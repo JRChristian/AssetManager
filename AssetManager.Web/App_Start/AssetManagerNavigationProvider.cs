@@ -28,6 +28,20 @@ namespace AssetManager.Web
                         url: "#/about",
                         icon: "fa fa-info"
                         )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        "AssetList",
+                        new LocalizableString("Assets", AssetManagerConsts.LocalizationSourceName),
+                        url: "#/assetlist",
+                        icon: "fa fa-tasks"
+                        )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        "AssetNew",
+                        new LocalizableString("NewAsset", AssetManagerConsts.LocalizationSourceName),
+                        url: "#/assetnew",
+                        icon: "fa fa-asterisk"
+                        )
                 );
         }
     }

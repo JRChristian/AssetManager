@@ -29,5 +29,25 @@
     
     <text name="LoginFailed" value="Login failed!" />
 
+    <text name="Actions" value="Actions" />
+    <text name="AllAssetTypes" value="All asset types" />
+    <text name="AssetCount" value="{0} assets" />
+    <text name="AssetCreatedOk" value="Asset {0} has been created" />
+    <text name="AssetUpdatedOk" value="Asset {0} has been updated" />
+    <text name="AssetDescription" value="Description" />
+    <text name="AssetList" value="Asset List" />
+    <text name="AssetName" value="Asset name" />
+    <text name="Assets" value="Assets" />
+    <text name="AssetType" value="Asset type" />
+    <text name="Created" value="Created" />
+    <text name="CreateTheAsset" value="Create asset" />
+    <text name="Description" value="Description" />
+    <text name="EnterNameHere" value="Enter asset name here" />
+    <text name="EnterDescriptionHere" value="Enter description here" />
+    <text name="FilterBy" value="Filter by" />
+    <text name="NewAsset" value="Create asset" />
+    <text name="Name" value="Name" />
+    <text name="UpdateTheAsset" value="Update" />
+  
   </texts>
 </localizationDictionary>

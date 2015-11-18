@@ -72,6 +72,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="FluentValidation, Version=5.6.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.5.6.2.0\lib\Net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
@@ -108,6 +112,7 @@
   <ItemGroup>
     <Compile Include="EntityFramework\AssetManagerDbContext.cs" />
     <Compile Include="EntityFramework\Repositories\AssetManagerRepositoryBase.cs" />
+    <Compile Include="EntityFramework\Repositories\AssetRepository.cs" />
     <Compile Include="Migrations\201506210746108_AbpZero_Initial.cs" />
     <Compile Include="Migrations\201506210746108_AbpZero_Initial.Designer.cs">
       <DependentUpon>201506210746108_AbpZero_Initial.cs</DependentUpon>
@@ -127,6 +132,14 @@
     <Compile Include="Migrations\201511092149188_Initial.cs" />
     <Compile Include="Migrations\201511092149188_Initial.Designer.cs">
       <DependentUpon>201511092149188_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201511120420415_Asset1.cs" />
+    <Compile Include="Migrations\201511120420415_Asset1.Designer.cs">
+      <DependentUpon>201511120420415_Asset1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201511121733061_Asset2.cs" />
+    <Compile Include="Migrations\201511121733061_Asset2.Designer.cs">
+      <DependentUpon>201511121733061_Asset2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
@@ -159,6 +172,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201511092149188_Initial.resx">
       <DependentUpon>201511092149188_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511120420415_Asset1.resx">
+      <DependentUpon>201511120420415_Asset1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511121733061_Asset2.resx">
+      <DependentUpon>201511121733061_Asset2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

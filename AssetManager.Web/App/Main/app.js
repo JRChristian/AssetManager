@@ -15,7 +15,7 @@
     //Configuration for Angular UI routing.
     app.config([
         '$stateProvider', '$urlRouterProvider',
-        function($stateProvider, $urlRouterProvider) {
+        function ($stateProvider, $urlRouterProvider) {
             $urlRouterProvider.otherwise('/');
             $stateProvider
                 .state('home', {
@@ -27,6 +27,21 @@
                     url: '/about',
                     templateUrl: '/App/Main/views/about/about.cshtml',
                     menu: 'About' //Matches to name of 'About' menu in AssetManagerNavigationProvider
+                })
+                .state('assetlist', {
+                    url: '/assetlist',
+                    templateUrl: '/App/Main/views/asset/list.cshtml',
+                    menu: 'AssetList' //Matches to name of 'Assets' menu in AssetManagerNavigationProvider
+                })
+                .state('assetedit', {
+                    url: '/assetedit?assetId',
+                    templateUrl: '/App/Main/views/asset/edit.cshtml',
+                    menu: 'AssetEdit' //Matches to name of 'Assets' menu in AssetManagerNavigationProvider
+                })
+                .state('assetnew', {
+                    url: '/assetnew',
+                    templateUrl: '/App/Main/views/asset/new.cshtml',
+                    menu: 'AssetNew' //Matches to name of 'NewAsset' menu in AssetManagerNavigationProvider
                 });
         }
     ]);

@@ -1,14 +1,21 @@
-﻿using System.Data.Common;
-using Abp.Zero.EntityFramework;
+﻿using Abp.Zero.EntityFramework;
 using AssetManager.Authorization.Roles;
+using AssetManager.Configurations;
+using AssetManager.Entities;
 using AssetManager.MultiTenancy;
 using AssetManager.Users;
+using System.Data.Common;
+using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace AssetManager.EntityFramework
 {
     public class AssetManagerDbContext : AbpZeroDbContext<Tenant, Role, User>
     {
-        //TODO: Define an IDbSet for your Entities...
+        #region Entity Sets
+        public IDbSet<Asset> Assets { get; set; }
+        public IDbSet<AssetType> AssetTypes { get; set; }
+        #endregion
 
         /* NOTE: 
          *   Setting "Default" to base class helps us when working migration commands on Package Manager Console.
@@ -29,6 +36,15 @@ namespace AssetManager.EntityFramework
             : base(nameOrConnectionString)
         {
 
+        }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+
+            modelBuilder.Configurations.Add(new AssetConfiguration());
+            modelBuilder.Configurations.Add(new AssetTypeConfiguration());
         }
 
         //This constructor is used in tests

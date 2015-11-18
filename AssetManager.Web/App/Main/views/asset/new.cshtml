@@ -1,0 +1,19 @@
+﻿<div ng-controller="app.views.asset.new as vm">
+    <form id="NewAssetForm" role="form" name="newAssetForm" novalidate>
+        <div class="form-group">
+            <label for="AssetName">@L("AssetName")</label>
+            <textarea id="AssetName" ng-model="vm.asset.name" class="form-control" placeholder="@L("EnterNameHere")" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="AssetDescription">@L("AssetDescription")</label>
+            <textarea id="AssetDescription" ng-model="vm.asset.description" class="form-control" rows="3" placeholder="@L("EnterDescriptionHere")" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="AssetType">@L("AssetType")</label>
+            <select id="AssetType" class="form-control" ng-model="vm.asset.assetTypeId" ng-options="x.id as x.name for x in vm.assettypes">
+                <option value="">@L("SelectAssetType")</option>
+            </select>
+        </div>
+        <button ng-click="vm.saveAsset()" ng-disabled="NewAssetForm.$invalid" type="submit" class="btn btn-primary">@L("CreateTheAsset")</button>
+    </form>
+</div>
