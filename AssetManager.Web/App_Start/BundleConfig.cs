@@ -11,16 +11,15 @@ namespace AssetManager.Web
             //VENDOR RESOURCES
 
             //~/Bundles/App/vendor/css
+            //FIXED 2015-11-18. See http://forum.aspnetboilerplate.com/viewtopic.php?p=1962
             bundles.Add(
                 new StyleBundle("~/Bundles/App/vendor/css")
-                    .Include(
-                        "~/Content/themes/base/all.css",
-                        "~/Content/bootstrap-cosmo.min.css",
-                        "~/Content/toastr.min.css",
-                        "~/Scripts/sweetalert/sweet-alert.css",
-                        "~/Content/flags/famfamfam-flags.css",
-                        "~/Content/font-awesome.min.css"
-                    )
+                    .Include("~/Content/themes/base/all.css", new CssRewriteUrlTransform())
+                    .Include("~/Content/bootstrap-cosmo.min.css", new CssRewriteUrlTransform())
+                    .Include("~/Content/toastr.min.css")
+                    .Include("~/Scripts/sweetalert/sweet-alert.css")
+                    .Include("~/Content/flags/famfamfam-flags.css", new CssRewriteUrlTransform())
+                    .Include("~/Content/font-awesome.min.css", new CssRewriteUrlTransform())
                 );
 
             //~/Bundles/App/vendor/js

@@ -6,18 +6,28 @@ using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
 
+//See http://stackoverflow.com/questions/13510341/entity-framework-5-migrations-setting-up-an-initial-migration-and-single-seed-o
+//for thoughts about when the Seed() method runs and how to control it.
+
 namespace AssetManager.Migrations
 {
     internal sealed class Configuration : DbMigrationsConfiguration<AssetManager.EntityFramework.AssetManagerDbContext>
     {
+        private readonly bool _pendingMigrations;
+
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
             ContextKey = "AssetManager";
+            var migrator = new DbMigrator(this);
+            _pendingMigrations = migrator.GetPendingMigrations().Any();
         }
 
         protected override void Seed(AssetManager.EntityFramework.AssetManagerDbContext context)
         {
+            //Uncomment this line to exit if there aren't any pending migrations
+            //if (!_pendingMigrations) return;
+
             context.DisableAllFilters();
             new InitialDataBuilder(context).Build();
 
@@ -41,41 +51,6 @@ namespace AssetManager.Migrations
             r = AddAsset(context, "CDU", "Crude Distillation Unit", "Unit Ops");
             r = AddAsset(context, "Reformer", "Catalytic Reforming Unit", "Unit Ops");
             r = AddAsset(context, "FCCU", "Fluid Catalytic Cracking Unit", "Unit Ops");
-
-            /*
-            var asset_types = new List<AssetType>
-            {
-                new AssetType {Name="Facility"},
-                new AssetType {Name="Fixed"},
-                new AssetType {Name="Logical"},
-                new AssetType {Name="Other"},
-                new AssetType {Name="Structural"},
-                new AssetType {Name="Temporary"},
-                new AssetType {Name="Unit Ops"}
-            };
-            asset_types.ForEach(x => context.AssetTypes.AddOrUpdate(y => y.Name, x));
-            context.SaveChanges();
-
-            // Assets
-            long asset_type_id;
-
-            asset_type_id = context.AssetTypes.Where(x => x.Name == "Facility").Single().Id;
-            var assets = new List<Asset>
-            {
-                new Asset {Name="Westlake Refinery", Description="Westlake Refinery", AssetTypeId=asset_type_id, TenantId=1}
-            };
-            assets.ForEach(x => context.Assets.AddOrUpdate(y => y.Name, x));
-
-            asset_type_id = context.AssetTypes.Where(x => x.Name == "Unit Ops").Single().Id;
-            assets = new List<Asset>
-            {
-                new Asset {Name="CDU", Description="Crude Distillation Unit", AssetTypeId=asset_type_id, TenantId=1},
-                new Asset {Name="Reformer", Description="Catalytic Reforming Unit", AssetTypeId=asset_type_id, TenantId=1}
-            };
-            assets.ForEach(x => context.Assets.AddOrUpdate(y => y.Name, x));
-            context.SaveChanges();
-
-            */
             return true;
         }
 
