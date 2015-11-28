@@ -18,7 +18,7 @@ namespace AssetManager.Services
     /// Inherits from <see cref="ApplicationService"/>.
     /// <see cref="ApplicationService"/> contains some basic functionality common for application services (such as logging and localization).
     /// </summary>
-    public class AssetTypeAppService : IAssetTypeAppService
+    public class AssetTypeAppService : AssetManagerAppServiceBase, IAssetTypeAppService
     {
         //These members set in constructor using constructor injection.
         private readonly IRepository<AssetType, long> _assetTypeRepository;

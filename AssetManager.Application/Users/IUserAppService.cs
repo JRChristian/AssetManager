@@ -9,5 +9,7 @@ namespace AssetManager.Users
         Task ProhibitPermission(ProhibitPermissionInput input);
 
         Task RemoveFromRole(long userId, string roleName);
+
+        Task<GetUserOutput> GetAllUsers(GetUserInput input);
     }
 }

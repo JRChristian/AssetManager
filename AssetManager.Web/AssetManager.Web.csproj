@@ -275,6 +275,7 @@
       <DependentUpon>main.css</DependentUpon>
     </Content>
     <Content Include="App\Main\services\appSession.js" />
+    <Content Include="App\Main\views\admin\userlist.js" />
     <Content Include="App\Main\views\asset\list.js" />
     <Content Include="App\Main\views\asset\edit.js" />
     <Content Include="App\Main\views\asset\new.js" />
@@ -407,6 +408,7 @@
     <Content Include="App\Main\views\asset\list.cshtml" />
     <Content Include="App\Main\views\asset\new.cshtml" />
     <Content Include="App\Main\views\asset\edit.cshtml" />
+    <Content Include="App\Main\views\admin\userlist.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />

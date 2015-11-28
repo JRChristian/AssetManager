@@ -13,6 +13,7 @@
     ]);
 
     //Configuration for Angular UI routing.
+    //menu: entries *must* match names in AssetManagerNavigationProvider
     app.config([
         '$stateProvider', '$urlRouterProvider',
         function ($stateProvider, $urlRouterProvider) {
@@ -42,7 +43,13 @@
                     url: '/assetnew',
                     templateUrl: '/App/Main/views/asset/new.cshtml',
                     menu: 'AssetNew' //Matches to name of 'NewAsset' menu in AssetManagerNavigationProvider
-                });
+                })
+                 .state('userlist', {
+                     url: '/userlist',
+                     templateUrl: '/App/Main/views/admin/userlist.cshtml',
+                     menu: 'UserList'
+                 })
+            ;
         }
     ]);
 })();

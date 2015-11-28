@@ -20,28 +20,43 @@ namespace AssetManager.Web
                         new LocalizableString("HomePage", AssetManagerConsts.LocalizationSourceName),
                         url: "#/",
                         icon: "fa fa-home"
-                        )
-                ).AddItem(
-                    new MenuItemDefinition(
-                        "About",
-                        new LocalizableString("About", AssetManagerConsts.LocalizationSourceName),
-                        url: "#/about",
-                        icon: "fa fa-info"
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            "Home",
+                            new LocalizableString("HomePage", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/",
+                            icon: "fa fa-home"
+                            )
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            "About",
+                            new LocalizableString("About", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/about",
+                            icon: "fa fa-info"
+                            )
                         )
                 ).AddItem(
                     new MenuItemDefinition(
                         "AssetList",
                         new LocalizableString("Assets", AssetManagerConsts.LocalizationSourceName),
                         url: "#/assetlist",
-                        icon: "fa fa-tasks"
+                        icon: "fa fa-industry"
                         )
                 ).AddItem(
                     new MenuItemDefinition(
-                        "AssetNew",
-                        new LocalizableString("NewAsset", AssetManagerConsts.LocalizationSourceName),
-                        url: "#/assetnew",
-                        icon: "fa fa-asterisk"
+                        "Admin",
+                        new LocalizableString("AdminMenu", AssetManagerConsts.LocalizationSourceName),
+                        url: "#/userlist",
+                        icon: "fa fa-user"
+                        ).AddItem(
+                            new MenuItemDefinition(
+                            "UserList",
+                            new LocalizableString("UserMenu", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/userlist",
+                            icon: "fa fa-user"
+                            )
                         )
+
                 );
         }
     }

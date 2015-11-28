@@ -28,6 +28,9 @@
     <text name="LogIn" value="Log in" />
     
     <text name="LoginFailed" value="Login failed!" />
+    
+    <text name="AdminMenu" value="Admin" />
+    <text name="UserMenu" value="Users" />
 
     <text name="Actions" value="Actions" />
     <text name="AllAssetTypes" value="All asset types" />
@@ -48,6 +51,14 @@
     <text name="NewAsset" value="Create asset" />
     <text name="Name" value="Name" />
     <text name="UpdateTheAsset" value="Update" />
+    
+    <text name="Email" value="Email address" />
+    <text name="FirstName" value="First name" />
+    <text name="LastLogin" value="Last login" />
+    <text name="LastName" value="Last name" />
+    <text name="Tenant" value="Tenant" />
+    <text name="UserList" value="User List" />
+    <text name="UserName" value="User name" />
   
   </texts>
 </localizationDictionary>
