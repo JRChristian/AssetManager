@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace AssetManager.Users.Dto
 {
-    public class GetUserInput : IInputDto
+    public class GetOneUserOutput : IOutputDto
     {
-        public long UserId { get; set; }
+        public UserDto User { get; set; }
     }
 }

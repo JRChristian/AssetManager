@@ -49,6 +49,11 @@
                      templateUrl: '/App/Main/views/admin/userlist.cshtml',
                      menu: 'UserList'
                  })
+                .state('useredit', {
+                    url: '/useredit?userId',
+                    templateUrl: '/App/Main/views/admin/useredit.cshtml',
+                    menu: 'UserEdit' //Matches to name in AssetManagerNavigationProvider
+                })
             ;
         }
     ]);

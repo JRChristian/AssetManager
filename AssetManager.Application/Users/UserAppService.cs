@@ -2,7 +2,6 @@ using Abp.Authorization;
 using Abp.Authorization.Users;
 using Abp.Domain.Repositories;
 using AssetManager.Entities;
-
 using AssetManager.Users.Dto;
 using AutoMapper;
 using System.Collections.Generic;
@@ -40,7 +39,7 @@ namespace AssetManager.Users
             CheckErrors(await _userManager.RemoveFromRoleAsync(userId, roleName));
         }
 
-         public async Task<GetUserOutput> GetAllUsers(GetUserInput input)
+        public async Task<GetUserOutput> GetAllUsers()
         {
             List<User> _users = await _userRepository.GetAllListAsync();
             //List<UserDto> userDto = Mapper.Map<List<UserDto>>(_users);
@@ -48,14 +47,15 @@ namespace AssetManager.Users
             foreach(User oneUser in _users)
             {
                 userDto.Add(new UserDto {
+                    Id = oneUser.Id,
                     Name = oneUser.Name,
                     Surname = oneUser.Surname,
                     UserName = oneUser.UserName,
                     EmailAddress = oneUser.EmailAddress,
                     LastLoginTime = oneUser.LastLoginTime,
                     IsActive = oneUser.IsActive,
-                    TenantId = oneUser.TenantId,
-                    TenancyName = (oneUser.TenantId >0 ) ? oneUser.Tenant.TenancyName : "(Host)"
+                    TenantId = (oneUser.TenantId.HasValue) ? oneUser.TenantId.Value : 0,
+                    TenancyName = (oneUser.TenantId.HasValue ) ? oneUser.Tenant.TenancyName : "(Host)"
                 });
             }
 
@@ -64,6 +64,62 @@ namespace AssetManager.Users
                 Users = userDto
                 //Users = Mapper.Map<List<UserDto>>( _users )
             };
+        }
+
+        public async Task<GetOneUserOutput> GetOneUser(GetUserInput input)
+        {
+            User oneUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == input.UserId);
+            UserDto _userDto = new UserDto
+            {
+                Id = oneUser.Id,
+                UserName = oneUser.UserName,
+                Name = oneUser.Name,
+                Surname = oneUser.Surname,
+                EmailAddress = oneUser.EmailAddress,
+                LastLoginTime = oneUser.LastLoginTime,
+                IsActive = oneUser.IsActive,
+                TenantId = (oneUser.TenantId.HasValue) ? oneUser.TenantId.Value : 0,
+                TenancyName = (oneUser.TenantId.HasValue) ? oneUser.Tenant.TenancyName : "(Host)"
+            };
+            return new GetOneUserOutput
+            {
+                User = _userDto
+            };
+        }
+
+        public async Task UpdateUser(UpdateUserInput input)
+        {
+            //We can use Logger, it is defined in ApplicationService base class.
+            Logger.Info("Updating a user for input: " + input);
+
+            //Get the original user
+            User theUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == input.Id);
+
+            //Update changed properties of the retriever User entity
+            string s;
+            s = input.Name.Trim();
+            if (s != "")
+            {
+                if (s == s.ToLower() || s == s.ToUpper())
+                    s = s[0].ToString().ToUpper() + s.Substring(1).ToLower();
+                theUser.Name = s;
+            }
+
+            s = input.Surname.Trim();
+            if (s != "")
+            {
+                if (s == s.ToLower() || s == s.ToUpper())
+                    s = s[0].ToString().ToUpper() + s.Substring(1).ToLower();
+                theUser.Surname = s;
+            }
+
+            s = input.EmailAddress.Trim();
+            if (s != "")
+                theUser.EmailAddress = s;
+
+            //No need to call the Update method of the repository.
+            //Because an application service method is a 'unit of work' scope as default and
+            //ABP automatically saves all changes when a 'unit of work' scope ends (without any exception).
         }
     }
 }

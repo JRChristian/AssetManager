@@ -7,9 +7,9 @@ namespace AssetManager.Users
     public interface IUserAppService : IApplicationService
     {
         Task ProhibitPermission(ProhibitPermissionInput input);
-
         Task RemoveFromRole(long userId, string roleName);
-
-        Task<GetUserOutput> GetAllUsers(GetUserInput input);
+        Task<GetUserOutput> GetAllUsers();
+        Task<GetOneUserOutput> GetOneUser(GetUserInput input);
+        Task UpdateUser(UpdateUserInput input);
     }
 }

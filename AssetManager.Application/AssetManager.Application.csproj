@@ -125,7 +125,9 @@
     <Compile Include="Roles\IRoleAppService.cs" />
     <Compile Include="Roles\Dto\UpdateRolePermissionsInput.cs" />
     <Compile Include="Services\IAssetTypeAppService.cs" />
+    <Compile Include="Users\Dto\GetOneUserOutput.cs" />
     <Compile Include="Users\Dto\GetUserInput.cs" />
+    <Compile Include="Users\Dto\UpdateUserInput.cs" />
     <Compile Include="Users\Dto\UserDto.cs" />
     <Compile Include="Users\Dto\GetUserOutput.cs" />
     <Compile Include="Users\IUserAppService.cs" />

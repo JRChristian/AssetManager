@@ -57,8 +57,10 @@
     <text name="LastLogin" value="Last login" />
     <text name="LastName" value="Last name" />
     <text name="Tenant" value="Tenant" />
+    <text name="UpdateTheUser" value="Update" />
     <text name="UserList" value="User List" />
     <text name="UserName" value="User name" />
-  
+    <text name="UserUpdatedOk" value="User {0} has been updated" />
+
   </texts>
 </localizationDictionary>

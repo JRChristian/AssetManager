@@ -1,19 +1,22 @@
 ﻿<div ng-controller="app.views.asset.edit as vm">
-    <form id="EditAssetForm" role="form" name="editAssetForm" novalidate>
-        <div class="form-group">
-            <label for="AssetName">@L("AssetName")</label>
-            <textarea id="AssetName" ng-model="vm.asset.name" class="form-control" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="AssetDescription">@L("AssetDescription")</label>
-            <textarea id="AssetDescription" ng-model="vm.asset.description" class="form-control" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="AssetType">@L("AssetType")</label>
-            <select id="AssetType" class="form-control" ng-model="vm.asset.assetTypeId" ng-options="x.id as x.name for x in vm.assettypes">
-            </select>
-        </div>
-        <button ng-click="vm.saveAsset()" ng-disabled="EditAssetForm.$invalid" type="submit" class="btn btn-primary">@L("UpdateTheAsset")</button>
-    </form>
+    <div class="container">
+        <form id="EditAssetForm" class="form-horizontal" role="form" name="editAssetForm" novalidate>
+            <div class="form-group">
+                <label class="col-sm-2" control-label for="AssetName">@L("AssetName")</label>
+                <div class="col-sm-10"><input type="text" id="AssetName" ng-model="vm.asset.name" class="form-control" required></div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2" control-label for="AssetDescription">@L("AssetDescription")</label>
+                <div class="col-sm-10"><textarea id="AssetDescription" ng-model="vm.asset.description" class="form-control" rows="3"></textarea></div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2" control-label for="AssetType">@L("AssetType")</label>
+                <div class="col-sm-10">
+                    <select id="AssetType" class="form-control" ng-model="vm.asset.assetTypeId" ng-options="x.id as x.name for x in vm.assettypes">
+                    </select>
+                </div>
+            </div>
+            <button ng-click="vm.saveAsset()" ng-disabled="EditAssetForm.$invalid" type="submit" class="btn btn-primary">@L("UpdateTheAsset")</button>
+        </form>
+    </div>
 </div>
-
