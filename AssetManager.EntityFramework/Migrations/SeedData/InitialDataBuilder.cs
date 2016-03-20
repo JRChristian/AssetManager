@@ -14,6 +14,7 @@ namespace AssetManager.Migrations.SeedData
         public void Build()
         {
             new DefaultTenantRoleAndUserBuilder(_context).Build();
+            new DefaultAssetBuilder(_context).Build();
         }
     }
 }
