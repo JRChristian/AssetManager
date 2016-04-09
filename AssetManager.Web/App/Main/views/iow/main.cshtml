@@ -1,0 +1,48 @@
+﻿<div class="panel panel-default" ng-controller="app.views.iow.main as vm">
+    <div class="panel-heading" style="position: relative;">
+        <div class="row">
+        </div>
+    </div>
+    <div class="panel-body">
+        <!-- Asset list -->
+        <h3 class="panel-title col-xs-6">
+            @L("AssetList")
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>@L("Name")</th>
+                        <th>@L("Description")</th>
+                        <th>@L("Status")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="asset in vm.assets">
+                        <td>{{asset.name}}</td>
+                        <td>{{asset.description}}</td>
+                        <td>{{vm.myStatus()}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </h3>
+        <h3 class="panel-title col-xs-6">
+            @L("AssetList")
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>@L("Name")</th>
+                        <th>@L("Description")</th>
+                        <th>@L("Status")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="asset in vm.assets">
+                        <td>{{asset.name}}</td>
+                        <td>{{asset.description}}</td>
+                        <td>{{vm.myStatus()}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </h3>
+    </div>
+</div>
+

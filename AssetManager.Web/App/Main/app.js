@@ -44,6 +44,11 @@
                     templateUrl: '/App/Main/views/asset/new.cshtml',
                     menu: 'AssetNew' //Matches to name of 'NewAsset' menu in AssetManagerNavigationProvider
                 })
+                 .state('iow', {
+                     url: '/iow',
+                     templateUrl: '/App/Main/views/iow/main.cshtml',
+                     menu: 'IOW' //Matches to name of 'IOW' menu in AssetManagerNavigationProvider
+                 })
                  .state('userlist', {
                      url: '/userlist',
                      templateUrl: '/App/Main/views/admin/userlist.cshtml',

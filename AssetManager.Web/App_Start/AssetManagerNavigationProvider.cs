@@ -16,47 +16,59 @@ namespace AssetManager.Web
             context.Manager.MainMenu
                 .AddItem(
                     new MenuItemDefinition(
-                        "Home",
-                        new LocalizableString("HomePage", AssetManagerConsts.LocalizationSourceName),
-                        url: "#/",
-                        icon: "fa fa-home"
-                    ).AddItem(
+                        "IOW",
+                        new LocalizableString("IOWs", AssetManagerConsts.LocalizationSourceName),
+                        url: "#/iow",
+                        icon: "fa fa-bar-chart"
+                    )
+                )
+                .AddItem(
+                    new MenuItemDefinition(
+                        "AssetList",
+                        new LocalizableString("Assets", AssetManagerConsts.LocalizationSourceName),
+                        url: "#/assetlist",
+                        icon: "fa fa-database"
+                    )
+                )
+                .AddItem(
+                    new MenuItemDefinition(
+                        "Admin",
+                        new LocalizableString("AdminMenu", AssetManagerConsts.LocalizationSourceName),
+                        url: "#/userlist",
+                        icon: "fa fa-user"
+                    )
+                    .AddItem(
                         new MenuItemDefinition(
-                            "Home",
-                            new LocalizableString("HomePage", AssetManagerConsts.LocalizationSourceName),
-                            url: "#/",
-                            icon: "fa fa-home"
+                            "UserList",
+                            new LocalizableString("UserMenu", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/userlist",
+                            icon: "fa fa-user"
                             )
-                    ).AddItem(
+                    )
+                )
+                .AddItem(
+                    new MenuItemDefinition(
+                        "Home",
+                        new LocalizableString("Help", AssetManagerConsts.LocalizationSourceName),
+                        url: "#/",
+                        icon: "fa fa-question"
+                    )
+                    .AddItem(
                         new MenuItemDefinition(
                             "About",
                             new LocalizableString("About", AssetManagerConsts.LocalizationSourceName),
                             url: "#/about",
                             icon: "fa fa-info"
                             )
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "About",
+                            new LocalizableString("About", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/about",
+                            icon: "fa fa-info"
                         )
-                ).AddItem(
-                    new MenuItemDefinition(
-                        "AssetList",
-                        new LocalizableString("Assets", AssetManagerConsts.LocalizationSourceName),
-                        url: "#/assetlist",
-                        icon: "fa fa-industry"
-                        )
-                ).AddItem(
-                    new MenuItemDefinition(
-                        "Admin",
-                        new LocalizableString("AdminMenu", AssetManagerConsts.LocalizationSourceName),
-                        url: "#/userlist",
-                        icon: "fa fa-user"
-                        ).AddItem(
-                            new MenuItemDefinition(
-                            "UserList",
-                            new LocalizableString("UserMenu", AssetManagerConsts.LocalizationSourceName),
-                            url: "#/userlist",
-                            icon: "fa fa-user"
-                            )
-                        )
-
+                    )
                 );
         }
     }

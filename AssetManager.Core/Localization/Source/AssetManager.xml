@@ -3,8 +3,9 @@
   <texts>
     <text name="HomePage" value="Home page" />
     <text name="About" value="About" />
-    <text name="WellcomeMessage" value="Welcome to AssetManager!" />
-    <text name="Home_ThisIsATemplate" value="This project template is a starting point to develop web applicatins using..." />
+    <text name="Help" value="Help" />
+    <text name="WelcomeMessage" value="Asset Integrity" />
+    <text name="Home_ThisIsATemplate" value="Integrity Operating Windows (IOW) extend asset life" />
     <text name="Home_AspNetDescription" value="ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that enables a clean separation of concerns and that gives you full control over markup for enjoyable, agile development." />
     <text name="Home_AspNetBoilerplateDescription" value="ASP.NET Boilerplate is a framework to build web based applications with best practices and most popular tools." />
     <text name="LearnMore" value="Learn more" />
@@ -31,6 +32,9 @@
     
     <text name="AdminMenu" value="Admin" />
     <text name="UserMenu" value="Users" />
+
+    <text name="IOWs" value="IOWs" />
+    <text name="Status" value="Status" />
 
     <text name="Actions" value="Actions" />
     <text name="AllAssetTypes" value="All asset types" />
