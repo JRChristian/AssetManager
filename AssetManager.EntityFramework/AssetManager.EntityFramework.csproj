@@ -114,9 +114,14 @@
     <Compile Include="EntityFramework\AssetManagerDbContext.cs" />
     <Compile Include="EntityFramework\Repositories\AssetManagerRepositoryBase.cs" />
     <Compile Include="EntityFramework\Repositories\AssetRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\IOWLevelRepository.cs" />
     <Compile Include="Migrations\201603180414128_Initial.cs" />
     <Compile Include="Migrations\201603180414128_Initial.Designer.cs">
       <DependentUpon>201603180414128_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604121906035_IOWTables.cs" />
+    <Compile Include="Migrations\201604121906035_IOWTables.Designer.cs">
+      <DependentUpon>201604121906035_IOWTables.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
@@ -138,6 +143,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201603180414128_Initial.resx">
       <DependentUpon>201603180414128_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604121906035_IOWTables.resx">
+      <DependentUpon>201604121906035_IOWTables.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

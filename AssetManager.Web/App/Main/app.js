@@ -49,6 +49,11 @@
                      templateUrl: '/App/Main/views/iow/main.cshtml',
                      menu: 'IOW' //Matches to name of 'IOW' menu in AssetManagerNavigationProvider
                  })
+                 .state('iowlevels', {
+                     url: '/iowlevellist',
+                     templateUrl: '/App/Main/views/iow/LevelList.cshtml',
+                     menu: 'IOWLevels' //Matches to name of 'IOWLevels' menu in AssetManagerNavigationProvider
+                 })
                  .state('userlist', {
                      url: '/userlist',
                      templateUrl: '/App/Main/views/admin/userlist.cshtml',

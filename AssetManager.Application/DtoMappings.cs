@@ -14,6 +14,7 @@ namespace AssetManager
         public static void Map()
         {
             Mapper.CreateMap<Asset, AssetDto>();
+            Mapper.CreateMap<IOWLevel, IOWLevelDto>();
         }
     }
 }

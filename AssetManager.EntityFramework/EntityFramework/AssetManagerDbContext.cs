@@ -42,9 +42,17 @@ namespace AssetManager.EntityFramework
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+            modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
 
             modelBuilder.Configurations.Add(new AssetConfiguration());
             modelBuilder.Configurations.Add(new AssetTypeConfiguration());
+            modelBuilder.Configurations.Add(new IOWDeviationConfiguration());
+            modelBuilder.Configurations.Add(new IOWLevelConfiguration());
+            modelBuilder.Configurations.Add(new IOWLimitConfiguration());
+            modelBuilder.Configurations.Add(new IOWStatsByDayConfiguration());
+            modelBuilder.Configurations.Add(new IOWVariableConfiguration());
+            modelBuilder.Configurations.Add(new TagConfiguration());
+            modelBuilder.Configurations.Add(new TagDataConfiguration());
         }
 
         //This constructor is used in tests

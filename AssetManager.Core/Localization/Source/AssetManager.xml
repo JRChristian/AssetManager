@@ -32,9 +32,16 @@
     
     <text name="AdminMenu" value="Admin" />
     <text name="UserMenu" value="Users" />
+    <text name="SwaggerMenu" value="Service info" />
 
     <text name="IOWs" value="IOWs" />
+    <text name="IOWLevels" value="Levels" />
+    <text name="LevelList" value="IOW Levels" />
     <text name="Status" value="Status" />
+    <text name="Criticality" value="Criticality" />
+    <text name="ResponseGoal" value="Response time goal" />
+    <text name="MetricGoal" value="Maximum acceptable deviations" />
+    <text name="CreateDefaultLevels" value="Create default levels" />
 
     <text name="Actions" value="Actions" />
     <text name="AllAssetTypes" value="All asset types" />

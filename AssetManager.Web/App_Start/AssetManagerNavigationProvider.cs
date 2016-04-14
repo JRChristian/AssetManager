@@ -21,6 +21,14 @@ namespace AssetManager.Web
                         url: "#/iow",
                         icon: "fa fa-bar-chart"
                     )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "IOWLevels",
+                            new LocalizableString("IOWLevels", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/iowlevellist",
+                            icon: "fa fa-tasks"
+                            )
+                    )
                 )
                 .AddItem(
                     new MenuItemDefinition(
@@ -39,10 +47,10 @@ namespace AssetManager.Web
                     )
                     .AddItem(
                         new MenuItemDefinition(
-                            "UserList",
-                            new LocalizableString("UserMenu", AssetManagerConsts.LocalizationSourceName),
-                            url: "#/userlist",
-                            icon: "fa fa-user"
+                            "Swagger",
+                            new LocalizableString("SwaggerMenu", AssetManagerConsts.LocalizationSourceName),
+                            url: "swagger/ui/index#/",
+                            icon: "fa fa-code"
                             )
                     )
                 )

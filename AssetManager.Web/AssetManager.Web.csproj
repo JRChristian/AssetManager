@@ -282,6 +282,7 @@
     <Content Include="App\Main\views\asset\list.js" />
     <Content Include="App\Main\views\asset\edit.js" />
     <Content Include="App\Main\views\asset\new.js" />
+    <Content Include="App\Main\views\iow\LevelList.js" />
     <Content Include="App\Main\views\iow\main.js" />
     <Content Include="App\Main\views\layout\header.js" />
     <Content Include="App\Main\views\layout\layout.js" />
@@ -401,6 +402,7 @@
     <Content Include="Abp\Framework\styles\abp.less" />
     <Content Include="Abp\Framework\styles\abp.css.map" />
     <Content Include="App\Main\views\iow\main.cshtml" />
+    <Content Include="App\Main\views\iow\LevelList.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

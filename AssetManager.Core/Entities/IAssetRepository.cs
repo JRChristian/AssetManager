@@ -15,7 +15,7 @@ namespace AssetManager.Entities
     public interface IAssetRepository : IRepository<Asset, long>
     {
         /// <summary>
-        /// Gets all tasks with <see cref="Asset.AssetType"/> is retrived (Include for EntityFramework, Fetch for NHibernate)
+        /// Gets all tasks with <see cref="Asset.AssetType"/> is retrieved (Include for EntityFramework, Fetch for NHibernate)
         /// filtered by given conditions.
         /// </summary>
         /// <param name="AssetTypeId">Optional assigned person filter. If it's null, not filtered.</param>

@@ -1,0 +1,42 @@
+﻿<div class="panel panel-default" ng-controller="app.views.level.list as vm">
+    <div class="panel-heading" style="position: relative;">
+        <div class="row">
+
+            <!-- Title -->
+            <h3 class="panel-title col-xs-6">
+                @L("LevelList")
+            </h3>
+            <div class="col-xs-6 text-right">
+                <button ng-click="vm.createDefaults()" type="submit" class="btn btn-primary">@L("CreateDefaultLevels")</button>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <!-- Level list -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th> </th>
+                    <th>@L("Name")</th>
+                    <th>@L("Description")</th>
+                    <th>@L("ResponseGoal")</th>
+                    <th>@L("MetricGoal")</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="level in vm.levels">
+                    <td>{{level.criticality}}</td>
+                    <td>{{level.name}}</td>
+                    <td>{{level.description}}</td>
+                    <td>{{level.responseGoal}}</td>
+                    <td>{{level.metricGoal}}</td>
+                    <td>
+                        <a ui-sref="Leveledit({ LevelId: level.id})"><i class="fa fa-pencil"></i></a>
+                        <i class="fa fa-trash"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
