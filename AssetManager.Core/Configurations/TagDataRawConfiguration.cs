@@ -8,14 +8,15 @@ using System.Threading.Tasks;
 
 namespace AssetManager.Configurations
 {
-    public class TagDataConfiguration  : EntityTypeConfiguration<TagData>
+    public class TagDataRawConfiguration  : EntityTypeConfiguration<TagDataRaw>
     {
-        public TagDataConfiguration()
+        public TagDataRawConfiguration()
         {
             Property(x => x.TenantId).IsRequired();
             Property(x => x.TagId).IsRequired();
-            Property(x => x.Date).IsRequired();
+            Property(x => x.Timestamp).IsRequired();
             Property(x => x.Value).IsRequired();
+            Property(x => x.Quality).IsRequired();
         }
     }
 }

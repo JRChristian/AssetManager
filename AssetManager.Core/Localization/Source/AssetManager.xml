@@ -39,8 +39,8 @@
     <text name="LevelList" value="IOW Levels" />
     <text name="Status" value="Status" />
     <text name="Criticality" value="Criticality" />
-    <text name="ResponseGoal" value="Response time goal" />
-    <text name="MetricGoal" value="Maximum acceptable deviations" />
+    <text name="ResponseGoal" value="Response goal" />
+    <text name="MetricGoal" value="Metric - last 30 days" />
     <text name="CreateDefaultLevels" value="Create default levels" />
 
     <text name="Actions" value="Actions" />

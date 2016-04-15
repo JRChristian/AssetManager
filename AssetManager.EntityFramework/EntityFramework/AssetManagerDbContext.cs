@@ -52,7 +52,7 @@ namespace AssetManager.EntityFramework
             modelBuilder.Configurations.Add(new IOWStatsByDayConfiguration());
             modelBuilder.Configurations.Add(new IOWVariableConfiguration());
             modelBuilder.Configurations.Add(new TagConfiguration());
-            modelBuilder.Configurations.Add(new TagDataConfiguration());
+            modelBuilder.Configurations.Add(new TagDataRawConfiguration());
         }
 
         //This constructor is used in tests

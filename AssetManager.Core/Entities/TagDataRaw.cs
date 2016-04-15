@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AssetManager.Entities
 {
-    public class TagData : FullAuditedEntity<long>, IMustHaveTenant
+    public class TagDataRaw : FullAuditedEntity<long>, IMustHaveTenant
     {
         public int TenantId { get; set; }
         public virtual Tenant Tenants { get; set; }
@@ -17,7 +17,8 @@ namespace AssetManager.Entities
         public long TagId { get; set; }
         public virtual Tag Tag { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime Timestamp { get; set; }
         public double Value { get; set; }
+        public TagDataQuality Quality { get; set; }
     }
 }

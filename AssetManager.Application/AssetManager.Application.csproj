@@ -123,7 +123,9 @@
     <Compile Include="Services\Dtos\GetAssetInput.cs" />
     <Compile Include="Services\Dtos\GetAssetOutput.cs" />
     <Compile Include="Services\Dtos\GetOneIOWLevelInput.cs" />
+    <Compile Include="Services\Dtos\GetTagOutput.cs" />
     <Compile Include="Services\Dtos\IOWLevelDto.cs" />
+    <Compile Include="Services\Dtos\TagDto.cs" />
     <Compile Include="Services\Dtos\UpdateAssetInput.cs" />
     <Compile Include="Services\Dtos\UpdateIOWLevelInput.cs" />
     <Compile Include="Services\IAssetAppService.cs" />

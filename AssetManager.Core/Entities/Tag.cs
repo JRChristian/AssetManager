@@ -18,7 +18,7 @@ namespace AssetManager.Entities
         public string Description { get; set; }
         public string UOM { get; set; }
 
-        public virtual ICollection<TagData> TagData { get; set; }
+        public virtual ICollection<TagDataRaw> TagDataRaw { get; set; }
         public virtual ICollection<IOWVariable> IOWVariables { get; set; }
     }
 }

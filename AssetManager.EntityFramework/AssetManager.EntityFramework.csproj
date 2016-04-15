@@ -123,6 +123,18 @@
     <Compile Include="Migrations\201604121906035_IOWTables.Designer.cs">
       <DependentUpon>201604121906035_IOWTables.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604142326301_AddTagDataQuality.cs" />
+    <Compile Include="Migrations\201604142326301_AddTagDataQuality.Designer.cs">
+      <DependentUpon>201604142326301_AddTagDataQuality.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604142350540_RemoveTagData.cs" />
+    <Compile Include="Migrations\201604142350540_RemoveTagData.Designer.cs">
+      <DependentUpon>201604142350540_RemoveTagData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604150014211_AddTagDataRaw.cs" />
+    <Compile Include="Migrations\201604150014211_AddTagDataRaw.Designer.cs">
+      <DependentUpon>201604150014211_AddTagDataRaw.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -146,6 +158,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604121906035_IOWTables.resx">
       <DependentUpon>201604121906035_IOWTables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604142326301_AddTagDataQuality.resx">
+      <DependentUpon>201604142326301_AddTagDataQuality.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604142350540_RemoveTagData.resx">
+      <DependentUpon>201604142350540_RemoveTagData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604150014211_AddTagDataRaw.resx">
+      <DependentUpon>201604150014211_AddTagDataRaw.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
