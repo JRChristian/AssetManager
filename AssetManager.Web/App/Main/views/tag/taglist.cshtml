@@ -1,0 +1,38 @@
+﻿<div class="panel panel-default" ng-controller="app.views.tag.list as vm">
+    <div class="panel-heading" style="position: relative;">
+        <div class="row">
+
+            <!-- Title -->
+            <h3 class="panel-title col-xs-12">
+                @L("TagList")
+            </h3>
+
+        </div>
+    </div>
+    <div class="panel-body">
+        <!-- Level list -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@L("Name")</th>
+                    <th>@L("Description")</th>
+                    <th>@L("UOM")</th>
+                    <th> </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="tag in vm.tags">
+                    <td>{{tag.name}}</td>
+                    <td>{{tag.description}}</td>
+                    <td>{{tag.uom}}</td>
+                    <td>
+                        <a ui-sref="Tagedit({ Id: tag.id})"><i class="fa fa-pencil"></i></a>
+                        <i class="fa fa-trash"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

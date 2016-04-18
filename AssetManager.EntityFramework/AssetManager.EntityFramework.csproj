@@ -115,6 +115,8 @@
     <Compile Include="EntityFramework\Repositories\AssetManagerRepositoryBase.cs" />
     <Compile Include="EntityFramework\Repositories\AssetRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IOWLevelRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\TagDataRawRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\TagRepository.cs" />
     <Compile Include="Migrations\201603180414128_Initial.cs" />
     <Compile Include="Migrations\201603180414128_Initial.Designer.cs">
       <DependentUpon>201603180414128_Initial.cs</DependentUpon>

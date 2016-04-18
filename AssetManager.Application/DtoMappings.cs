@@ -1,5 +1,7 @@
 ﻿using AssetManager.Entities;
-using AssetManager.Services.Dtos;
+using AssetManager.Assets.Dtos;
+using AssetManager.IOWs.Dtos;
+using AssetManager.Tags.Dtos;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,8 @@ namespace AssetManager
         {
             Mapper.CreateMap<Asset, AssetDto>();
             Mapper.CreateMap<IOWLevel, IOWLevelDto>();
+            Mapper.CreateMap<Tag, TagDto>();
+            Mapper.CreateMap<TagDataRaw, TagDataRawDto>();
         }
     }
 }

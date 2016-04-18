@@ -32,6 +32,14 @@ namespace AssetManager.Web
                 )
                 .AddItem(
                     new MenuItemDefinition(
+                        "TagList",
+                        new LocalizableString("Tags", AssetManagerConsts.LocalizationSourceName),
+                        url: "#/taglist",
+                        icon: "fa fa-sticky-note-o"
+                    )
+                )
+                .AddItem(
+                    new MenuItemDefinition(
                         "AssetList",
                         new LocalizableString("Assets", AssetManagerConsts.LocalizationSourceName),
                         url: "#/assetlist",

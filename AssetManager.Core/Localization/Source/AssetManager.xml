@@ -73,5 +73,8 @@
     <text name="UserName" value="User name" />
     <text name="UserUpdatedOk" value="User {0} has been updated" />
 
+    <text name="Tags" value="Tags" />
+    <text name="TagList" value="Tags" />
+    <text name="UOM" value="UOM" />
   </texts>
 </localizationDictionary>

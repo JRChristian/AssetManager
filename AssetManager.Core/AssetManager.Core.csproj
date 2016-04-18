@@ -123,6 +123,8 @@
     <Compile Include="Entities\IOWStatsByDay.cs" />
     <Compile Include="Entities\IOWStatus.cs" />
     <Compile Include="Entities\IOWVariable.cs" />
+    <Compile Include="Entities\ITagDataRawRepository.cs" />
+    <Compile Include="Entities\ITagRepository.cs" />
     <Compile Include="Entities\Tag.cs" />
     <Compile Include="Entities\TagDataQuality.cs" />
     <Compile Include="Entities\TagDataRaw.cs" />
