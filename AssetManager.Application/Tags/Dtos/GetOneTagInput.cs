@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace AssetManager.Tags.Dtos
 {
-    public class GetTagInput : IInputDto
+    public class GetOneTagInput : IInputDto
     {
+        public long? Id { get; set; }
         public string Name { get; set; }
     }
 }

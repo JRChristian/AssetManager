@@ -116,6 +116,7 @@
     <Compile Include="Assets\Dtos\AssetTypeDto.cs" />
     <Compile Include="Assets\Dtos\CreateAssetInput.cs" />
     <Compile Include="IOWs\Dtos\CreateIOWLevelInput.cs" />
+    <Compile Include="Tags\Dtos\AddTagDataRawInput.cs" />
     <Compile Include="Tags\Dtos\CreateTagInput.cs" />
     <Compile Include="Tags\Dtos\DeleteTagInput.cs" />
     <Compile Include="Assets\Dtos\GetAllAssetTypeOutput.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="Assets\Dtos\GetAssetInput.cs" />
     <Compile Include="Assets\Dtos\GetAssetOutput.cs" />
     <Compile Include="IOWs\Dtos\GetOneIOWLevelInput.cs" />
+    <Compile Include="Tags\Dtos\GetOneTagInput.cs" />
     <Compile Include="Tags\Dtos\GetTagDataRawInput.cs" />
     <Compile Include="Tags\Dtos\GetTagDataRawOutput.cs" />
     <Compile Include="Tags\Dtos\GetTagInput.cs" />

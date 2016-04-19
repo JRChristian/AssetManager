@@ -10,10 +10,11 @@ namespace AssetManager.Tags
 {
     public interface ITagAppService : IApplicationService
     {
+        TagDto GetOneTag(GetOneTagInput input);
         GetTagOutput GetTagList(GetTagInput input);
         Task<GetTagOutput> GetTagListAsync(GetTagInput input);
-        void CreateTag(CreateTagInput input);
+        TagDto CreateTag(CreateTagInput input);
         void DeleteTag(DeleteTagInput input);
-        void UpdateTag(UpdateTagInput input);
+        TagDto UpdateTag(UpdateTagInput input);
     }
 }

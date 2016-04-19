@@ -288,6 +288,8 @@
     <Content Include="App\Main\views\layout\layout.js" />
     <Content Include="App\Main\views\home\home.js" />
     <Content Include="App\Main\views\about\about.js" />
+    <Content Include="App\Main\views\tag\tagdata.js" />
+    <Content Include="App\Main\views\tag\tagedit.js" />
     <Content Include="App\Main\views\tag\taglist.js" />
     <Content Include="Content\bootstrap-cosmo.min.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -405,6 +407,8 @@
     <Content Include="App\Main\views\iow\main.cshtml" />
     <Content Include="App\Main\views\iow\LevelList.cshtml" />
     <Content Include="App\Main\views\tag\taglist.cshtml" />
+    <Content Include="App\Main\views\tag\tagedit.cshtml" />
+    <Content Include="App\Main\views\tag\tagdata.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

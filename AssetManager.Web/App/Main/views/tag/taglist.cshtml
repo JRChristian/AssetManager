@@ -26,13 +26,12 @@
                     <td>{{tag.description}}</td>
                     <td>{{tag.uom}}</td>
                     <td>
-                        <a ui-sref="Tagedit({ Id: tag.id})"><i class="fa fa-pencil"></i></a>
-                        <i class="fa fa-trash"></i>
+                        <a ui-sref="tagdata({ tagId: tag.id})"><i class="fa fa-bar-chart"></i></a>
+
+                        <a ui-sref="tagedit({ tagId: tag.id})"><i class="fa fa-pencil"></i></a>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
-
-

@@ -48,21 +48,31 @@
                      url: '/iow',
                      templateUrl: '/App/Main/views/iow/main.cshtml',
                      menu: 'IOW' //Matches to name of 'IOW' menu in AssetManagerNavigationProvider
-                 })
-                 .state('iowlevels', {
+                })
+                .state('iowlevels', {
                      url: '/iowlevellist',
                      templateUrl: '/App/Main/views/iow/LevelList.cshtml',
                      menu: 'IOWLevels' //Matches to name of 'IOWLevels' menu in AssetManagerNavigationProvider
-                 })
-                 .state('taglist', {
+                })
+                .state('tagdata', {
+                    url: '/tagdata?tagId',
+                    templateUrl: '/App/Main/views/tag/tagdata.cshtml',
+                    menu: 'TagData'
+                }).state('tagedit', {
+                    url: '/tagedit?tagId',
+                    templateUrl: '/App/Main/views/tag/tagedit.cshtml',
+                    menu: 'TagEdit'
+                })
+                .state('taglist', {
                      url: '/taglist',
                      templateUrl: '/App/Main/views/tag/taglist.cshtml',
                      menu: 'TagList' //Matches name in AssetManagerNavigationProvider
-                 }).state('userlist', {
+                })
+                .state('userlist', {
                      url: '/userlist',
                      templateUrl: '/App/Main/views/admin/userlist.cshtml',
                      menu: 'UserList'
-                 })
+                })
                 .state('useredit', {
                     url: '/useredit?userId',
                     templateUrl: '/App/Main/views/admin/useredit.cshtml',

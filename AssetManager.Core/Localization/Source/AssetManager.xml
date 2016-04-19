@@ -73,8 +73,17 @@
     <text name="UserName" value="User name" />
     <text name="UserUpdatedOk" value="User {0} has been updated" />
 
+    <text name="TagName" value="Tag name" />
     <text name="Tags" value="Tags" />
     <text name="TagList" value="Tags" />
     <text name="UOM" value="UOM" />
+    <text name="UpdateTheTag" value="Update" />
+    <text name="TagUpdatedOk" value="Tag {0} has been updated" />
+    <text name="Time" value="Time" />
+    <text name="Quality" value="Quality" />
+  
+    <text name="QualityGood" value="OK" />
+    <text name="QualityUncertain" value="?" />
+    <text name="QualityBad" value="Bad" />
   </texts>
 </localizationDictionary>

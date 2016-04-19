@@ -10,7 +10,6 @@ namespace AssetManager.Tags.Dtos
 {
     public class TagDataRawDto : EntityDto<long>
     {
-        public long id { get; set; }
         public DateTime Timestamp { get; set; }
         public double Value { get; set; }
         public TagDataQuality Quality { get; set; }

@@ -49,13 +49,13 @@ namespace AssetManager.Tags
 
                 // Get data in the desired range
                 if (input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.Id == tag.Id && t.Timestamp >= input.StartTimestamp.Value && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp >= input.StartTimestamp.Value && t.Timestamp <= input.EndTimestamp).OrderByDescending(t => t.Timestamp).ToList();
                 else if (input.StartTimestamp.HasValue && !input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.Id == tag.Id && t.Timestamp >= input.StartTimestamp.Value).OrderBy(t => t.Timestamp).ToList();
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp >= input.StartTimestamp.Value).OrderByDescending(t => t.Timestamp).ToList();
                 else if (!input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.Id == tag.Id && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp <= input.EndTimestamp).OrderByDescending(t => t.Timestamp).ToList();
                 else
-                    data = _tagDataRawRepository.GetAll().Where(t => t.Id == tag.Id).OrderBy(t => t.Timestamp).ToList();
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id).OrderByDescending(t => t.Timestamp).ToList();
 
                 output.TagDataRaw = data.MapTo<List<TagDataRawDto>>();
             }
@@ -67,5 +67,41 @@ namespace AssetManager.Tags
         {
 
         }*/
+
+        public TagDataRawDto AddTagDataRaw(AddTagDataRawInput input)
+        {
+            Tag tag;
+            TagDataRawDto output = new TagDataRawDto
+            {
+                Id = 0,
+                Timestamp = DateTime.Now,
+                Value = 0,
+                Quality = TagDataQuality.Bad
+            };
+
+            //Get the tag information and confirm that the tag exists
+            if (input.Id.HasValue)
+                tag = _tagRepository.Get(input.Id.Value);
+            else
+                tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
+
+            //If the tag exists, add the value
+            if (tag != null)
+            {
+                TagDataRaw data = new TagDataRaw
+                {
+                    TagId = tag.Id,
+                    Timestamp = input.Timestamp.HasValue ? input.Timestamp.Value : DateTime.Now,
+                    Value = input.Value,
+                    Quality = input.Quality.HasValue ? input.Quality.Value : TagDataQuality.Good
+                };
+
+                _tagDataRawRepository.InsertOrUpdate(data);
+
+                output = data.MapTo<TagDataRawDto>();
+            }
+
+            return output;
+        }
     }
 }
