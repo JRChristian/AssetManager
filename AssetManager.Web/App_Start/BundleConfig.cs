@@ -20,6 +20,7 @@ namespace AssetManager.Web
                     .Include("~/Scripts/sweetalert/sweet-alert.css")
                     .Include("~/Content/flags/famfamfam-flags.css", new CssRewriteUrlTransform())
                     .Include("~/Content/font-awesome.min.css", new CssRewriteUrlTransform())
+                    .Include("~/Content/ui-grid.min.css", new CssRewriteUrlTransform())     // Angular UI Grid
                 );
 
             //~/Bundles/App/vendor/js
@@ -50,6 +51,7 @@ namespace AssetManager.Web
                         "~/Scripts/angular-ui/ui-bootstrap.min.js",
                         "~/Scripts/angular-ui/ui-bootstrap-tpls.min.js",
                         "~/Scripts/angular-ui/ui-utils.min.js",
+                        "~/Scripts/ui-grid.js", // Angular UI Grid
 
                         "~/Abp/Framework/scripts/abp.js",
                         "~/Abp/Framework/scripts/libs/abp.jquery.js",

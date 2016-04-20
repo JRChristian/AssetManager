@@ -81,6 +81,7 @@
     <text name="TagUpdatedOk" value="Tag {0} has been updated" />
     <text name="Time" value="Time" />
     <text name="Quality" value="Quality" />
+    <text name="Action" value="Action" />
   
     <text name="QualityGood" value="OK" />
     <text name="QualityUncertain" value="?" />

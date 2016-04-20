@@ -1,37 +1,44 @@
 ﻿<div class="panel panel-default" ng-controller="app.views.tag.list as vm">
     <div class="panel-heading" style="position: relative;">
         <div class="row">
-
             <!-- Title -->
-            <h3 class="panel-title col-xs-12">
+            <h3 class="panel-title">
                 @L("TagList")
             </h3>
 
         </div>
     </div>
     <div class="panel-body">
-        <!-- Level list -->
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>@L("Name")</th>
-                    <th>@L("Description")</th>
-                    <th>@L("UOM")</th>
-                    <th> </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="tag in vm.tags">
-                    <td>{{tag.name}}</td>
-                    <td>{{tag.description}}</td>
-                    <td>{{tag.uom}}</td>
-                    <td>
-                        <a ui-sref="tagdata({ tagId: tag.id})"><i class="fa fa-bar-chart"></i></a>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>@L("Name")</th>
+                            <th>@L("Description")</th>
+                            <th>@L("UOM")</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="tag in vm.tags">
+                            <td>{{tag.name}}</td>
+                            <td>{{tag.description}}</td>
+                            <td>{{tag.uom}}</td>
+                            <td>
+                                <a ui-sref="tagdata({ tagId: tag.id})"><i class="fa fa-bar-chart"></i></a>
 
-                        <a ui-sref="tagedit({ tagId: tag.id})"><i class="fa fa-pencil"></i></a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                                <a ui-sref="tagedit({ tagId: tag.id})"><i class="fa fa-pencil"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <div>
+                    <div id="grid1" ui-grid="vm.grid" class="grid"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

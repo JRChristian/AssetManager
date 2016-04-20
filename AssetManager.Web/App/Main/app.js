@@ -8,6 +8,7 @@
         'ui.router',
         'ui.bootstrap',
         'ui.jq',
+        'ui.grid',  // Angular UI Grid
 
         'abp'
     ]);
