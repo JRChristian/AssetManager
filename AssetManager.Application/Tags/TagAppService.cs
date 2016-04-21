@@ -24,7 +24,7 @@ namespace AssetManager.Tags
         public TagDto GetOneTag(GetOneTagInput input)
         {
             TagDto output = new TagDto { Name = input.Name, Description = "", UOM = "" };
-            Tag tag;
+            Tag tag = null;
 
             // If the input includes a tag name, treat it as a wild card match. Otherwise, get all tags.
             if (input.Id.HasValue)
@@ -38,10 +38,10 @@ namespace AssetManager.Tags
 
         public GetTagOutput GetTagList(GetTagInput input)
         {
-            List<Tag> tags;
+            List<Tag> tags = null;
 
             // If the input includes a tag name, treat it as a wild card match. Otherwise, get all tags.
-            if(input.Name != "")
+            if (!string.IsNullOrEmpty(input.Name))
                 tags = _tagRepository.GetAll().Where(p => p.Name.Contains(input.Name)).OrderBy(p => p.Name).ToList();
             else
                 tags = _tagRepository.GetAll().OrderBy(p => p.Name).ToList();
@@ -54,10 +54,10 @@ namespace AssetManager.Tags
 
         public async Task<GetTagOutput> GetTagListAsync(GetTagInput input)
         {
-            List<Tag> tags;
+            List<Tag> tags = null;
 
             // If the input includes a tag name, treat it as a wild card match. Otherwise, get all tags.
-            if (input.Name != "")
+            if (!string.IsNullOrEmpty(input.Name))
                 tags = await _tagRepository.GetAllListAsync(p => p.Name.Contains(input.Name));
             else
                 tags = await _tagRepository.GetAllListAsync();
@@ -103,7 +103,7 @@ namespace AssetManager.Tags
 
         public void DeleteTag(DeleteTagInput input)
         {
-            Tag tag;
+            Tag tag = null;
 
             //We can use Logger, it is defined in ApplicationService base class.
             Logger.Info("Deleting a tag for input Id= " + (input.Id.HasValue ? (input.Id.Value).ToString() : "n/a") + " Name= " + input.Name);
@@ -126,7 +126,7 @@ namespace AssetManager.Tags
 
             //Retrieving an Tag entity with given id (if specified) or name (if id is not specified).
             //FirstOrDefault() returns null if nothing is found.
-            Tag tag;
+            Tag tag = null;
             if (input.Id.HasValue)
                 tag = _tagRepository.FirstOrDefault(input.Id.Value);
             else
@@ -134,13 +134,13 @@ namespace AssetManager.Tags
 
             if (tag != null)
             {
-                if (input.Name != "")
+                if (!string.IsNullOrEmpty(input.Name))
                     tag.Name = input.Name;
 
-                if (input.Description != "")
+                if (!string.IsNullOrEmpty(input.Description))
                     tag.Description = input.Description;
 
-                if (input.UOM != "")
+                if (!string.IsNullOrEmpty(input.Name))
                     tag.UOM = input.UOM;
 
                 // Map the new tag to the return format, and return the new information

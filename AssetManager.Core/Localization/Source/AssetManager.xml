@@ -32,16 +32,20 @@
     
     <text name="AdminMenu" value="Admin" />
     <text name="UserMenu" value="Users" />
-    <text name="SwaggerMenu" value="Service info" />
+    <text name="SwaggerMenu" value="WebAPI Swagger" />
 
     <text name="IOWs" value="IOWs" />
     <text name="IOWLevels" value="Levels" />
+    <text name="IOWVariables" value="Variables" />
     <text name="LevelList" value="IOW Levels" />
+    <text name="IowVariableList" value="IOW Variables" />
     <text name="Status" value="Status" />
     <text name="Criticality" value="Criticality" />
     <text name="ResponseGoal" value="Response goal" />
     <text name="MetricGoal" value="Metric - last 30 days" />
     <text name="CreateDefaultLevels" value="Create default levels" />
+    <text name="VariableName" value="Variable" />
+    <text name="UpdateTheVariable" value="Update" />
 
     <text name="Actions" value="Actions" />
     <text name="AllAssetTypes" value="All asset types" />

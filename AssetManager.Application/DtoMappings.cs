@@ -17,6 +17,7 @@ namespace AssetManager
         {
             Mapper.CreateMap<Asset, AssetDto>();
             Mapper.CreateMap<IOWLevel, IOWLevelDto>();
+            Mapper.CreateMap<IOWVariable, IowVariableDto>();
             Mapper.CreateMap<Tag, TagDto>();
             Mapper.CreateMap<TagDataRaw, TagDataRawDto>();
         }

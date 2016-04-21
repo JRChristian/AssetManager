@@ -24,8 +24,8 @@ namespace AssetManager.Tags
 
         public GetTagDataRawOutput GetTagDataRawList(GetTagDataRawInput input)
         {
-            Tag tag;
-            List<TagDataRaw> data;
+            Tag tag = null;
+            List<TagDataRaw> data = null;
             GetTagDataRawOutput output = new GetTagDataRawOutput
             {
                 Name = input.Name,
@@ -70,7 +70,7 @@ namespace AssetManager.Tags
 
         public TagDataRawDto AddTagDataRaw(AddTagDataRawInput input)
         {
-            Tag tag;
+            Tag tag = null;
             TagDataRawDto output = new TagDataRawDto
             {
                 Id = 0,

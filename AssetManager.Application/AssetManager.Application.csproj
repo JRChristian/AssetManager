@@ -116,6 +116,14 @@
     <Compile Include="Assets\Dtos\AssetTypeDto.cs" />
     <Compile Include="Assets\Dtos\CreateAssetInput.cs" />
     <Compile Include="IOWs\Dtos\CreateIOWLevelInput.cs" />
+    <Compile Include="IOWs\Dtos\CreateIowVariableInput.cs" />
+    <Compile Include="IOWs\Dtos\GetOneIowVariableInput.cs" />
+    <Compile Include="IOWs\Dtos\GetIowVariableInput.cs" />
+    <Compile Include="IOWs\Dtos\GetIowVariableOutput.cs" />
+    <Compile Include="IOWs\Dtos\IowVariableDto.cs" />
+    <Compile Include="IOWs\Dtos\UpdateIowVariableInput.cs" />
+    <Compile Include="IOWs\IIowVariableAppService.cs" />
+    <Compile Include="IOWs\IowVariableAppService.cs" />
     <Compile Include="Tags\Dtos\AddTagDataRawInput.cs" />
     <Compile Include="Tags\Dtos\CreateTagInput.cs" />
     <Compile Include="Tags\Dtos\DeleteTagInput.cs" />

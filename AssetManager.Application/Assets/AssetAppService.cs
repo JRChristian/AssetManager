@@ -76,10 +76,10 @@ namespace AssetManager.Assets
             var Asset = _assetRepository.Get(input.Id);
 
             //Updating changed properties of the retrieved Asset entity.
-            if (input.Name != "")
+            if (!string.IsNullOrEmpty(input.Name))
                 Asset.Name = input.Name;
 
-            if (input.Description != "")
+            if (!string.IsNullOrEmpty(input.Description))
                 Asset.Description = input.Description;
 
             if (input.AssetTypeId.HasValue)
@@ -108,7 +108,7 @@ namespace AssetManager.Assets
             {
                 Asset.AssetTypeId = input.AssetTypeId.Value;
             }
-            else if(input.AssetTypeName != "")
+            else if (!string.IsNullOrEmpty(input.AssetTypeName))
             {
                 var assettype = _assetTypeRepository.FirstOrDefault(x => x.Name == input.AssetTypeName);
                 if (assettype != null) 

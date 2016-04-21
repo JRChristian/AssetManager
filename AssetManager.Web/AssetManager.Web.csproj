@@ -284,6 +284,8 @@
     <Content Include="App\Main\views\asset\new.js" />
     <Content Include="App\Main\views\iow\LevelList.js" />
     <Content Include="App\Main\views\iow\main.js" />
+    <Content Include="App\Main\views\iow\variableedit.js" />
+    <Content Include="App\Main\views\iow\variablelist.js" />
     <Content Include="App\Main\views\layout\header.js" />
     <Content Include="App\Main\views\layout\layout.js" />
     <Content Include="App\Main\views\home\home.js" />
@@ -415,6 +417,8 @@
     <Content Include="Content\ui-grid.woff" />
     <Content Include="Content\ui-grid.ttf" />
     <Content Include="Content\ui-grid.eot" />
+    <Content Include="App\Main\views\iow\variablelist.cshtml" />
+    <Content Include="App\Main\views\iow\variableedit.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

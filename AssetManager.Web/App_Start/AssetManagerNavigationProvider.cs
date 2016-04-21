@@ -18,8 +18,24 @@ namespace AssetManager.Web
                     new MenuItemDefinition(
                         "IOW",
                         new LocalizableString("IOWs", AssetManagerConsts.LocalizationSourceName),
-                        url: "#/iow",
+                        url: "#/",
                         icon: "fa fa-bar-chart"
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "IOWMain",
+                            new LocalizableString("IOWs", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/iowmain",
+                            icon: "fa fa-bar-chart"
+                            )
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "IOWVariables",
+                            new LocalizableString("IOWVariables", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/iowvariablelist",
+                            icon: "fa fa-tasks"
+                            )
                     )
                     .AddItem(
                         new MenuItemDefinition(
@@ -35,7 +51,7 @@ namespace AssetManager.Web
                         "TagList",
                         new LocalizableString("Tags", AssetManagerConsts.LocalizationSourceName),
                         url: "#/taglist",
-                        icon: "fa fa-sticky-note-o"
+                        icon: "fa fa-database"
                     )
                 )
                 .AddItem(
@@ -43,7 +59,7 @@ namespace AssetManager.Web
                         "AssetList",
                         new LocalizableString("Assets", AssetManagerConsts.LocalizationSourceName),
                         url: "#/assetlist",
-                        icon: "fa fa-database"
+                        icon: "fa fa-sticky-note-o"
                     )
                 )
                 .AddItem(
@@ -51,14 +67,14 @@ namespace AssetManager.Web
                         "Admin",
                         new LocalizableString("AdminMenu", AssetManagerConsts.LocalizationSourceName),
                         url: "#/userlist",
-                        icon: "fa fa-user"
+                        icon: "fa fa-gear"
                     )
                     .AddItem(
                         new MenuItemDefinition(
                             "Swagger",
                             new LocalizableString("SwaggerMenu", AssetManagerConsts.LocalizationSourceName),
                             url: "swagger/ui/index#/",
-                            icon: "fa fa-code"
+                            icon: "fa fa-key"
                             )
                     )
                 )
@@ -76,14 +92,6 @@ namespace AssetManager.Web
                             url: "#/about",
                             icon: "fa fa-info"
                             )
-                    )
-                    .AddItem(
-                        new MenuItemDefinition(
-                            "About",
-                            new LocalizableString("About", AssetManagerConsts.LocalizationSourceName),
-                            url: "#/about",
-                            icon: "fa fa-info"
-                        )
                     )
                 );
         }

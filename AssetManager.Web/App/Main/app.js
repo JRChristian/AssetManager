@@ -45,21 +45,32 @@
                     templateUrl: '/App/Main/views/asset/new.cshtml',
                     menu: 'AssetNew' //Matches to name of 'NewAsset' menu in AssetManagerNavigationProvider
                 })
-                 .state('iow', {
-                     url: '/iow',
+                 .state('iowmain', {
+                     url: '/iowmain',
                      templateUrl: '/App/Main/views/iow/main.cshtml',
-                     menu: 'IOW' //Matches to name of 'IOW' menu in AssetManagerNavigationProvider
+                     menu: 'IOWMain' //Matches to name of 'IOW' menu in AssetManagerNavigationProvider
                 })
                 .state('iowlevels', {
                      url: '/iowlevellist',
                      templateUrl: '/App/Main/views/iow/LevelList.cshtml',
                      menu: 'IOWLevels' //Matches to name of 'IOWLevels' menu in AssetManagerNavigationProvider
                 })
+                .state('iowvariableedit', {
+                    url: '/iowvariableedit?Id',
+                    templateUrl: '/App/Main/views/iow/variableedit.cshtml',
+                    menu: 'IOWVariableEdit' //Matches to name in AssetManagerNavigationProvider
+                })
+                .state('iowvariablelist', {
+                    url: '/iowvariablelist',
+                    templateUrl: '/App/Main/views/iow/variablelist.cshtml',
+                    menu: 'IOWVariables' //Matches to name in AssetManagerNavigationProvider
+                })
                 .state('tagdata', {
                     url: '/tagdata?tagId',
                     templateUrl: '/App/Main/views/tag/tagdata.cshtml',
                     menu: 'TagData'
-                }).state('tagedit', {
+                })
+                .state('tagedit', {
                     url: '/tagedit?tagId',
                     templateUrl: '/App/Main/views/tag/tagedit.cshtml',
                     menu: 'TagEdit'

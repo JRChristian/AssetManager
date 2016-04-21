@@ -21,7 +21,7 @@
             </thead>
             <tbody>
                 <tr ng-repeat="item in vm.data">
-                    <td>{{item.timestamp}}</td>
+                    <td>{{item.timestamp | momentFromNow2}}</td>
                     <td>{{item.value}}</td>
                     <td>{{vm.qualitystatus[item.quality]}}</td>
                 </tr>

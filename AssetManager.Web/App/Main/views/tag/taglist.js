@@ -23,7 +23,7 @@
                     { name: 'name', width: '20%', minWidth: 50, displayName: vm.localize('Name') },
                     { name: 'description', width: '50%', displayName: vm.localize('Description') },
                     { name: 'uom', width: '15%', displayName: vm.localize('UOM') },
-                    { name: 'id', width: '15%', displayName: 'Action',
+                    { name: 'id', width: '15%', displayName: vm.localize('Action'),
                     cellTemplate: '<div class="ui-grid-cell-contents"><a ui-sref="tagdata({ tagId: row.entity.id })"><i class="fa fa-bar-chart"></i></a> <a ui-sref="tagedit({ tagId: row.entity.id })"><i class="fa fa-pencil"></i></a></div>'
                     }]
                     //{ name: 'id', cellTemplate: '<div class="ui-grid-cell-contents"><button class="btn btn-primary" ng-click="grid.appScope.vm.tagdata( row.entity.id )">Click Me</button></div>' }]

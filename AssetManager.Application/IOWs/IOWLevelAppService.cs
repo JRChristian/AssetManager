@@ -49,7 +49,7 @@ namespace AssetManager.IOWs
 
             //Retrieving an IOWLevel entity with given id (if specified) or name (if id is not specified).
             //FirstOrDefault() returns null if nothing is found.
-            IOWLevel theLevel;
+            IOWLevel theLevel = null;
             if (input.Id.HasValue)
                 theLevel = _iowLevelRepository.FirstOrDefault(input.Id.Value);
             else
@@ -57,19 +57,19 @@ namespace AssetManager.IOWs
 
             if(theLevel != null )
             {
-                if (input.Name != "")
+                if (!string.IsNullOrEmpty(input.Name))
                     theLevel.Name = input.Name;
 
-                if (input.Description != "")
+                if (!string.IsNullOrEmpty(input.Description))
                     theLevel.Description = input.Description;
 
                 if (input.Criticality.HasValue && input.Criticality.Value > 0 && input.Criticality.Value <= 5)
                     theLevel.Criticality = input.Criticality.Value;
 
-                if (input.ResponseGoal != "")
+                if (!string.IsNullOrEmpty(input.ResponseGoal))
                     theLevel.ResponseGoal = input.ResponseGoal;
 
-                if (input.MetricGoal != "")
+                if (!string.IsNullOrEmpty(input.MetricGoal))
                     theLevel.MetricGoal = input.MetricGoal;
             }
 
@@ -106,7 +106,7 @@ namespace AssetManager.IOWs
 
         public void DeleteIOWLevel(GetOneIOWLevelInput input)
         {
-            IOWLevel CurrentLevel;
+            IOWLevel CurrentLevel = null;
             
             //We can use Logger, it is defined in ApplicationService base class.
             Logger.Info("Deleting an IOW level for input: " + input);

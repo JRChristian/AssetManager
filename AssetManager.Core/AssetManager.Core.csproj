@@ -116,6 +116,8 @@
     <Compile Include="Editions\EditionManager.cs" />
     <Compile Include="Entities\AssetType.cs" />
     <Compile Include="Entities\IIOWLevelRepository.cs" />
+    <Compile Include="Entities\IIOWLimitRepository.cs" />
+    <Compile Include="Entities\IIOWVariableRepository.cs" />
     <Compile Include="Entities\IOWDeviation.cs" />
     <Compile Include="Entities\IOWLevel.cs" />
     <Compile Include="Entities\IAssetRepository.cs" />
