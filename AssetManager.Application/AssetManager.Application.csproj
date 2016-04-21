@@ -120,6 +120,7 @@
     <Compile Include="IOWs\Dtos\GetOneIowVariableInput.cs" />
     <Compile Include="IOWs\Dtos\GetIowVariableInput.cs" />
     <Compile Include="IOWs\Dtos\GetIowVariableOutput.cs" />
+    <Compile Include="IOWs\Dtos\IowLimitDto.cs" />
     <Compile Include="IOWs\Dtos\IowVariableDto.cs" />
     <Compile Include="IOWs\Dtos\UpdateIowVariableInput.cs" />
     <Compile Include="IOWs\IIowVariableAppService.cs" />

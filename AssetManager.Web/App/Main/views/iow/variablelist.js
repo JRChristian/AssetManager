@@ -19,8 +19,8 @@
                     { name: 'tagName', width: '20%', displayName: vm.localize('TagName') },
                     { name: 'uom', width: '10%', displayName: vm.localize('UOM') },
                     {
-                        name: 'id', width: '10%', displayName: vm.localize('Action'),
-                        cellTemplate: '<div class="ui-grid-cell-contents"><a ui-sref="tagdata({ tagId: row.entity.tagId })"><i class="fa fa-bar-chart"></i></a> <a ui-sref="iowvariableedit({ Id: row.entity.id })"><i class="fa fa-pencil"></i></a></div>'
+                        name: 'id', width: '10%', displayName: vm.localize('Action'), enableSorting: false,
+                        cellTemplate: '<div class="ui-grid-cell-contents"><a ui-sref="tagdata({ tagId: row.entity.tagId })"><i class="fa fa-bar-chart"></i></a> <a ui-sref="iowvariableview({ Id: row.entity.id })"><i class="fa fa-binoculars"></i></a> <a ui-sref="iowvariableedit({ Id: row.entity.id })"><i class="fa fa-pencil"></i></a></div>'
                     }]
                 //{ name: 'id', cellTemplate: '<div class="ui-grid-cell-contents"><button class="btn btn-primary" ng-click="grid.appScope.vm.tagdata( row.entity.id )">Click Me</button></div>' }]
             };

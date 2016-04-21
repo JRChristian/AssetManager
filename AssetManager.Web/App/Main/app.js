@@ -65,6 +65,11 @@
                     templateUrl: '/App/Main/views/iow/variablelist.cshtml',
                     menu: 'IOWVariables' //Matches to name in AssetManagerNavigationProvider
                 })
+                .state('iowvariableview', {
+                    url: '/iowvariableview?Id',
+                    templateUrl: '/App/Main/views/iow/variableview.cshtml',
+                    menu: 'IOWVariableView' //Matches to name in AssetManagerNavigationProvider
+                })
                 .state('tagdata', {
                     url: '/tagdata?tagId',
                     templateUrl: '/App/Main/views/tag/tagdata.cshtml',
@@ -79,6 +84,11 @@
                      url: '/taglist',
                      templateUrl: '/App/Main/views/tag/taglist.cshtml',
                      menu: 'TagList' //Matches name in AssetManagerNavigationProvider
+                })
+                .state('tagview', {
+                    url: '/tagview?tagId',
+                    templateUrl: '/App/Main/views/tag/tagview.cshtml',
+                    menu: 'TagView'
                 })
                 .state('userlist', {
                      url: '/userlist',

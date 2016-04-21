@@ -3,8 +3,8 @@
 
     var controllerId = 'app.views.variable.edit';
     app.controller(controllerId, [
-        '$scope', '$location', '$stateParams', 'abp.services.app.iowVariable',
-        function ($scope, $location, $stateParams, variableService) {
+        '$scope', '$location', '$stateParams', 'abp.services.app.iowVariable', 'abp.services.app.tag',
+        function ($scope, $location, $stateParams, variableService, tagService) {
             var vm = this;
             var localize = abp.localization.getSource('AssetManager');
 
@@ -15,8 +15,19 @@
                 uom: ''
             };
 
-            variableService.getOneIowVariable({ Id: vm.variable.id })
-                .success(function (data) { vm.variable.name = data.name; vm.variable.description = data.description; vm.variable.uom = data.uom });
+            abp.ui.setBusy(
+                null,
+                variableService.getOneIowVariable({ Id: vm.variable.id })
+                    .success(function (data) { vm.variable = data } )
+                    //if (data != null) { vm.variable.name = data.name; vm.variable.description = data.description; vm.variable.uom = data.uom }
+                );
+
+            vm.tags = [];
+            abp.ui.setBusy(
+                null,
+                tagService.getTagListAsync({})
+                    .success(function (data) { vm.tags = data.tags })
+                    );
 
             vm.saveVariable = function () {
                 abp.ui.setBusy(

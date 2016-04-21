@@ -1,9 +1,9 @@
 ﻿(function () {
     var app = angular.module('app');
 
-    var controllerId = 'app.views.tag.edit';
+    var controllerId = 'app.views.tag.view';
     app.controller(controllerId, [
-        '$scope', '$location', '$stateParams', 'abp.services.app.tag', 
+        '$scope', '$location', '$stateParams', 'abp.services.app.tag',
         function ($scope, $location, $stateParams, tagService) {
             var vm = this;
             var localize = abp.localization.getSource('AssetManager');
@@ -20,16 +20,6 @@
                 tagService.getOneTag({ Id: vm.tag.id })
                     .success(function (data) { vm.tag = data })
                 );
-
-            vm.saveTag = function () {
-                abp.ui.setBusy(
-                    null,
-                    tagService.updateTag(vm.tag)
-                        .success(function () {
-                            abp.notify.info(abp.utils.formatString(localize("TagUpdatedOk"), vm.tag.name));
-                            $location.path('/taglist');
-                        }));
-            };
         }
     ]);
 })();

@@ -286,6 +286,7 @@
     <Content Include="App\Main\views\iow\main.js" />
     <Content Include="App\Main\views\iow\variableedit.js" />
     <Content Include="App\Main\views\iow\variablelist.js" />
+    <Content Include="App\Main\views\iow\variableview.js" />
     <Content Include="App\Main\views\layout\header.js" />
     <Content Include="App\Main\views\layout\layout.js" />
     <Content Include="App\Main\views\home\home.js" />
@@ -293,6 +294,7 @@
     <Content Include="App\Main\views\tag\tagdata.js" />
     <Content Include="App\Main\views\tag\tagedit.js" />
     <Content Include="App\Main\views\tag\taglist.js" />
+    <Content Include="App\Main\views\tag\tagview.js" />
     <Content Include="Content\bootstrap-cosmo.min.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -419,6 +421,8 @@
     <Content Include="Content\ui-grid.eot" />
     <Content Include="App\Main\views\iow\variablelist.cshtml" />
     <Content Include="App\Main\views\iow\variableedit.cshtml" />
+    <Content Include="App\Main\views\iow\variableview.cshtml" />
+    <Content Include="App\Main\views\tag\tagview.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

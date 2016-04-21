@@ -34,7 +34,7 @@ namespace AssetManager.Web
                             "IOWVariables",
                             new LocalizableString("IOWVariables", AssetManagerConsts.LocalizationSourceName),
                             url: "#/iowvariablelist",
-                            icon: "fa fa-tasks"
+                            icon: "fa fa-sitemap"
                             )
                     )
                     .AddItem(

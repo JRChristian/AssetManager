@@ -1,0 +1,40 @@
+﻿<div ng-controller="app.views.variable.view as vm">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9">
+                <h3>@L("IowVariable")</h3>
+            </div>
+            <div class="col-sm-3">
+                <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-primary">@L("Edit")</a>
+            </div>
+        </div>
+        <div class="row">
+            <form id="ViewVariableForm" class="form-horizontal" role="form" name="viewVariableForm" novalidate>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="VariableName">@L("VariableName")</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">{{vm.variable.name}}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="VariableDescription">@L("Description")</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">{{vm.variable.description}}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="VariableTagName">@L("TagName")</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">{{vm.variable.tagName}}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="VariableUOM">@L("UOM")</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static">{{vm.variable.uom}}</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -39,6 +39,7 @@
     <text name="IOWVariables" value="Variables" />
     <text name="LevelList" value="IOW Levels" />
     <text name="IowVariableList" value="IOW Variables" />
+    <text name="IowVariable" value="IOW Variable" />
     <text name="Status" value="Status" />
     <text name="Criticality" value="Criticality" />
     <text name="ResponseGoal" value="Response goal" />
@@ -46,6 +47,9 @@
     <text name="CreateDefaultLevels" value="Create default levels" />
     <text name="VariableName" value="Variable" />
     <text name="UpdateTheVariable" value="Update" />
+    <text name="Edit" value="Edit" />
+    <text name="CreateVariable" value="Add a variable" />
+    <text name="VariableUpdatedOk" value="Variable {0} has been updated" />
 
     <text name="Actions" value="Actions" />
     <text name="AllAssetTypes" value="All asset types" />
@@ -58,7 +62,7 @@
     <text name="Assets" value="Assets" />
     <text name="AssetType" value="Asset type" />
     <text name="Created" value="Created" />
-    <text name="CreateTheAsset" value="Create asset" />
+    <text name="CreateTheAsset" value="Add an asset" />
     <text name="Description" value="Description" />
     <text name="EnterNameHere" value="Enter asset name here" />
     <text name="EnterDescriptionHere" value="Enter description here" />
@@ -80,12 +84,14 @@
     <text name="TagName" value="Tag name" />
     <text name="Tags" value="Tags" />
     <text name="TagList" value="Tags" />
+    <text name="TagDetails" value="Tag details" />
     <text name="UOM" value="UOM" />
     <text name="UpdateTheTag" value="Update" />
     <text name="TagUpdatedOk" value="Tag {0} has been updated" />
     <text name="Time" value="Time" />
     <text name="Quality" value="Quality" />
     <text name="Action" value="Action" />
+    <text name="CreateTag" value="Add a tag" />
   
     <text name="QualityGood" value="OK" />
     <text name="QualityUncertain" value="?" />

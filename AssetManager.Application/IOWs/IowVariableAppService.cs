@@ -182,7 +182,8 @@ namespace AssetManager.IOWs
             else if (input.Name != "")
                 variable = _iowVariableRepository.FirstOrDefault(p => p.Name == input.Name);
 
-            if (variable != null)   // If we find a variable, update its properties
+            // If we find a variable, update its properties
+            if (variable != null)
             {
                 if (!string.IsNullOrEmpty(input.Name))
                     variable.Name = input.Name;
@@ -212,6 +213,19 @@ namespace AssetManager.IOWs
                         variable.UOM = variable.Tag.UOM;
                }
             }
+            // If we did not find a variable, attempt to create one. This will work if all required fields are specified.
+            else
+            {
+                return CreateIowVariable(new CreateIowVariableInput
+                {
+                    Name = input.Name,
+                    Description = input.Description,
+                    TagId = input.TagId.HasValue ? input.TagId.Value : 0,
+                    TagName = input.TagName,
+                    UOM = input.UOM
+                });
+            }
+
 
             //We do not call Update method of the repository.
             //Because an application service method is a 'unit of work' scope as default.
