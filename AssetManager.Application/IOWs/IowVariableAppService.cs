@@ -15,11 +15,16 @@ namespace AssetManager.IOWs
     public class IowVariableAppService : AssetManagerAppServiceBase, IIowVariableAppService
     {
         private readonly IIOWVariableRepository _iowVariableRepository;
+        private readonly IIOWLimitRepository _iowLimitRepository;
+        private readonly IIOWLevelRepository _iowLevelRepository;
         private readonly ITagRepository _tagRepository;
 
-        public IowVariableAppService(IIOWVariableRepository iowVariableRepository, ITagRepository tagRepository)
+        public IowVariableAppService(IIOWVariableRepository iowVariableRepository, 
+            IIOWLimitRepository iowLimitRepository, IIOWLevelRepository iowLevelRepository, ITagRepository tagRepository)
         {
             _iowVariableRepository = iowVariableRepository;
+            _iowLimitRepository = iowLimitRepository;
+            _iowLevelRepository = iowLevelRepository;
             _tagRepository = tagRepository;
         }
 
@@ -103,6 +108,45 @@ namespace AssetManager.IOWs
             return new GetIowVariableOutput
             {
                 IowVariables = sorted.MapTo<List<IowVariableDto>>()
+            };
+        }
+
+        public GetIowVariableLimitOutput GetIowVariableLimits(GetIowVariableInput input)
+        {
+            List<IOWVariable> variables = null;
+
+            // If the input includes a variable name or a tag name, treat those as wild card matches.
+            if (!string.IsNullOrEmpty(input.Name) && !string.IsNullOrEmpty(input.TagName))
+            {
+                variables = _iowVariableRepository.GetAll()
+                    .Where(v => v.Name.Contains(input.Name) && v.Tag.Name.Contains(input.TagName))
+                    .OrderBy(v => v.Name)
+                    .ToList();
+            }
+            else if (!string.IsNullOrEmpty(input.Name))
+            {
+                variables = _iowVariableRepository.GetAll()
+                    .Where(v => v.Name.Contains(input.Name))
+                    .OrderBy(v => v.Name)
+                    .ToList();
+            }
+            else if (!string.IsNullOrEmpty(input.TagName))
+            {
+                variables = _iowVariableRepository.GetAll()
+                    .Where(v => v.Tag.Name.Contains(input.TagName))
+                    .OrderBy(v => v.Name)
+                    .ToList();
+            }
+            else
+            {
+                variables = _iowVariableRepository.GetAll()
+                    .OrderBy(v => v.Name)
+                    .ToList();
+            }
+
+            return new GetIowVariableLimitOutput
+            {
+                IowVariables = variables.MapTo<List<IowVariableLimitDto>>()
             };
         }
 
@@ -232,6 +276,184 @@ namespace AssetManager.IOWs
             //ABP automatically saves all changes when a 'unit of work' scope ends (without any exception).
 
             return variable.MapTo<IowVariableDto>();
+        }
+
+        public GetIowLimitOutput GetIowLimits(GetIowLimitInput input)
+        {
+            IOWVariable variable = null;
+            List<IOWLimit> limits = null;
+            List<IOWLevel> levels = null;
+            List<IowLimitDto> output = new List<IowLimitDto>();
+            int i, j;
+
+            // Look for the variable. This will thrown an error if the variable id is not found.
+            variable = _iowVariableRepository.Get(input.VariableId);
+
+            // Get limits for this variable.
+            limits = _iowLimitRepository.GetAll().Where(v => v.IOWVariableId == input.VariableId).OrderBy(c => c.Level.Criticality).ToList();
+
+            // Get all available levels defined at this site.
+            levels = _iowLevelRepository.GetAll().OrderBy(c => c.Criticality).ToList();
+
+            // Now build the output DTO. Do it the hard way, since we have our own logic.
+            // "j" is our counter into the list of limits. This list will have between zero items
+            // and the number of items in the level list.
+            j = limits.Count > 0 ? 0 : levels.Count + 1;
+
+            for ( i = 0; i < levels.Count; i++ )
+            {
+                // Increment j (index into existing limits) to match the level, if possible
+                for (; j < limits.Count && limits[j].Level.Criticality < levels[i].Criticality; j++ );
+                bool haveLimit = (j <= i) && (j < limits.Count);
+
+                // If j (the index into the list of limits for this variable) <= i (index into the list of all levels)
+                // then the limit matches the level, and this level matches an active limit.
+                // Otherwise, this level is not currently active for this variable.
+                output.Add(new IowLimitDto
+                {
+                    Id = haveLimit ? limits[j].Id : 0,
+                    IsActive = haveLimit ? true : false,
+                    IOWVariableId = variable.Id,
+                    IOWLevelId = levels[i].Id,
+                    Name = levels[i].Name,
+                    Description = levels[i].Description,
+                    Criticality = levels[i].Criticality,
+                    ResponseGoal = levels[i].ResponseGoal,
+                    MetricGoal = levels[i].MetricGoal,
+                    Cause = haveLimit ? limits[j].Cause : "",
+                    Consequences = haveLimit ? limits[j].Consequences : "",
+                    Action = haveLimit ? limits[j].Action : "",
+                    LowLimit = haveLimit ? limits[j].LowLimit : null,
+                    HighLimit = haveLimit ? limits[j].HighLimit : null
+                });
+            }
+
+            return new GetIowLimitOutput
+            {
+                Limits = new List<IowLimitDto>(output)
+            };
+        }
+
+        public IowLimitDto ChangeIowLimits(ChangeIowLimitInput input)
+        {
+            // This method accepts one limit for one variable.
+            // If the limit does not exist, it is added.
+            // If the limit exists, it is changed or deleted.
+
+            IOWVariable variable = null;
+            IOWLimit limit = null;
+            IOWLevel level = null;
+            IowLimitDto output = null;
+
+            // Look for the variable. This will thrown an error if the variable id is not found.
+            variable = _iowVariableRepository.Get(input.IOWVariableId);
+
+            // Does the specified limit exist? If so, get it. This will return null if nothing is found.
+            if( input.Id.HasValue )
+            {
+                limit = _iowLimitRepository.FirstOrDefault( input.Id.Value );
+                if ( limit != null )
+                    level = _iowLevelRepository.FirstOrDefault( limit.IOWLevelId );
+            }
+            else if ( input.IOWLevelId.HasValue )
+            {   
+                limit = _iowLimitRepository.FirstOrDefault( x => x.IOWVariableId == input.IOWVariableId && x.IOWLevelId == input.IOWLevelId.Value );
+                if (limit != null)
+                    level = _iowLevelRepository.FirstOrDefault(limit.IOWLevelId);
+            }
+            else if ( !string.IsNullOrEmpty(input.Name) )
+            {
+                level = _iowLevelRepository.FirstOrDefault( x => x.Name == input.Name );
+                if ( level != null )
+                    limit = _iowLimitRepository.FirstOrDefault(x => x.IOWVariableId == input.IOWVariableId && x.IOWLevelId == level.Id );
+            }
+            else if ( input.Criticality.HasValue )
+            {
+                level = _iowLevelRepository.FirstOrDefault(x => x.Criticality == input.Criticality.Value);
+                if (level != null)
+                    limit = _iowLimitRepository.FirstOrDefault(x => x.IOWVariableId == input.IOWVariableId && x.IOWLevelId == level.Id);
+            }
+
+            // There are four possibilities at this point:
+            //   1) We did not find a limit and the level is not valid ==> bad input, do nothing
+            //   2) We did not find a limit and the level is valid ==> insert a new limit if possible
+            //   3) We found a limit and the IsActive flag is true ==> update an existing limit
+            //   4) We found a limit and the InActive flag is false ==> delete an existing limit
+            if ( limit == null && level == null )
+            {
+                // Case 1: Bad input
+            }
+            else if ( limit == null && level != null && input.IsActive == true )
+            {
+                // Case 2: Limit does not exist, so insert a new limit
+
+                // All assets belong to a tenant. If not specified, put them in the default tenant.
+                int tenantid = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
+
+                double? lowLimit = null, highLimit = null;
+                if (input.LowLimit.HasValue)
+                    lowLimit = input.LowLimit.Value;
+                if (input.HighLimit.HasValue)
+                    highLimit = input.HighLimit.Value;
+
+
+                limit = new IOWLimit
+                {
+                    IOWVariableId = input.IOWVariableId,
+                    IOWLevelId = level.Id,
+                    Cause = input.Cause,
+                    Consequences = input.Consequences,
+                    Action = input.Action,
+                    LowLimit = lowLimit,
+                    HighLimit = highLimit,
+                    LastCheckDate = null,
+                    LastStatus = IOWStatus.Normal,
+                    LastDeviationStartDate = null,
+                    LastDeviationEndDate = null,
+                    TenantId = tenantid
+                };
+
+                limit.Id = _iowLimitRepository.InsertAndGetId(limit);
+            }
+            else if ( input.IsActive == true )
+            {
+                // Case 3: Limit exists and should be updated.
+                if (!string.IsNullOrEmpty(input.Cause))
+                    limit.Cause = input.Cause;
+
+                if (!string.IsNullOrEmpty(input.Consequences))
+                    limit.Consequences = input.Consequences;
+
+                if (!string.IsNullOrEmpty(input.Action))
+                    limit.Action = input.Action;
+
+                // Replace the low and high limits in all situation, even if incoming values are null
+                limit.LowLimit = input.LowLimit.Value;
+                limit.HighLimit = input.HighLimit.Value;
+            }
+            else if ( input.IsActive == false )
+            {
+                // Case 4: Limit exists and should be deleted
+                _iowLimitRepository.Delete(limit.Id);
+            }
+
+
+            output = new IowLimitDto
+            {
+               Id = limit.Id,
+               IOWVariableId = limit.IOWVariableId,
+               IsActive = (limit != null && input.IsActive == true) ? true : false,
+               IOWLevelId = limit.IOWLevelId,
+               Name = level.Name,
+               Criticality = level.Criticality,
+               Cause = limit.Cause,
+               Consequences = limit.Consequences,
+               Action = limit.Action,
+               LowLimit = limit.LowLimit,
+               HighLimit = limit.HighLimit
+            };
+
+            return output;
         }
     }
 }

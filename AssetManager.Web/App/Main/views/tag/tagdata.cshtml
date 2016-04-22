@@ -1,32 +1,25 @@
-﻿<div class="panel panel-default" ng-controller="app.views.tag.data as vm">
-    <div class="panel-heading" style="position: relative;">
+﻿<div ng-controller="app.views.tag.data as vm">
+    <div class="container">
         <div class="row">
-
-            <!-- Title -->
-            <h3 class="panel-title col-xs-12">
-                {{vm.name}}: {{vm.description}}
-            </h3>
-
+            <h3>{{vm.name}} <small> {{vm.description}}</small></h3>
+        </div>
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>@L("Time")</th>
+                        <th>{{vm.uom}}</th>
+                        <th>@L("Quality")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in vm.data">
+                        <td>{{item.timestamp | momentFromNow2}}</td>
+                        <td>{{item.value}}</td>
+                        <td>{{vm.qualitystatus[item.quality]}}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="panel-body">
-        <!-- Level list -->
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>@L("Time")</th>
-                    <th>{{vm.uom}}</th>
-                    <th>@L("Quality")</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="item in vm.data">
-                    <td>{{item.timestamp | momentFromNow2}}</td>
-                    <td>{{item.value}}</td>
-                    <td>{{vm.qualitystatus[item.quality]}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 </div>
-

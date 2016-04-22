@@ -139,6 +139,10 @@
     <Compile Include="Migrations\201604150014211_AddTagDataRaw.Designer.cs">
       <DependentUpon>201604150014211_AddTagDataRaw.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604221932106_SomeFieldsAreOptional.cs" />
+    <Compile Include="Migrations\201604221932106_SomeFieldsAreOptional.Designer.cs">
+      <DependentUpon>201604221932106_SomeFieldsAreOptional.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -171,6 +175,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604150014211_AddTagDataRaw.resx">
       <DependentUpon>201604150014211_AddTagDataRaw.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604221932106_SomeFieldsAreOptional.resx">
+      <DependentUpon>201604221932106_SomeFieldsAreOptional.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

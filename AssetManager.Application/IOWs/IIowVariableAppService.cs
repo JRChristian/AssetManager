@@ -13,8 +13,12 @@ namespace AssetManager.IOWs
         IowVariableDto GetOneIowVariable(GetOneIowVariableInput input);
         GetIowVariableOutput GetIowVariables(GetIowVariableInput input);
         Task<GetIowVariableOutput> GetIowVariablesAsync(GetIowVariableInput input);
+        GetIowVariableLimitOutput GetIowVariableLimits(GetIowVariableInput input);
         IowVariableDto CreateIowVariable(CreateIowVariableInput input);
         IowVariableDto DeleteIowVariable(GetOneIowVariableInput input);
         IowVariableDto UpdateIowVariable(UpdateIowVariableInput input);
+
+        GetIowLimitOutput GetIowLimits(GetIowLimitInput input);
+        IowLimitDto ChangeIowLimits(ChangeIowLimitInput input);
     }
 }

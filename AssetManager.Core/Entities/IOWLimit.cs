@@ -24,13 +24,13 @@ namespace AssetManager.Entities
         public string Consequences { get; set; }
         public string Action { get; set; }
 
-        public double LowLimit { get; set; }
-        public double HighLimit { get; set; }
+        public double? LowLimit { get; set; }
+        public double? HighLimit { get; set; }
 
-        public DateTime LastCheckDate { get; set; }
+        public DateTime? LastCheckDate { get; set; }
         public IOWStatus LastStatus { get; set; }
-        public DateTime LastDeviationStartDate { get; set; }
-        public DateTime LastDeviationEndDate { get; set; }
+        public DateTime? LastDeviationStartDate { get; set; }
+        public DateTime? LastDeviationEndDate { get; set; }
 
         public virtual ICollection<IOWDeviation> IOWDeviations { get; set; }
         public virtual ICollection<IOWStatsByDay> IOWStatsByDay { get; set; }
