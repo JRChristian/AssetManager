@@ -8,7 +8,10 @@
         'ui.router',
         'ui.bootstrap',
         'ui.jq',
-        'ui.grid',  // Angular UI Grid
+        'ui.grid',      // Angular UI Grid (ui-grid)
+        'ui.grid.edit',
+        'ui.grid.rowEdit',
+        'ui.grid.cellNav',
 
         'abp'
     ]);

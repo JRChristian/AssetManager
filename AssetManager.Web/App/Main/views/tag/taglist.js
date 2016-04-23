@@ -15,7 +15,7 @@
                 tagdata({ tagId: id });
             };
 */
-            vm.grid = {
+            vm.gridOptions = {
                 data: [],
                 enableSorting: true,
                 enableColumnResizing: true,
@@ -34,7 +34,7 @@
                     null,
                     tagService.getTagListAsync({ Name: '' }).success(function (data) {
                         vm.tags = data.tags;
-                        vm.grid.data = data.tags;
+                        vm.gridOptions.data = data.tags;
                     })
                 );
             };

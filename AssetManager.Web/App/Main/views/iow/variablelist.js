@@ -9,7 +9,7 @@
 
             vm.localize = abp.localization.getSource('AssetManager');
 
-            vm.gridvariables = {
+            vm.gridOptions = {
                 data: [],
                 enableSorting: true,
                 enableColumnResizing: true,
@@ -29,7 +29,7 @@
                 abp.ui.setBusy( //Set whole page busy until getTagListAsync completes
                     null,
                     variableService.getIowVariablesAsync({ }).success(function (data) {
-                        vm.gridvariables.data = data.iowVariables;
+                        vm.gridOptions.data = data.iowVariables;
                     })
                 );
             };

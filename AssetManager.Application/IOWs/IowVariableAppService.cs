@@ -344,6 +344,7 @@ namespace AssetManager.IOWs
             IOWLimit limit = null;
             IOWLevel level = null;
             IowLimitDto output = null;
+            bool inputIsValid = false;
 
             // Look for the variable. This will thrown an error if the variable id is not found.
             variable = _iowVariableRepository.Get(input.IOWVariableId);
@@ -414,6 +415,8 @@ namespace AssetManager.IOWs
                 };
 
                 limit.Id = _iowLimitRepository.InsertAndGetId(limit);
+
+                inputIsValid = true;
             }
             else if ( input.IsActive == true )
             {
@@ -430,28 +433,33 @@ namespace AssetManager.IOWs
                 // Replace the low and high limits in all situation, even if incoming values are null
                 limit.LowLimit = input.LowLimit.Value;
                 limit.HighLimit = input.HighLimit.Value;
+
+                inputIsValid = true;
             }
             else if ( input.IsActive == false )
             {
                 // Case 4: Limit exists and should be deleted
                 _iowLimitRepository.Delete(limit.Id);
+
+                inputIsValid = true;
             }
 
 
-            output = new IowLimitDto
-            {
-               Id = limit.Id,
-               IOWVariableId = limit.IOWVariableId,
-               IsActive = (limit != null && input.IsActive == true) ? true : false,
-               IOWLevelId = limit.IOWLevelId,
-               Name = level.Name,
-               Criticality = level.Criticality,
-               Cause = limit.Cause,
-               Consequences = limit.Consequences,
-               Action = limit.Action,
-               LowLimit = limit.LowLimit,
-               HighLimit = limit.HighLimit
-            };
+            if( inputIsValid )
+                output = new IowLimitDto
+                {
+                   Id = limit.Id,
+                   IOWVariableId = limit.IOWVariableId,
+                   IsActive = (limit != null && input.IsActive == true) ? true : false,
+                   IOWLevelId = limit.IOWLevelId,
+                   Name = level.Name,
+                   Criticality = level.Criticality,
+                   Cause = limit.Cause,
+                   Consequences = limit.Consequences,
+                   Action = limit.Action,
+                   LowLimit = limit.LowLimit,
+                   HighLimit = limit.HighLimit
+                };
 
             return output;
         }

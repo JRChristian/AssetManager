@@ -50,6 +50,11 @@
     <text name="Edit" value="Edit" />
     <text name="CreateVariable" value="Add a variable" />
     <text name="VariableUpdatedOk" value="Variable {0} has been updated" />
+    <text name="Causes" value="Causes" />
+    <text name="Consequences" value="Consequences" />
+    <text name="LowLimit" value="Low limit" />
+    <text name="HighLimit" value="High limit" />
+    <text name="IsActive" value="Active?" />
 
     <text name="Actions" value="Actions" />
     <text name="AllAssetTypes" value="All asset types" />
