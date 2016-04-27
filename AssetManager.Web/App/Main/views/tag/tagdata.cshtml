@@ -15,7 +15,7 @@
                 <tbody>
                     <tr ng-repeat="item in vm.data">
                         <td>{{item.timestamp | momentFromNow2}}</td>
-                        <td>{{item.value}}</td>
+                        <td>{{item.value | number: vm.precision}}</td>
                         <td>{{vm.qualitystatus[item.quality]}}</td>
                     </tr>
                 </tbody>

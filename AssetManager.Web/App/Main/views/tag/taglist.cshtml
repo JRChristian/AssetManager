@@ -9,37 +9,42 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>@L("Name")</th>
-                            <th>@L("Description")</th>
-                            <th>@L("UOM")</th>
-                            <th> </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="tag in vm.tags">
-                            <td>{{tag.name}}</td>
-                            <td>{{tag.description}}</td>
-                            <td>{{tag.uom}}</td>
-                            <td>
-                                <a ui-sref="tagdata({ tagId: tag.id})"><i class="fa fa-bar-chart"></i></a>
+@* --Remove the duplicate list of tags, but keep it here for future reference
 
-                                <a ui-sref="tagview({ tagId: tag.id})"><i class="fa fa-binoculars"></i></a>
+    <div class="col-md-6">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@L("Name")</th>
+                    <th>@L("Description")</th>
+                    <th>@L("UOM")</th>
+                    <th> </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="tag in vm.tags">
+                    <td>{{tag.name}}</td>
+                    <td>{{tag.description}}</td>
+                    <td>{{tag.uom}}</td>
+                    <td>
+                        <a ui-sref="tagdata({ tagId: tag.id})"><i class="fa fa-bar-chart"></i></a>
 
-                                <a ui-sref="tagedit({ tagId: tag.id})"><i class="fa fa-pencil"></i></a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-6">
-                <div>
-                    <div id="grid1" ui-grid="vm.gridOptions" class="grid"></div>
-                </div>
-            </div>
+                        <a ui-sref="tagview({ tagId: tag.id})"><i class="fa fa-binoculars"></i></a>
+
+                        <a ui-sref="tagedit({ tagId: tag.id})"><i class="fa fa-pencil"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <div>
+            <div id="grid1" ui-grid="vm.gridOptions" class="grid"></div>
+        </div>
+    </div>
+*@
+            <div id="grid1" ui-grid="vm.gridOptions" class="grid"></div>
+            <div>@L("NumberOfTagsTotal") {{vm.gridOptions.data.length}} @L("NumberOfTagsVisible") {{vm.gridApi.grid.getVisibleRows().length}}</div>
         </div>
     </div>
 </div>

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AssetManager.Tags
 {
-    public interface ITagDataRawAppService : IApplicationService
+    public interface ITagDataAppService : IApplicationService
     {
         GetTagDataRawOutput GetTagDataRawList(GetTagDataRawInput input);
         //Task<GetTagDataRawOutput> GetTagDataRawListAsync(GetTagDataRawInput input);

@@ -15,5 +15,7 @@ namespace AssetManager.Tags.Dtos
         [Required]
         public string Description { get; set; }
         public string UOM { get; set; }
+        [Range(-10,10)]
+        public int? Precision { get; set; }
     }
 }

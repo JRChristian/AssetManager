@@ -159,9 +159,9 @@
     <Compile Include="IOWs\IIOWLevelAppService.cs" />
     <Compile Include="IOWs\IOWLevelAppService.cs" />
     <Compile Include="Tags\ITagAppService.cs" />
-    <Compile Include="Tags\ITagDataRawAppService.cs" />
+    <Compile Include="Tags\ITagDataAppService.cs" />
     <Compile Include="Tags\TagAppService.cs" />
-    <Compile Include="Tags\TagDataRawAppService.cs" />
+    <Compile Include="Tags\TagDataAppService.cs" />
     <Compile Include="Users\Dto\GetOneUserOutput.cs" />
     <Compile Include="Users\Dto\GetUserInput.cs" />
     <Compile Include="Users\Dto\UpdateUserInput.cs" />

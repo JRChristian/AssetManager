@@ -10,6 +10,7 @@
         };
     })
     .filter('moment', [
+        // See http://stackoverflow.com/questions/14774486/use-jquery-timeago-or-momentjs-and-angularjs-together
         function () {
             return function (date, method) {
                 var momented = moment(date);

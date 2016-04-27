@@ -143,6 +143,10 @@
     <Compile Include="Migrations\201604221932106_SomeFieldsAreOptional.Designer.cs">
       <DependentUpon>201604221932106_SomeFieldsAreOptional.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604272122131_AddTagPrecision.cs" />
+    <Compile Include="Migrations\201604272122131_AddTagPrecision.Designer.cs">
+      <DependentUpon>201604272122131_AddTagPrecision.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -178,6 +182,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604221932106_SomeFieldsAreOptional.resx">
       <DependentUpon>201604221932106_SomeFieldsAreOptional.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604272122131_AddTagPrecision.resx">
+      <DependentUpon>201604272122131_AddTagPrecision.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

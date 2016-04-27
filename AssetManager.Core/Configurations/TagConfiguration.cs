@@ -16,6 +16,7 @@ namespace AssetManager.Configurations
             Property(x => x.Name).IsRequired().HasMaxLength(40);
             Property(x => x.Description).IsRequired().HasMaxLength(255);
             Property(x => x.UOM).IsOptional().HasMaxLength(40);
+            Property(x => x.Precision).IsOptional();
         }
     }
 }

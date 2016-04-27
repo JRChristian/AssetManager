@@ -13,5 +13,6 @@ namespace AssetManager.Tags.Dtos
         public string Name { get; set; }
         public string Description { get; set; }
         public string UOM { get; set; }
+        public int? Precision { get; set; }
     }
 }

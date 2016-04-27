@@ -70,8 +70,9 @@
                     null,
                     // Save the main part of the variable
                     variableService.updateIowVariable(vm.variable)
-                        .success(function () {
+                        .success(function (data) {
                             // Save any limit rows that changed
+                            vm.variable.id = data.id;
                             vm.gridDirtyRows = vm.gridApi.rowEdit.getDirtyRows(vm.gridApi.grid);
                             for (var i = 0; i < vm.gridDirtyRows.length; i++) {
                                 variableService.changeIowLimits({

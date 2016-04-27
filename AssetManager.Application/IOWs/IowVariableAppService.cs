@@ -286,8 +286,8 @@ namespace AssetManager.IOWs
             List<IowLimitDto> output = new List<IowLimitDto>();
             int i, j;
 
-            // Look for the variable. This will thrown an error if the variable id is not found.
-            variable = _iowVariableRepository.Get(input.VariableId);
+            // Look for the variable. This will NOT throw an error if the variable id is not found.
+            variable = _iowVariableRepository.FirstOrDefault(input.VariableId);
 
             // Get limits for this variable.
             limits = _iowLimitRepository.GetAll().Where(v => v.IOWVariableId == input.VariableId).OrderBy(c => c.Level.Criticality).ToList();
@@ -304,7 +304,7 @@ namespace AssetManager.IOWs
             {
                 // Increment j (index into existing limits) to match the level, if possible
                 for (; j < limits.Count && limits[j].Level.Criticality < levels[i].Criticality; j++ );
-                bool haveLimit = (j <= i) && (j < limits.Count);
+                bool haveLimit = (j < limits.Count) && (limits[j].Level.Criticality == levels[i].Criticality);
 
                 // If j (the index into the list of limits for this variable) <= i (index into the list of all levels)
                 // then the limit matches the level, and this level matches an active limit.
@@ -313,7 +313,7 @@ namespace AssetManager.IOWs
                 {
                     Id = haveLimit ? limits[j].Id : 0,
                     IsActive = haveLimit ? true : false,
-                    IOWVariableId = variable.Id,
+                    IOWVariableId = variable != null ? variable.Id : 0,
                     IOWLevelId = levels[i].Id,
                     Name = levels[i].Name,
                     Description = levels[i].Description,

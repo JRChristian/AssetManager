@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace AssetManager.Tags
 {
-    public class TagDataRawAppService : AssetManagerAppServiceBase, ITagDataRawAppService
+    public class TagDataAppService : AssetManagerAppServiceBase, ITagDataAppService
     {
         //These members set in constructor using constructor injection.
         private readonly ITagRepository _tagRepository;
         private readonly ITagDataRawRepository _tagDataRawRepository;
 
-        public TagDataRawAppService(ITagRepository tagRepository, ITagDataRawRepository tagDataRawRepository)
+        public TagDataAppService(ITagRepository tagRepository, ITagDataRawRepository tagDataRawRepository)
         {
             _tagRepository = tagRepository;
             _tagDataRawRepository = tagDataRawRepository;
@@ -31,6 +31,7 @@ namespace AssetManager.Tags
                 Name = input.Name,
                 Description = "",
                 UOM = "",
+                Precision = null,
                 TagDataRaw = new List<TagDataRawDto>()
             };
 
@@ -46,6 +47,7 @@ namespace AssetManager.Tags
                 output.Name = tag.Name;
                 output.Description = tag.Description;
                 output.UOM = tag.UOM;
+                output.Precision = tag.Precision;
 
                 // Get data in the desired range
                 if (input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
@@ -79,24 +81,42 @@ namespace AssetManager.Tags
                 Quality = TagDataQuality.Bad
             };
 
-            //Get the tag information and confirm that the tag exists
+            // Get the tag information and confirm that the tag exists
             if (input.Id.HasValue)
                 tag = _tagRepository.Get(input.Id.Value);
             else
                 tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
 
-            //If the tag exists, add the value
+            // If the tag exists, add or update the value
             if (tag != null)
             {
-                TagDataRaw data = new TagDataRaw
-                {
-                    TagId = tag.Id,
-                    Timestamp = input.Timestamp.HasValue ? input.Timestamp.Value : DateTime.Now,
-                    Value = input.Value,
-                    Quality = input.Quality.HasValue ? input.Quality.Value : TagDataQuality.Good
-                };
+                TagDataRaw data = null;
+                DateTime timestamp = input.Timestamp.HasValue ? input.Timestamp.Value : DateTime.Now;
 
-                _tagDataRawRepository.InsertOrUpdate(data);
+                // Find out if there is already a tag with this value
+                data = _tagDataRawRepository.FirstOrDefault(p => p.TagId == tag.Id && p.Timestamp == timestamp);
+
+                if( data == null)
+                {
+                    // Did not found a match, so add all entries
+                    data = new TagDataRaw
+                        {
+                            TenantId = tag.TenantId,
+                            TagId = tag.Id,
+                            Timestamp = timestamp,
+                            Value = input.Value,
+                            Quality = input.Quality.HasValue ? input.Quality.Value : TagDataQuality.Good
+                        };
+                }
+                else
+                {
+                    // Found the record, so update only what has changed
+                    data.Value = input.Value;
+                    if( input.Quality.HasValue )
+                        data.Quality = input.Quality.Value;
+                }
+
+                data.Id = _tagDataRawRepository.InsertOrUpdateAndGetId(data);
 
                 output = data.MapTo<TagDataRawDto>();
             }

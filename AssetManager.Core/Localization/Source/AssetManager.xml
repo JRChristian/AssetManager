@@ -90,13 +90,16 @@
     <text name="Tags" value="Tags" />
     <text name="TagList" value="Tags" />
     <text name="TagDetails" value="Tag details" />
-    <text name="UOM" value="UOM" />
+    <text name="UOM" value="Units" />
+    <text name="Precision" value="Precision" />
     <text name="UpdateTheTag" value="Update" />
     <text name="TagUpdatedOk" value="Tag {0} has been updated" />
     <text name="Time" value="Time" />
     <text name="Quality" value="Quality" />
     <text name="Action" value="Action" />
     <text name="CreateTag" value="Add a tag" />
+    <text name="NumberOfTagsTotal" value="Total tags:" />
+    <text name="NumberOfTagsVisible" value="Number of filtered tags:" />
   
     <text name="QualityGood" value="OK" />
     <text name="QualityUncertain" value="?" />

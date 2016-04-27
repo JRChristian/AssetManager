@@ -89,6 +89,7 @@ namespace AssetManager.Tags
                     Name = input.Name,
                     Description = input.Description,
                     UOM = input.UOM,
+                    Precision = input.Precision,
                     TenantId = tenantid
                 };
 
@@ -143,8 +144,25 @@ namespace AssetManager.Tags
                 if (!string.IsNullOrEmpty(input.Name))
                     tag.UOM = input.UOM;
 
+                if (input.Precision.HasValue)
+                    tag.Precision = input.Precision.Value;
+
                 // Map the new tag to the return format, and return the new information
                 output = tag.MapTo<TagDto>();
+            }
+
+            else // No tag was found, so try to create a new tag, if that is possible
+            { if( !string.IsNullOrEmpty(input.Name) && !string.IsNullOrEmpty(input.Description) )
+                {
+                    var create = new CreateTagInput
+                    {
+                        Name = input.Name,
+                        Description = input.Description,
+                        UOM = input.UOM,
+                        Precision = input.Precision
+                    };
+                    output = CreateTag(create);
+                }
             }
 
             //We even do not call Update method of the repository.
