@@ -30433,3 +30433,41 @@ DEBUG 2016-04-27 15:36:53,616 [110  ] Abp.Logging.LogHelper                    -
 DEBUG 2016-04-27 15:36:53,620 [110  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.IOWs.IIOWLevelAppService' with service name 'app/iOWLevel'.
 DEBUG 2016-04-27 15:36:53,624 [110  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.Assets.IAssetAppService' with service name 'app/asset'.
 DEBUG 2016-04-27 15:36:53,627 [110  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.Assets.IAssetTypeAppService' with service name 'app/assetType'.
+DEBUG 2016-04-27 15:55:06,449 [62   ] Abp.BackgroundJobs.BackgroundJobManager  - Stop background worker: Abp.BackgroundJobs.BackgroundJobManager
+DEBUG 2016-04-27 15:55:06,454 [62   ] Abp.BackgroundJobs.BackgroundJobManager  - WaitToStop background worker: Abp.BackgroundJobs.BackgroundJobManager
+DEBUG 2016-04-27 16:53:23,334 [184  ] Abp.Modules.AbpModuleManager             - Loading Abp modules...
+DEBUG 2016-04-27 16:54:01,959 [184  ] Abp.Modules.AbpModuleManager             - Found 13 ABP modules in total.
+DEBUG 2016-04-27 16:54:01,979 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: Abp.AutoMapper.AbpAutoMapperModule, Abp.AutoMapper, Version=0.8.3.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:01,991 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: Abp.AbpKernelModule, Abp, Version=0.8.3.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:01,993 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: Abp.EntityFramework.AbpEntityFrameworkModule, Abp.EntityFramework, Version=0.8.3.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:01,993 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: Abp.WebApi.AbpWebApiModule, Abp.Web.Api, Version=0.8.3.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:01,994 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: Abp.Web.AbpWebModule, Abp.Web, Version=0.8.3.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:01,995 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: Abp.Web.Mvc.AbpWebMvcModule, Abp.Web.Mvc, Version=0.8.3.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:02,028 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: Abp.Zero.AbpZeroCoreModule, Abp.Zero, Version=0.8.3.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:02,029 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: Abp.Zero.EntityFramework.AbpZeroEntityFrameworkModule, Abp.Zero.EntityFramework, Version=0.8.3.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:02,030 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: AssetManager.AssetManagerApplicationModule, AssetManager.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:02,031 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: AssetManager.AssetManagerCoreModule, AssetManager.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:02,065 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: AssetManager.AssetManagerDataModule, AssetManager.EntityFramework, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:02,066 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: AssetManager.Web.AssetManagerWebModule, AssetManager.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:02,067 [184  ] Abp.Modules.AbpModuleManager             - Loaded module: AssetManager.Api.AssetManagerWebApiModule, AssetManager.WebApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+DEBUG 2016-04-27 16:54:02,126 [184  ] Abp.Modules.AbpModuleManager             - 13 modules loaded.
+DEBUG 2016-04-27 16:54:05,380 [184  ] Abp.Localization.LocalizationManager     - Initializing 4 localization sources.
+DEBUG 2016-04-27 16:54:05,391 [184  ] Abp.Localization.LocalizationManager     - Initialized localization source: Abp
+DEBUG 2016-04-27 16:54:05,392 [184  ] Abp.Localization.LocalizationManager     - Initialized localization source: AbpWeb
+DEBUG 2016-04-27 16:54:05,417 [184  ] Abp.Localization.LocalizationManager     - Initialized localization source: AbpZero
+DEBUG 2016-04-27 16:54:05,442 [184  ] Abp.Localization.LocalizationManager     - Initialized localization source: AssetManager
+DEBUG 2016-04-27 16:54:06,995 [184  ] Abp.BackgroundJobs.BackgroundJobManager  - Start background worker: Abp.BackgroundJobs.BackgroundJobManager
+DEBUG 2016-04-27 16:54:07,731 [184  ] Abp.AutoMapper.AbpAutoMapperModule       - Found 4 classes defines auto mapping attributes
+DEBUG 2016-04-27 16:54:07,731 [184  ] Abp.AutoMapper.AbpAutoMapperModule       - AssetManager.Sessions.Dto.TenantLoginInfoDto
+DEBUG 2016-04-27 16:54:07,763 [184  ] Abp.AutoMapper.AbpAutoMapperModule       - AssetManager.Sessions.Dto.UserLoginInfoDto
+DEBUG 2016-04-27 16:54:07,778 [184  ] Abp.AutoMapper.AbpAutoMapperModule       - AssetManager.Assets.Dtos.AssetTypeDto
+DEBUG 2016-04-27 16:54:07,783 [184  ] Abp.AutoMapper.AbpAutoMapperModule       - AssetManager.Web.Models.Account.TenantSelectionViewModel+TenantInfo
+DEBUG 2016-04-27 16:54:07,854 [184  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.Sessions.ISessionAppService' with service name 'app/session'.
+DEBUG 2016-04-27 16:54:07,860 [184  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.Users.IUserAppService' with service name 'app/user'.
+DEBUG 2016-04-27 16:54:07,863 [184  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.Roles.IRoleAppService' with service name 'app/role'.
+DEBUG 2016-04-27 16:54:07,869 [184  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.Tags.ITagAppService' with service name 'app/tag'.
+DEBUG 2016-04-27 16:54:07,873 [184  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.Tags.ITagDataAppService' with service name 'app/tagData'.
+DEBUG 2016-04-27 16:54:07,877 [184  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.IOWs.IIowVariableAppService' with service name 'app/iowVariable'.
+DEBUG 2016-04-27 16:54:07,880 [184  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.IOWs.IIOWLevelAppService' with service name 'app/iOWLevel'.
+DEBUG 2016-04-27 16:54:07,883 [184  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.Assets.IAssetAppService' with service name 'app/asset'.
+DEBUG 2016-04-27 16:54:07,887 [184  ] Abp.Logging.LogHelper                    - Dynamic web api controller is created for type 'AssetManager.Assets.IAssetTypeAppService' with service name 'app/assetType'.

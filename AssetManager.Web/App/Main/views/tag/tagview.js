@@ -12,7 +12,8 @@
                 id: $stateParams.tagId > 0 ? $stateParams.tagId : null,
                 name: '',
                 description: '',
-                uom: ''
+                uom: '',
+                precison: ''
             };
 
             abp.ui.setBusy(
