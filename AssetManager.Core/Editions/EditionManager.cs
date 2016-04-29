@@ -11,7 +11,7 @@ namespace AssetManager.Editions
 
         public EditionManager(
             IRepository<Edition> editionRepository,
-            IRepository<EditionFeatureSetting, long> editionFeatureRepository)
+            IAbpZeroFeatureValueStore editionFeatureRepository)
             : base(
                 editionRepository,
                 editionFeatureRepository
