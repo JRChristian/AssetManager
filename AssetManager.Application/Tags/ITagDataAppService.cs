@@ -11,6 +11,7 @@ namespace AssetManager.Tags
     public interface ITagDataAppService : IApplicationService
     {
         GetTagDataRawOutput GetTagDataRawList(GetTagDataRawInput input);
+        GetTagDataChartOutput GetTagDataChart(GetTagDataChartInput input);
         //Task<GetTagDataRawOutput> GetTagDataRawListAsync(GetTagDataRawInput input);
         TagDataRawDto AddTagDataRaw(AddTagDataRawInput input);
     }

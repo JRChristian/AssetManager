@@ -53,6 +53,12 @@ namespace AssetManager.Web
                         "~/Scripts/angular-ui/ui-utils.min.js",
                         "~/Scripts/ui-grid.js", // Angular UI Grid
 
+                        "~/Scripts/flot/jquery.flot.min.js",    // Flot -- see http://www.flotcharts.org/
+                        "~/Scripts/angular-flot.js",            // Flot helper library -- see https://docs.omniref.com/js/npm/angular-flot/0.0.6
+
+                        //"~/Scripts/jquery.canvasjs.min.js",     // CanvasJS -- see http://canvasjs.com/
+                        "~/Scripts/canvasjs.min.js",     // CanvasJS -- see http://canvasjs.com/
+
                         "~/Abp/Framework/scripts/abp.js",
                         "~/Abp/Framework/scripts/libs/abp.jquery.js",
                         "~/Abp/Framework/scripts/libs/abp.toastr.js",

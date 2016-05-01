@@ -4,22 +4,27 @@
             <h3>{{vm.name}} <small> {{vm.description}}</small></h3>
         </div>
         <div class="row">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>@L("Time")</th>
-                        <th>{{vm.uom}}</th>
-                        <th>@L("Quality")</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="item in vm.data">
-                        <td>{{item.timestamp | momentFromNow2}}</td>
-                        <td>{{item.value | number: vm.precision}}</td>
-                        <td>{{vm.qualitystatus[item.quality]}}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="col-xs-6">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>@L("Time")</th>
+                            <th>{{vm.uom}}</th>
+                            <th>@L("Quality")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in vm.data">
+                            <td>{{item.timestamp | momentFromNow2}}</td>
+                            <td>{{item.value | number: vm.precision}}</td>
+                            <td>{{vm.qualitystatus[item.quality]}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-6">
+                <div id="chartContainer" style="width:100%; height:300px;"></div>
+            </div>
         </div>
     </div>
 </div>

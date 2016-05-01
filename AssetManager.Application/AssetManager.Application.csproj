@@ -141,11 +141,14 @@
     <Compile Include="Assets\Dtos\GetAssetOutput.cs" />
     <Compile Include="IOWs\Dtos\GetOneIOWLevelInput.cs" />
     <Compile Include="Tags\Dtos\GetOneTagInput.cs" />
+    <Compile Include="Tags\Dtos\GetTagDataChartInput.cs" />
+    <Compile Include="Tags\Dtos\GetTagDataChartOutput.cs" />
     <Compile Include="Tags\Dtos\GetTagDataRawInput.cs" />
     <Compile Include="Tags\Dtos\GetTagDataRawOutput.cs" />
     <Compile Include="Tags\Dtos\GetTagInput.cs" />
     <Compile Include="Tags\Dtos\GetTagOutput.cs" />
     <Compile Include="IOWs\Dtos\IOWLevelDto.cs" />
+    <Compile Include="Tags\Dtos\TagDataChartDto.cs" />
     <Compile Include="Tags\Dtos\TagDataRawDto.cs" />
     <Compile Include="Tags\Dtos\TagDto.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetInput.cs" />

@@ -13,6 +13,8 @@
         'ui.grid.rowEdit',
         'ui.grid.cellNav',
 
+        'angular-flot', // Flot helper library -- see https://docs.omniref.com/js/npm/angular-flot/0.0.6 
+
         'abp'
     ]);
 

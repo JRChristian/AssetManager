@@ -32,10 +32,6 @@
                 );
             };
 
-            vm.getAssetCountText = function () {
-                return abp.utils.formatString(vm.localize('AssetCount'), vm.assets.length);
-            };
-
             function randomIntFromInternal(min, max) {
                 return Math.floor(Math.random() * (max - min + 1) + min);
             };
@@ -57,6 +53,26 @@
                 }
                 return status;
             };
+
+            // Flot example
+            vm.chartData = [[[0, 1], [1, 5], [2, 2]]];
+            vm.chartOptions = {};
+
+            // CanvasJS example
+            vm.canvasChart = new CanvasJS.Chart("chartContainer", {
+                data: [{
+                    type: "splineArea", //change it to column, spline, line, pie, etc
+                    dataPoints: [
+                        { x: 10, y: 10 },
+                        { x: 20, y: 14 },
+                        { x: 30, y: 18 },
+                        { x: 40, y: 22 },
+                        { x: 50, y: 18 },
+                        { x: 60, y: 28 }
+                    ]
+                }]
+            });
+            vm.canvasChart.render();
         }
     ]);
 })();
