@@ -3,8 +3,8 @@
 
     var controllerId = 'app.views.iow.main';
     app.controller(controllerId, [
-        '$scope', '$location', 'abp.services.app.asset', 'abp.services.app.assetType',
-        function ($scope, $location, assetService, assetTypeService) {
+        '$scope', '$location', 'abp.services.app.asset', 'abp.services.app.assetType', 'abp.services.app.tagData',
+        function ($scope, $location, assetService, assetTypeService, tagDataService) {
             var vm = this;
 
             vm.localize = abp.localization.getSource('AssetManager');
@@ -60,19 +60,20 @@
 
             // CanvasJS example
             vm.canvasChart = new CanvasJS.Chart("chartContainer", {
-                data: [{
-                    type: "splineArea", //change it to column, spline, line, pie, etc
-                    dataPoints: [
-                        { x: 10, y: 10 },
-                        { x: 20, y: 14 },
-                        { x: 30, y: 18 },
-                        { x: 40, y: 22 },
-                        { x: 50, y: 18 },
-                        { x: 60, y: 28 }
-                    ]
-                }]
+                title: { text: "Chart Title" },
+                axisX: { gridThickness: 1 },
+                axisY: { title: "Measurement Units" },
+                data: []
             });
-            vm.canvasChart.render();
+
+            tagDataService.getTagDataCanvasJS({ id: 6 })
+                .success(function (data) {
+                    vm.name = data.name;
+                    vm.description = data.description;
+
+                    vm.canvasChart.options = data.canvasJS;
+                    vm.canvasChart.render();
+                });
         }
     ]);
 })();

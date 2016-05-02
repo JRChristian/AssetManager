@@ -142,6 +142,99 @@ namespace AssetManager.Tags
             return output;
         }
 
+        public GetTagDataCanvasJSOutput GetTagDataCanvasJS(GetTagDataCanvasJSInput input)
+        {
+            Tag tag = null;
+            GetTagDataCanvasJSOutput output = new GetTagDataCanvasJSOutput
+            {
+                Name = input.Name,
+                Description = "",
+                UOM = "",
+                Precision = null,
+                CanvasJS = new CanvasJSDto
+                {
+                    title = new CanvasJSTitle { },
+                    axisX = new CanvasJSAxisX { },
+                    axisY = new CanvasJSAxisY { },
+                    data = new List<CanvasJSData>()
+                }
+            };
+            List<TagDataRaw> data = null;
+
+            //Get the tag information and confirm that the tag exists
+            if (input.Id.HasValue)
+                tag = _tagRepository.Get(input.Id.Value);
+            else if (!string.IsNullOrEmpty(input.Name))
+                tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
+
+            //If the tag exists, save the description and get values in the relevant time range
+            if (tag != null)
+            {
+                output.Name = tag.Name;
+                output.Description = tag.Description;
+                output.UOM = tag.UOM;
+                output.Precision = tag.Precision;
+
+                output.CanvasJS.title.text = tag.Name;
+                output.CanvasJS.axisX.gridThickness = 0;
+                output.CanvasJS.axisY.gridThickness = 1;
+                output.CanvasJS.axisY.title = tag.UOM;
+                output.CanvasJS.data.Add(new CanvasJSData
+                {
+                    name = tag.Name,
+                    type = "line",
+                    markerType = "none",
+                    xValueType = "dateTime",
+                    color = "rgba(0,75,141,0.7)",
+                    dataPoints = new List<CanvasJSDataPoints>()
+                });
+
+                // Get data in the desired range
+                if (input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp >= input.StartTimestamp.Value && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
+                else if (input.StartTimestamp.HasValue && !input.EndTimestamp.HasValue)
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp >= input.StartTimestamp.Value).OrderBy(t => t.Timestamp).ToList();
+                else if (!input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
+                else
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id).OrderBy(t => t.Timestamp).ToList();
+
+                // Convert the entity data into the necessary charting format
+                foreach (TagDataRaw d in data)
+                {
+                    // Charting time is in JavaScript ticks (milliseconds) since January 1, 1970
+                    // C# datetime is in ticks (milliseconds) since January 1, 0000
+                    output.CanvasJS.data[0].dataPoints.Add(new CanvasJSDataPoints { x = d.Timestamp.ToJavaScriptMilliseconds(), y = d.Value });
+                }
+
+                if (data != null && data.Count > 0)
+                {
+                    string valueFormatString = null;
+                    DateTime minTimestamp = input.StartTimestamp.HasValue ? input.StartTimestamp.Value : data[0].Timestamp;
+                    DateTime maxTimestamp = input.EndTimestamp.HasValue ? input.EndTimestamp.Value : data[data.Count - 1].Timestamp;
+                    TimeSpan tsRange = maxTimestamp - minTimestamp;
+                    if (tsRange.TotalDays > 1)
+                    {
+                        // Round the start back to the start of day
+                        minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, 0, 0, 0);
+                        valueFormatString = "DD-MMM HH:mm";
+                    }
+                    else if (tsRange.TotalHours > 1)
+                    {
+                        // Round the start back to the start of the hour
+                        minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, minTimestamp.Hour, 0, 0);
+                        valueFormatString = "HH:mm";
+                    }
+
+                    output.CanvasJS.axisX.minimum = minTimestamp.ToJavaScriptMilliseconds();
+                    output.CanvasJS.axisX.maximum = maxTimestamp.ToJavaScriptMilliseconds();
+                    output.CanvasJS.axisX.valueFormatString = valueFormatString;
+                }
+            }
+
+            return output;
+        }
+
 
         /*public Task<GetTagDataRawOutput> GetTagDataRawListAsync(GetTagDataRawInput input)
         {

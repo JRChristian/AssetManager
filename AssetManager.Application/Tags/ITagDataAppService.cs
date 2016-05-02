@@ -12,6 +12,7 @@ namespace AssetManager.Tags
     {
         GetTagDataRawOutput GetTagDataRawList(GetTagDataRawInput input);
         GetTagDataChartOutput GetTagDataChart(GetTagDataChartInput input);
+        GetTagDataCanvasJSOutput GetTagDataCanvasJS(GetTagDataCanvasJSInput input);
         //Task<GetTagDataRawOutput> GetTagDataRawListAsync(GetTagDataRawInput input);
         TagDataRawDto AddTagDataRaw(AddTagDataRawInput input);
     }
