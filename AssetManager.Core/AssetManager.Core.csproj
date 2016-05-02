@@ -141,6 +141,7 @@
     <Compile Include="Users\UserManager.cs" />
     <Compile Include="Users\UserStore.cs" />
     <Compile Include="Utilities\DateTimeJavaScript.cs" />
+    <Compile Include="Utilities\TagType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

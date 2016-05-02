@@ -151,6 +151,14 @@
     <Compile Include="Migrations\201604290453368_UpgradeToABP084.Designer.cs">
       <DependentUpon>201604290453368_UpgradeToABP084.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605021634206_CreateNewIndexOnTagData.cs" />
+    <Compile Include="Migrations\201605021634206_CreateNewIndexOnTagData.Designer.cs">
+      <DependentUpon>201605021634206_CreateNewIndexOnTagData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605022123467_AddTagType.cs" />
+    <Compile Include="Migrations\201605022123467_AddTagType.Designer.cs">
+      <DependentUpon>201605022123467_AddTagType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -192,6 +200,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604290453368_UpgradeToABP084.resx">
       <DependentUpon>201604290453368_UpgradeToABP084.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605021634206_CreateNewIndexOnTagData.resx">
+      <DependentUpon>201605021634206_CreateNewIndexOnTagData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605022123467_AddTagType.resx">
+      <DependentUpon>201605022123467_AddTagType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

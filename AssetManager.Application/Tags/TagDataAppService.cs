@@ -174,6 +174,7 @@ namespace AssetManager.Tags
                 output.Description = tag.Description;
                 output.UOM = tag.UOM;
                 output.Precision = tag.Precision;
+                TagType tagType = tag.Type.HasValue ? tag.Type.Value : TagType.Continuous;
 
                 output.CanvasJS.title.text = tag.Name;
                 output.CanvasJS.axisX.gridThickness = 0;
@@ -182,8 +183,9 @@ namespace AssetManager.Tags
                 output.CanvasJS.data.Add(new CanvasJSData
                 {
                     name = tag.Name,
-                    type = "line",
-                    markerType = "none",
+                    type = tagType == TagType.Continuous ? "line" : "scatter",
+                    markerColor = "rgba(0,75,141,0.7)",
+                    markerType = tagType == TagType.Continuous ? "none" : "circle",
                     xValueType = "dateTime",
                     color = "rgba(0,75,141,0.7)",
                     dataPoints = new List<CanvasJSDataPoints>()
@@ -294,5 +296,41 @@ namespace AssetManager.Tags
 
             return output;
         }
+
+        public PostTagDataBulkOutput PostTagDataBulk(PostTagDataBulkInput input)
+        {
+            PostTagDataBulkOutput output = new PostTagDataBulkOutput { Total = 0, Successes = 0 };
+            Tag tag = null;
+
+            foreach( TagDataBulkDto one in input.TagDataRaw )
+            {
+                output.Total++;
+
+                // Get a tag id for the tag on this record.
+                // If the tag is the same as the previous record, no need to get it again.
+                if ( tag == null || one.Name != tag.Name )
+                    tag = _tagRepository.FirstOrDefault(p => p.Name == one.Name);
+
+                if ( tag != null )
+                {
+                    TagDataRaw data = new TagDataRaw
+                    {
+                        TenantId = tag.TenantId,
+                        TagId = tag.Id,
+                        Timestamp = one.Timestamp,
+                        Value = one.Value,
+                        Quality = one.Quality.HasValue ? one.Quality.Value : TagDataQuality.Good
+                    };
+
+                    data.Id = _tagDataRawRepository.InsertOrUpdateAndGetId(data);
+
+                    if (data.Id > 0)
+                        output.Successes++;
+                }
+            }
+
+            return output;
+        }
+
     }
 }

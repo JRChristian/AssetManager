@@ -40,6 +40,7 @@ namespace AssetManager.Tags.Dtos
     {
         public string name { get; set; }
         public string type { get; set; }
+        public string markerColor { get; set; }
         public string markerType { get; set; }
         public string xValueType { get; set; }
         public string color { get; set; }

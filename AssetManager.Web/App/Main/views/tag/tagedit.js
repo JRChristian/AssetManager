@@ -7,6 +7,7 @@
         function ($scope, $location, $stateParams, tagService) {
             var vm = this;
             var localize = abp.localization.getSource('AssetManager');
+            vm.tagTypes = [{ id: 0, name: localize('TagContinuous') }, { id: 1, name: localize('TagEvent') }];
 
             vm.tag = {
                 id: $stateParams.tagId > 0 ? $stateParams.tagId : null,

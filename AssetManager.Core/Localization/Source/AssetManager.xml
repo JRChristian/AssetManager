@@ -92,6 +92,9 @@
     <text name="TagDetails" value="Tag details" />
     <text name="UOM" value="Units" />
     <text name="Precision" value="Precision" />
+    <text name="TagType" value="Type" />
+    <text name="TagContinuous" value="Continuous" />
+    <text name="TagEvent" value="Discrete" />
     <text name="UpdateTheTag" value="Update" />
     <text name="TagUpdatedOk" value="Tag {0} has been updated" />
     <text name="Time" value="Time" />

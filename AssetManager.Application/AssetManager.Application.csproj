@@ -141,6 +141,7 @@
     <Compile Include="Assets\Dtos\GetAssetOutput.cs" />
     <Compile Include="IOWs\Dtos\GetOneIOWLevelInput.cs" />
     <Compile Include="Tags\Dtos\GetOneTagInput.cs" />
+    <Compile Include="Tags\Dtos\PostTagDataBulkInput.cs" />
     <Compile Include="Tags\Dtos\GetTagDataCanvasJSInput.cs" />
     <Compile Include="Tags\Dtos\GetTagDataCanvasJSOutput.cs" />
     <Compile Include="Tags\Dtos\GetTagDataChartInput.cs" />
@@ -151,6 +152,8 @@
     <Compile Include="Tags\Dtos\GetTagOutput.cs" />
     <Compile Include="IOWs\Dtos\IOWLevelDto.cs" />
     <Compile Include="Tags\Dtos\CanvasJSDto.cs" />
+    <Compile Include="Tags\Dtos\PostTagDataBulkOutput.cs" />
+    <Compile Include="Tags\Dtos\TagDataBulkDto.cs" />
     <Compile Include="Tags\Dtos\TagDataChartDto.cs" />
     <Compile Include="Tags\Dtos\TagDataRawDto.cs" />
     <Compile Include="Tags\Dtos\TagDto.cs" />

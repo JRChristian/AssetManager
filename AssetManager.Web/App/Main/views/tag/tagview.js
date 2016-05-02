@@ -13,7 +13,8 @@
                 name: '',
                 description: '',
                 uom: '',
-                precison: ''
+                precison: '',
+                type: 0
             };
 
             abp.ui.setBusy(

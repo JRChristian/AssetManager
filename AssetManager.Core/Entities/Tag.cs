@@ -1,6 +1,7 @@
 ﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using AssetManager.MultiTenancy;
+using AssetManager.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace AssetManager.Entities
         public string Description { get; set; }
         public string UOM { get; set; }
         public int? Precision { get; set; }
+        public TagType? Type { get; set; }
 
         public virtual ICollection<TagDataRaw> TagDataRaw { get; set; }
         public virtual ICollection<IOWVariable> IOWVariables { get; set; }

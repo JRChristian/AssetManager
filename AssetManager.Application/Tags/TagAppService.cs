@@ -2,6 +2,7 @@
 using Abp.AutoMapper;
 using AssetManager.Entities;
 using AssetManager.Tags.Dtos;
+using AssetManager.Utilities;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -90,6 +91,7 @@ namespace AssetManager.Tags
                     Description = input.Description,
                     UOM = input.UOM,
                     Precision = input.Precision,
+                    Type = input.Type.HasValue ? input.Type.Value : TagType.Continuous,
                     TenantId = tenantid
                 };
 
@@ -147,6 +149,9 @@ namespace AssetManager.Tags
                 if (input.Precision.HasValue)
                     tag.Precision = input.Precision.Value;
 
+                if (input.Type.HasValue)
+                    tag.Type = input.Type.Value;
+
                 // Map the new tag to the return format, and return the new information
                 output = tag.MapTo<TagDto>();
             }
@@ -159,7 +164,8 @@ namespace AssetManager.Tags
                         Name = input.Name,
                         Description = input.Description,
                         UOM = input.UOM,
-                        Precision = input.Precision
+                        Precision = input.Precision,
+                        Type = input.Type.HasValue ? input.Type.Value : TagType.Continuous
                     };
                     output = CreateTag(create);
                 }

@@ -1,4 +1,5 @@
 ﻿using Abp.Application.Services.Dto;
+using AssetManager.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,5 +17,6 @@ namespace AssetManager.Tags.Dtos
         public string UOM { get; set; }
         [Range(-10, 10)]
         public int? Precision { get; set; }
+        public TagType? Type { get; set; }
     }
 }
