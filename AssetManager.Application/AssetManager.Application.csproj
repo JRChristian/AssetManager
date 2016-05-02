@@ -118,6 +118,8 @@
     <Compile Include="IOWs\Dtos\ChangeIowLimitInput.cs" />
     <Compile Include="IOWs\Dtos\CreateIOWLevelInput.cs" />
     <Compile Include="IOWs\Dtos\CreateIowVariableInput.cs" />
+    <Compile Include="IOWs\Dtos\GetIowChartCanvasJSInput.cs" />
+    <Compile Include="IOWs\Dtos\GetIowChartCanvasJSOutput.cs" />
     <Compile Include="IOWs\Dtos\GetIowLimitInput.cs" />
     <Compile Include="IOWs\Dtos\GetIowLimitOutput.cs" />
     <Compile Include="IOWs\Dtos\GetIowVariableLimitOutput.cs" />

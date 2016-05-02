@@ -20,5 +20,7 @@ namespace AssetManager.IOWs
 
         GetIowLimitOutput GetIowLimits(GetIowLimitInput input);
         IowLimitDto ChangeIowLimits(ChangeIowLimitInput input);
+
+        GetIowChartCanvasJSOutput GetIowChartCanvasJS(GetIowChartCanvasJSInput input);
     }
 }

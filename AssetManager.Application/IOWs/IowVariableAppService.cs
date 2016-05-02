@@ -3,6 +3,9 @@ using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using AssetManager.Entities;
 using AssetManager.IOWs.Dtos;
+using AssetManager.Tags;
+using AssetManager.Tags.Dtos;
+using AssetManager.Utilities;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -18,14 +21,20 @@ namespace AssetManager.IOWs
         private readonly IIOWLimitRepository _iowLimitRepository;
         private readonly IIOWLevelRepository _iowLevelRepository;
         private readonly ITagRepository _tagRepository;
+        private readonly ITagDataRawRepository _tagDataRawRepository;
 
-        public IowVariableAppService(IIOWVariableRepository iowVariableRepository, 
-            IIOWLimitRepository iowLimitRepository, IIOWLevelRepository iowLevelRepository, ITagRepository tagRepository)
+        public IowVariableAppService(
+            IIOWVariableRepository iowVariableRepository, 
+            IIOWLimitRepository iowLimitRepository, 
+            IIOWLevelRepository iowLevelRepository, 
+            ITagRepository tagRepository, 
+            ITagDataRawRepository tagDataRawRepository)
         {
             _iowVariableRepository = iowVariableRepository;
             _iowLimitRepository = iowLimitRepository;
             _iowLevelRepository = iowLevelRepository;
             _tagRepository = tagRepository;
+            _tagDataRawRepository = tagDataRawRepository;
         }
 
 
@@ -461,6 +470,103 @@ namespace AssetManager.IOWs
                    HighLimit = limit.HighLimit
                 };
 
+            return output;
+        }
+
+        public GetIowChartCanvasJSOutput GetIowChartCanvasJS(GetIowChartCanvasJSInput input)
+        {
+            IOWVariable variable = null;
+            GetIowChartCanvasJSOutput output = new GetIowChartCanvasJSOutput
+            {
+                Name = input.Name,
+                Description = "",
+                TagId = 0,
+                TagName = "",
+                UOM = "",
+                CanvasJS = new CanvasJSDto
+                {
+                    title = new CanvasJSTitle { },
+                    axisX = new CanvasJSAxisX { },
+                    axisY = new CanvasJSAxisY { },
+                    data = new List<CanvasJSData>()
+                }
+            };
+
+            // Look for the variable
+            if (input.Id.HasValue)
+                variable = _iowVariableRepository.Get(input.Id.Value);
+            else if (!string.IsNullOrEmpty(input.Name))
+                variable = _iowVariableRepository.FirstOrDefault(p => p.Name == input.Name);
+
+            if( variable != null )
+            {
+                output.Name = variable.Name;
+                output.Description = variable.Description;
+                output.TagId = variable.TagId;
+                output.TagName = variable.Tag.Name;
+                output.UOM = !string.IsNullOrEmpty(variable.UOM) ? variable.UOM : variable.Tag.UOM;
+                
+                List<TagDataRaw> data = null;
+
+                TagType tagType = variable.Tag.Type.HasValue ? variable.Tag.Type.Value : TagType.Continuous;
+
+                output.CanvasJS.title.text = output.Name;
+                output.CanvasJS.axisX.gridThickness = 0;
+                output.CanvasJS.axisY.gridThickness = 0;
+                output.CanvasJS.axisY.title = output.UOM;
+                output.CanvasJS.data.Add(new CanvasJSData
+                {
+                    name = variable.Tag.Name,
+                    type = tagType == TagType.Continuous ? "line" : "scatter",
+                    markerColor = "rgba(0,75,141,0.7)",
+                    markerType = tagType == TagType.Continuous ? "none" : "circle",
+                    xValueType = "dateTime",
+                    color = "rgba(0,75,141,0.7)",
+                    dataPoints = new List<CanvasJSDataPoints>()
+                });
+
+                // Get data in the desired range
+                if (input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == output.TagId && t.Timestamp >= input.StartTimestamp.Value && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
+                else if (input.StartTimestamp.HasValue && !input.EndTimestamp.HasValue)
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == output.TagId && t.Timestamp >= input.StartTimestamp.Value).OrderBy(t => t.Timestamp).ToList();
+                else if (!input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == output.TagId && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
+                else
+                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == output.TagId).OrderBy(t => t.Timestamp).ToList();
+
+                // Convert the entity data into the necessary charting format
+                foreach (TagDataRaw d in data)
+                {
+                    // Charting time is in JavaScript ticks (milliseconds) since January 1, 1970
+                    // C# datetime is in ticks (milliseconds) since January 1, 0000
+                    output.CanvasJS.data[0].dataPoints.Add(new CanvasJSDataPoints { x = d.Timestamp.ToJavaScriptMilliseconds(), y = d.Value });
+                }
+
+                if (data != null && data.Count > 0)
+                {
+                    string valueFormatString = null;
+                    DateTime minTimestamp = input.StartTimestamp.HasValue ? input.StartTimestamp.Value : data[0].Timestamp;
+                    DateTime maxTimestamp = input.EndTimestamp.HasValue ? input.EndTimestamp.Value : data[data.Count - 1].Timestamp;
+                    TimeSpan tsRange = maxTimestamp - minTimestamp;
+                    if (tsRange.TotalDays > 1)
+                    {
+                        // Round the start back to the start of day
+                        minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, 0, 0, 0);
+                        valueFormatString = "DD-MMM HH:mm";
+                    }
+                    else if (tsRange.TotalHours > 1)
+                    {
+                        // Round the start back to the start of the hour
+                        minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, minTimestamp.Hour, 0, 0);
+                        valueFormatString = "HH:mm";
+                    }
+
+                    output.CanvasJS.axisX.minimum = minTimestamp.ToJavaScriptMilliseconds();
+                    output.CanvasJS.axisX.maximum = maxTimestamp.ToJavaScriptMilliseconds();
+                    output.CanvasJS.axisX.valueFormatString = valueFormatString;
+                }
+            }
             return output;
         }
     }

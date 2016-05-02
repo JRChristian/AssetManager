@@ -60,6 +60,11 @@
                      templateUrl: '/App/Main/views/iow/LevelList.cshtml',
                      menu: 'IOWLevels' //Matches to name of 'IOWLevels' menu in AssetManagerNavigationProvider
                 })
+                .state('iowvariablechart', {
+                    url: '/iowvariablechart?Id',
+                    templateUrl: '/App/Main/views/iow/variablechart.cshtml',
+                    menu: 'IOWVariableChart' //Matches to name in AssetManagerNavigationProvider
+                })
                 .state('iowvariableedit', {
                     url: '/iowvariableedit?Id',
                     templateUrl: '/App/Main/views/iow/variableedit.cshtml',
