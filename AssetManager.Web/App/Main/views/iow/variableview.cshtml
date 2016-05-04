@@ -5,8 +5,9 @@
                 <h3>@L("IowVariable")</h3>
             </div>
             <div class="col-sm-3">
-                <a ui-sref="iowvariablechart({ Id: {{vm.variable.id}} })" class="btn btn-primary" btn-sm><i class="fa fa-bar-chart"></i> @L("Chart")</a>
-                <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default" btn-sm><i class="fa fa-pencil"></i> @L("Edit")</a>
+                <a ui-sref="iowvariablechart({ Id: {{vm.variable.id}} })" class="btn btn-primary btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
+                <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>
+                <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-wrench"></i> @L("Edit")</a>
             </div>
         </div>
         <div class="row">

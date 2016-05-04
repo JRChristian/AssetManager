@@ -112,8 +112,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityFramework\AssetManagerDbContext.cs" />
+    <Compile Include="EntityFramework\DomainServices\IIowDeviationManager.cs" />
+    <Compile Include="EntityFramework\DomainServices\IowDeviationManager.cs" />
     <Compile Include="EntityFramework\Repositories\AssetManagerRepositoryBase.cs" />
     <Compile Include="EntityFramework\Repositories\AssetRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\IIOWDeviationRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\IOWDeviationRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IOWLevelRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IOWLimitRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IOWVariableRepository.cs" />

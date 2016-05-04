@@ -46,9 +46,10 @@
     <text name="MetricGoal" value="Metric - last 30 days" />
     <text name="CreateDefaultLevels" value="Create default levels" />
     <text name="VariableName" value="Variable" />
-    <text name="UpdateTheVariable" value="Update" />
+    <text name="UpdateTheVariable" value="Save changes" />
     <text name="Edit" value="Edit" />
     <text name="Chart" value="Chart" />
+    <text name="Drawings" value="Drawings" />
     <text name="View" value="View" />
     <text name="CreateVariable" value="Add a variable" />
     <text name="VariableUpdatedOk" value="Variable {0} has been updated" />
@@ -76,7 +77,7 @@
     <text name="FilterBy" value="Filter by" />
     <text name="NewAsset" value="Create asset" />
     <text name="Name" value="Name" />
-    <text name="UpdateTheAsset" value="Update" />
+    <text name="UpdateTheAsset" value="Save changes" />
     
     <text name="Email" value="Email address" />
     <text name="FirstName" value="First name" />
@@ -97,7 +98,7 @@
     <text name="TagType" value="Type" />
     <text name="TagContinuous" value="Continuous" />
     <text name="TagEvent" value="Discrete" />
-    <text name="UpdateTheTag" value="Update" />
+    <text name="UpdateTheTag" value="Save changes" />
     <text name="TagUpdatedOk" value="Tag {0} has been updated" />
     <text name="Time" value="Time" />
     <text name="Quality" value="Quality" />

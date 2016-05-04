@@ -5,7 +5,10 @@
                 <h3>@L("IowVariable")</h3>
             </div>
             <div class="col-sm-6 text-right">
-                <button ng-click="vm.saveVariable()" ng-disabled="EditVariableForm.$invalid" type="submit" class="btn btn-primary">@L("UpdateTheVariable")</button>
+                <button ng-click="vm.saveVariable()" ng-disabled="EditVariableForm.$invalid" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-floppy-o"></i> @L("UpdateTheVariable")</button>
+                <a ui-sref="iowvariablechart({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
+                <a ui-sref="iowvariableview({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-binoculars"></i> @L("View")</a>
+                <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>
             </div>
         </div>
         <div class="row">

@@ -18,9 +18,9 @@ namespace AssetManager.Entities
         public virtual IOWLimit IOWLimits { get; set; }
 
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public double LowLimit { get; set; }
-        public double HighLimit { get; set; }
-        public double WorstValue { get; set; }
+        public DateTime? EndDate { get; set; }
+        public double? LowLimit { get; set; }
+        public double? HighLimit { get; set; }
+        public double? WorstValue { get; set; }
     }
 }

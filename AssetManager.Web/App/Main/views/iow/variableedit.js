@@ -21,6 +21,7 @@
                 enableSorting: false,
                 enableColumnResizing: true,
                 enableCellEditOnFocus: true,
+                rowHeight: 33,
                 columnDefs: [
                     {
                         name: 'isActive', width: '10%', displayName: vm.localize('IsActive'), enableCellEdit: true,

@@ -5,7 +5,8 @@
                 <h3>@L("TagDetails")</h3>
             </div>
             <div class="col-sm-6 text-right">
-                <button ng-click="vm.saveTag()" ng-disabled="EditTagForm.$invalid" type="submit" class="btn btn-primary">@L("UpdateTheTag")</button>
+                <button ng-click="vm.saveTag()" ng-disabled="EditTagForm.$invalid" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> @L("UpdateTheTag")</button>
+                <a ui-sref="tagdata({ tagId: {{vm.tag.id}} })" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
             </div>
         </div>
         <form id="EditTagForm" class="form-horizontal" role="form" name="editTagForm" novalidate>
