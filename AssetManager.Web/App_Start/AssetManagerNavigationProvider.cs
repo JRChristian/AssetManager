@@ -71,6 +71,14 @@ namespace AssetManager.Web
                     )
                     .AddItem(
                         new MenuItemDefinition(
+                            "UserList",
+                            new LocalizableString("UserMenu", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/userlist",
+                            icon: "fa fa-gear"
+                            )
+                    )
+                   .AddItem(
+                        new MenuItemDefinition(
                             "Swagger",
                             new LocalizableString("SwaggerMenu", AssetManagerConsts.LocalizationSourceName),
                             url: "swagger/ui/index#/",
