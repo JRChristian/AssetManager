@@ -12,11 +12,9 @@ namespace AssetManager.IOWs.Dtos
     {
         public long? Id { get; set; }
 
-        [Required]
-        public long IOWVariableId { get; set; }
-
-        [Required]
-        public bool IsActive { get; set; }
+        public long? IowVariableId { get; set; }
+        public string IowVariableName { get; set; }
+        public bool? IsActive { get; set; }
 
         public long? IOWLevelId { get; set; }
         public string Name { get; set; }

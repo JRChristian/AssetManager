@@ -27,14 +27,18 @@
                         cellTemplate: '<div class="ui-grid-cell-contents">{{COL_FIELD ? "X" : ""}}</div>'
                     },
                     {
-                        name: 'name', width: '10%', displayName: vm.localize('Name'),
+                        name: 'name', width: '10%', displayName: vm.localize('Name'), cellTooltip: true,
                         cellTemplate: '<div class="grid-tooltip" tooltip="{{ row.entity.description }}" tooltip-placement="top" tooltip-append-to-body="true">'
                             + '<div class="ui-grid-cell-contents">{{ COL_FIELD }}</div></div>'
                     },
                     { name: 'lowLimit', width: '10%', displayName: vm.localize('LowLimit') },
                     { name: 'highLimit', width: '10%', displayName: vm.localize('HighLimit') },
                     { name: 'cause', width: '20%', displayName: vm.localize('Causes') },
-                    { name: 'consequences', width: '20%', displayName: vm.localize('Consequences') },
+                    {
+                        name: 'consequences', width: '20%', displayName: vm.localize('Consequences'), cellTooltip: true,
+                        cellTemplate: '<div class="grid-tooltip" tooltip="{{ COL_FIELD }}" tooltip-placement="top" tooltip-append-to-body="true">'
+                            + '<div class="ui-grid-cell-contents">{{ COL_FIELD }}</div></div>'
+                    },
                     { name: 'action', width: '20%', displayName: vm.localize('Action') }
                     ]
             };

@@ -76,10 +76,10 @@
                             vm.gridDirtyRows = vm.gridApi.rowEdit.getDirtyRows(vm.gridApi.grid);
                             for (var i = 0; i < vm.gridDirtyRows.length; i++) {
                                 variableService.changeIowLimits({
-                                    IOWVariableId: vm.variable.id,
+                                    IowVariableId: vm.variable.id,
                                     Name: vm.gridDirtyRows[i].entity.name,
                                     IsActive: vm.gridDirtyRows[i].entity.isActive,
-                                    IOWLevelId: vm.gridDirtyRows[i].entity.iOWLevelId,
+                                    IOWLevelId: vm.gridDirtyRows[i].entity.iowLevelId,
                                     Cause: vm.gridDirtyRows[i].entity.cause,
                                     Consequences: vm.gridDirtyRows[i].entity.consequences,
                                     Action: vm.gridDirtyRows[i].entity.action,

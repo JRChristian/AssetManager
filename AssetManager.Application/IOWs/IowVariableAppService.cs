@@ -354,127 +354,150 @@ namespace AssetManager.IOWs
             IOWLevel level = null;
             IowLimitDto output = null;
             bool inputIsValid = false;
+            bool isActive = input.IsActive.HasValue ? input.IsActive.Value : true;
 
-            // Look for the variable. This will thrown an error if the variable id is not found.
-            variable = _iowVariableRepository.Get(input.IOWVariableId);
+            // Look for the variable.
+            if( input.IOWLevelId.HasValue)
+                variable = _iowVariableRepository.Get(input.IowVariableId.Value);
+            else if ( !string.IsNullOrEmpty(input.IowVariableName) )
+                variable = _iowVariableRepository.FirstOrDefault(x => x.Name == input.IowVariableName);
 
-            // Does the specified limit exist? If so, get it. This will return null if nothing is found.
-            if( input.Id.HasValue )
+            if( variable != null )
             {
-                limit = _iowLimitRepository.FirstOrDefault( input.Id.Value );
-                if ( limit != null )
-                    level = _iowLevelRepository.FirstOrDefault( limit.IOWLevelId );
-            }
-            else if ( input.IOWLevelId.HasValue )
-            {   
-                limit = _iowLimitRepository.FirstOrDefault( x => x.IOWVariableId == input.IOWVariableId && x.IOWLevelId == input.IOWLevelId.Value );
-                if (limit != null)
-                    level = _iowLevelRepository.FirstOrDefault(limit.IOWLevelId);
-            }
-            else if ( !string.IsNullOrEmpty(input.Name) )
-            {
-                level = _iowLevelRepository.FirstOrDefault( x => x.Name == input.Name );
-                if ( level != null )
-                    limit = _iowLimitRepository.FirstOrDefault(x => x.IOWVariableId == input.IOWVariableId && x.IOWLevelId == level.Id );
-            }
-            else if ( input.Criticality.HasValue )
-            {
-                level = _iowLevelRepository.FirstOrDefault(x => x.Criticality == input.Criticality.Value);
-                if (level != null)
-                    limit = _iowLimitRepository.FirstOrDefault(x => x.IOWVariableId == input.IOWVariableId && x.IOWLevelId == level.Id);
-            }
 
-            // There are four possibilities at this point:
-            //   1) We did not find a limit and the level is not valid ==> bad input, do nothing
-            //   2) We did not find a limit and the level is valid ==> insert a new limit if possible
-            //   3) We found a limit and the IsActive flag is true ==> update an existing limit
-            //   4) We found a limit and the InActive flag is false ==> delete an existing limit
-            if ( limit == null && level == null )
-            {
-                // Case 1: Bad input
-            }
-            else if ( limit == null && level != null && input.IsActive == true )
-            {
-                // Case 2: Limit does not exist, so insert a new limit
-
-                // All assets belong to a tenant. If not specified, put them in the default tenant.
-                int tenantid = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
-
-                double? lowLimit = null, highLimit = null;
-                if (input.LowLimit.HasValue)
-                    lowLimit = input.LowLimit.Value;
-                if (input.HighLimit.HasValue)
-                    highLimit = input.HighLimit.Value;
-
-
-                limit = new IOWLimit
+                // Does the specified limit exist? If so, get it. This will return null if nothing is found.
+                if ( input.Id.HasValue )
                 {
-                    IOWVariableId = input.IOWVariableId,
-                    IOWLevelId = level.Id,
-                    Cause = input.Cause,
-                    Consequences = input.Consequences,
-                    Action = input.Action,
-                    LowLimit = lowLimit,
-                    HighLimit = highLimit,
-                    LastCheckDate = null,
-                    LastStatus = IOWStatus.Normal,
-                    LastDeviationStartDate = null,
-                    LastDeviationEndDate = null,
-                    TenantId = tenantid
-                };
-
-                limit.Id = _iowLimitRepository.InsertAndGetId(limit);
-
-                inputIsValid = true;
-            }
-            else if ( input.IsActive == true )
-            {
-                // Case 3: Limit exists and should be updated.
-                if (!string.IsNullOrEmpty(input.Cause))
-                    limit.Cause = input.Cause;
-
-                if (!string.IsNullOrEmpty(input.Consequences))
-                    limit.Consequences = input.Consequences;
-
-                if (!string.IsNullOrEmpty(input.Action))
-                    limit.Action = input.Action;
-
-                // Replace the low and high limits in all situation, even if incoming values are null
-                limit.LowLimit = input.LowLimit.Value;
-                limit.HighLimit = input.HighLimit.Value;
-
-                inputIsValid = true;
-            }
-            else if ( input.IsActive == false )
-            {
-                // Case 4: Limit exists and should be deleted
-                _iowLimitRepository.Delete(limit.Id);
-
-                inputIsValid = true;
-            }
-
-
-            if( inputIsValid )
-                output = new IowLimitDto
+                    limit = _iowLimitRepository.FirstOrDefault( input.Id.Value );
+                    if ( limit != null )
+                        level = _iowLevelRepository.FirstOrDefault( limit.IOWLevelId );
+                }
+                else if ( input.IOWLevelId.HasValue )
+                {   
+                    limit = _iowLimitRepository.FirstOrDefault( x => x.IOWVariableId == variable.Id && x.IOWLevelId == input.IOWLevelId.Value );
+                    if (limit != null)
+                        level = _iowLevelRepository.FirstOrDefault(limit.IOWLevelId);
+                }
+                else if ( !string.IsNullOrEmpty(input.Name) )
                 {
-                   Id = limit.Id,
-                   IOWVariableId = limit.IOWVariableId,
-                   IsActive = (limit != null && input.IsActive == true) ? true : false,
-                   IOWLevelId = limit.IOWLevelId,
-                   Name = level.Name,
-                   Criticality = level.Criticality,
-                   Cause = limit.Cause,
-                   Consequences = limit.Consequences,
-                   Action = limit.Action,
-                   LowLimit = limit.LowLimit,
-                   HighLimit = limit.HighLimit
-                };
+                    level = _iowLevelRepository.FirstOrDefault( x => x.Name == input.Name );
+                    if ( level != null )
+                        limit = _iowLimitRepository.FirstOrDefault(x => x.IOWVariableId == variable.Id && x.IOWLevelId == level.Id );
+                }
+                else if ( input.Criticality.HasValue )
+                {
+                    level = _iowLevelRepository.FirstOrDefault(x => x.Criticality == input.Criticality.Value);
+                    if (level != null)
+                        limit = _iowLimitRepository.FirstOrDefault(x => x.IOWVariableId == variable.Id && x.IOWLevelId == level.Id);
+                }
+
+                // There are four possibilities at this point:
+                //   1) We did not find a limit and the level is not valid ==> bad input, do nothing
+                //   2) We did not find a limit and the level is valid ==> insert a new limit if possible
+                //   3) We found a limit and the IsActive flag is true ==> update an existing limit
+                //   4) We found a limit and the InActive flag is false ==> delete an existing limit
+
+                if ( limit == null && level == null )
+                {
+                    // Case 1: Bad input
+                }
+                else if ( limit == null && level != null && isActive )
+                {
+                    // Case 2: Limit does not exist, so insert a new limit
+
+                    // All assets belong to a tenant. If not specified, put them in the default tenant.
+                    int tenantid = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
+
+                    double? lowLimit = null, highLimit = null;
+                    if (input.LowLimit.HasValue)
+                        lowLimit = input.LowLimit.Value;
+                    if (input.HighLimit.HasValue)
+                        highLimit = input.HighLimit.Value;
+
+                    limit = new IOWLimit
+                    {
+                        IOWVariableId = variable.Id,
+                        IOWLevelId = level.Id,
+                        Cause = input.Cause,
+                        Consequences = input.Consequences,
+                        Action = input.Action,
+                        LowLimit = lowLimit,
+                        HighLimit = highLimit,
+                        LastCheckDate = null,
+                        LastStatus = IOWStatus.Normal,
+                        LastDeviationStartDate = null,
+                        LastDeviationEndDate = null,
+                        TenantId = tenantid
+                    };
+
+                    limit.Id = _iowLimitRepository.InsertAndGetId(limit);
+
+                    inputIsValid = true;
+                }
+                else if ( isActive )
+                {
+                    // Case 3: Limit exists and should be updated.
+                    if (!string.IsNullOrEmpty(input.Cause))
+                        limit.Cause = input.Cause;
+
+                    if (!string.IsNullOrEmpty(input.Consequences))
+                        limit.Consequences = input.Consequences;
+
+                    if (!string.IsNullOrEmpty(input.Action))
+                        limit.Action = input.Action;
+
+                    // Replace the low and high limits in all situation, even if incoming values are null
+                    double? lowLimit = null, highLimit = null;
+                    if (input.LowLimit.HasValue)
+                        lowLimit = input.LowLimit.Value;
+                    if (input.HighLimit.HasValue)
+                        highLimit = input.HighLimit.Value;
+
+                    limit.LowLimit = lowLimit;
+                    limit.HighLimit = highLimit;
+
+                    inputIsValid = true;
+                }
+                else if ( !isActive )
+                {
+                    // Case 4: Limit exists and should be deleted
+                    _iowLimitRepository.Delete(limit.Id);
+
+                    inputIsValid = true;
+                }
+
+                if( inputIsValid )
+                    output = new IowLimitDto
+                    {
+                        Id = limit.Id,
+                        IOWVariableId = variable.Id,
+                        IsActive = (limit != null && isActive ) ? true : false,
+                        IOWLevelId = limit.IOWLevelId,
+                        Name = level.Name,
+                        Criticality = level.Criticality,
+                        Cause = limit.Cause,
+                        Consequences = limit.Consequences,
+                        Action = limit.Action,
+                        LowLimit = limit.LowLimit,
+                        HighLimit = limit.HighLimit
+                    };
+            }
 
             return output;
         }
 
         public GetIowChartCanvasJSOutput GetIowChartCanvasJS(GetIowChartCanvasJSInput input)
         {
+            string[] colors =
+            {
+                    "rgba(0,75,141,0.7)",   // 0 - blue
+                    "rgba(255,0,0,0.7)",    // 1 - red
+                    "rgba(255,102,0,0.7)",  // 2 - orange
+                    "darkgreen",            // 3 - green
+                    "rgba(51,51,51,0.7)",   // 4 - gray
+                    "rgba(100,100,100,0.7)" // 5 - lighter gray
+                };
+
             IOWVariable variable = null;
             GetIowChartCanvasJSOutput output = new GetIowChartCanvasJSOutput
             {
@@ -485,6 +508,9 @@ namespace AssetManager.IOWs
                 UOM = "",
                 CanvasJS = new CanvasJSDto
                 {
+                    exportEnabled = true,
+                    zoomEnabled = true,
+                    zoomType = "xy",
                     title = new CanvasJSTitle { },
                     axisX = new CanvasJSAxisX { },
                     axisY = new CanvasJSAxisY { },
@@ -494,7 +520,7 @@ namespace AssetManager.IOWs
 
             // Look for the variable
             if (input.Id.HasValue)
-                variable = _iowVariableRepository.Get(input.Id.Value);
+                variable = _iowVariableRepository.FirstOrDefault(p => p.Id == input.Id.Value);
             else if (!string.IsNullOrEmpty(input.Name))
                 variable = _iowVariableRepository.FirstOrDefault(p => p.Name == input.Name);
 
@@ -514,14 +540,18 @@ namespace AssetManager.IOWs
                 output.CanvasJS.axisX.gridThickness = 0;
                 output.CanvasJS.axisY.gridThickness = 0;
                 output.CanvasJS.axisY.title = output.UOM;
+                output.CanvasJS.axisY.includeZero = false;
                 output.CanvasJS.data.Add(new CanvasJSData
                 {
                     name = variable.Tag.Name,
                     type = tagType == TagType.Continuous ? "line" : "scatter",
-                    markerColor = "rgba(0,75,141,0.7)",
+                    lineDashType = "solid",
+                    markerColor = colors[0],
                     markerType = tagType == TagType.Continuous ? "none" : "circle",
                     xValueType = "dateTime",
-                    color = "rgba(0,75,141,0.7)",
+                    color = colors[0],
+                    showInLegend = true,
+                    legendText = variable.Tag.Name,
                     dataPoints = new List<CanvasJSDataPoints>()
                 });
 
@@ -543,28 +573,94 @@ namespace AssetManager.IOWs
                     output.CanvasJS.data[0].dataPoints.Add(new CanvasJSDataPoints { x = d.Timestamp.ToJavaScriptMilliseconds(), y = d.Value });
                 }
 
+                // Calculate the minimum and maximum times that cover our data
+                DateTime minTimestamp = DateTime.Now.AddDays(-1);
+                DateTime maxTimestamp = DateTime.Now;
                 if (data != null && data.Count > 0)
                 {
-                    string valueFormatString = null;
-                    DateTime minTimestamp = input.StartTimestamp.HasValue ? input.StartTimestamp.Value : data[0].Timestamp;
-                    DateTime maxTimestamp = input.EndTimestamp.HasValue ? input.EndTimestamp.Value : data[data.Count - 1].Timestamp;
-                    TimeSpan tsRange = maxTimestamp - minTimestamp;
-                    if (tsRange.TotalDays > 1)
+                    minTimestamp = input.StartTimestamp.HasValue ? input.StartTimestamp.Value : data[0].Timestamp;
+                    maxTimestamp = input.EndTimestamp.HasValue ? input.EndTimestamp.Value : data[data.Count - 1].Timestamp;
+                }
+                else
+                {
+                    minTimestamp = input.StartTimestamp.HasValue ? input.StartTimestamp.Value : minTimestamp;
+                    maxTimestamp = input.EndTimestamp.HasValue ? input.EndTimestamp.Value : maxTimestamp;
+                }
+
+                string valueFormatString = null;
+                TimeSpan tsRange = maxTimestamp - minTimestamp;
+                if (tsRange.TotalDays > 1)
+                {
+                    // Round the start back to the start of day
+                    minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, 0, 0, 0);
+                    valueFormatString = "DD-MMM HH:mm";
+                }
+                else if (tsRange.TotalHours > 1)
+                {
+                    // Round the start back to the start of the hour
+                    minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, minTimestamp.Hour, 0, 0);
+                    valueFormatString = "HH:mm";
+                }
+                output.CanvasJS.axisX.minimum = minTimestamp.ToJavaScriptMilliseconds();
+                output.CanvasJS.axisX.maximum = maxTimestamp.ToJavaScriptMilliseconds();
+                output.CanvasJS.axisX.valueFormatString = valueFormatString;
+
+                // Add some limit information to the chart
+                foreach( IOWLimit limit in variable.IOWLimits)
+                {
+                    // Get the color for this limit from the colors array.
+                    string color = limit.Level.Criticality > 0 && limit.Level.Criticality < colors.Length
+                        ? colors[limit.Level.Criticality] : colors[colors.Length-1];
+
+                    if(limit.HighLimit.HasValue)
                     {
-                        // Round the start back to the start of day
-                        minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, 0, 0, 0);
-                        valueFormatString = "DD-MMM HH:mm";
-                    }
-                    else if (tsRange.TotalHours > 1)
-                    {
-                        // Round the start back to the start of the hour
-                        minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, minTimestamp.Hour, 0, 0);
-                        valueFormatString = "HH:mm";
+                        output.CanvasJS.data.Add(new CanvasJSData
+                        {
+                            name = limit.Level.Name,
+                            type = "line",
+                            lineDashType = "solid",
+                            markerColor = color,
+                            markerType = "none",
+                            xValueType = "dateTime",
+                            color = color,
+                            showInLegend = true,
+                            legendText = limit.Level.Name + "- high",
+                            dataPoints = new List<CanvasJSDataPoints>()
+                        });
+
+                        // Charting time is in JavaScript ticks (milliseconds) since January 1, 1970
+                        // C# datetime is in ticks (milliseconds) since January 1, 0000
+                        int index = output.CanvasJS.data.Count - 1;
+                        output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
+                            { x = minTimestamp.ToJavaScriptMilliseconds(), y = limit.HighLimit.Value });
+                        output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
+                            { x = maxTimestamp.ToJavaScriptMilliseconds(), y = limit.HighLimit.Value });
                     }
 
-                    output.CanvasJS.axisX.minimum = minTimestamp.ToJavaScriptMilliseconds();
-                    output.CanvasJS.axisX.maximum = maxTimestamp.ToJavaScriptMilliseconds();
-                    output.CanvasJS.axisX.valueFormatString = valueFormatString;
+                    if (limit.LowLimit.HasValue)
+                    {
+                        output.CanvasJS.data.Add(new CanvasJSData
+                        {
+                            name = limit.Level.Name,
+                            type = "line",
+                            lineDashType = "dash",
+                            markerColor = color,
+                            markerType = "none",
+                            xValueType = "dateTime",
+                            color = color,
+                            showInLegend = true,
+                            legendText = limit.Level.Name + "- low",
+                            dataPoints = new List<CanvasJSDataPoints>()
+                        });
+
+                        // Charting time is in JavaScript ticks (milliseconds) since January 1, 1970
+                        // C# datetime is in ticks (milliseconds) since January 1, 0000
+                        int index = output.CanvasJS.data.Count - 1;
+                        output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
+                            { x = minTimestamp.ToJavaScriptMilliseconds(), y = limit.LowLimit.Value });
+                        output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
+                            { x = maxTimestamp.ToJavaScriptMilliseconds(), y = limit.LowLimit.Value });
+                    }
                 }
             }
             return output;

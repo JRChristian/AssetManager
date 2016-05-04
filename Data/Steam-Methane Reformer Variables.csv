@@ -1,0 +1,13 @@
+name,description,tagName,uom
+42 FEED CONDENSATE PH,D-101 bottoms (feed condensate) pH,42AI056.PH,PH
+42 FEED GAS H2S,D-101 overhead (feed gas) H2S,42QM059.H2S,PPM
+42 DESULFURIZER INLET TEMPERATURE,R-103 desulfurizer inlet temperature,42TI015,DEG F
+42 DESULFURIZER OUTLET TEMPERATURE,R-103 desulfurizer outlet temperature,42TC019,DEG F
+42 PREREFORMER INLET TEMPERATURE,R-104 prereformer inlet temperature,42TI020,DEG F
+42 PREREFORMER OUTLET TEMPERATURE,R-104 prereformer outlet temperature,42TI023,DEG F
+42 REFORMER TMT,R-105 reformer tube metal temperature,42TI061,DEG F
+42 REFORMER STEAM/CARBON,R-105 reformer steam to carbon ratio,42CI024,RATIO
+42 LTSR INET TEMPERATURE,R-110 Low Temperature Shift Reactor inlet temperature,42TI034,DEG F
+42 PSA INLET TEMPERATURE,Pressure Swing Absorption inlet temperature,42TI039,DEG F
+42 CONDENSATE CHLORIDE,D-113 condensate drum chlorides,42QM057.CL,PPM
+42 CONDENSATE AMMONIA,D-113 condensate drum ammonia,42QM058.NH3,PPM

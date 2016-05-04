@@ -9,6 +9,9 @@ namespace AssetManager.Tags.Dtos
 {
     public class CanvasJSDto : EntityDto<long>
     {
+        public bool? exportEnabled { get; set; }
+        public bool? zoomEnabled { get; set; }
+        public string zoomType { get; set; }
         public CanvasJSTitle title { get; set; }
         public CanvasJSAxisX axisX { get; set; }
         public CanvasJSAxisY axisY { get; set; }
@@ -35,13 +38,17 @@ namespace AssetManager.Tags.Dtos
         public long? maximum { get; set; }
         public long? minimum { get; set; }
         public string title { get; set; }
+        public bool? includeZero { get; set; }
     }
     public class CanvasJSData
     {
         public string name { get; set; }
         public string type { get; set; }
+        public string legendText { get; set; }
+        public string lineDashType { get; set; }
         public string markerColor { get; set; }
         public string markerType { get; set; }
+        public bool? showInLegend { get; set; }
         public string xValueType { get; set; }
         public string color { get; set; }
         public List<CanvasJSDataPoints> dataPoints { get; set; }

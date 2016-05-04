@@ -48,6 +48,8 @@
     <text name="VariableName" value="Variable" />
     <text name="UpdateTheVariable" value="Update" />
     <text name="Edit" value="Edit" />
+    <text name="Chart" value="Chart" />
+    <text name="View" value="View" />
     <text name="CreateVariable" value="Add a variable" />
     <text name="VariableUpdatedOk" value="Variable {0} has been updated" />
     <text name="Causes" value="Causes" />

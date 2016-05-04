@@ -153,6 +153,9 @@ namespace AssetManager.Tags
                 Precision = null,
                 CanvasJS = new CanvasJSDto
                 {
+                    exportEnabled = true,
+                    zoomEnabled = true,
+                    zoomType = "xy",
                     title = new CanvasJSTitle { },
                     axisX = new CanvasJSAxisX { },
                     axisY = new CanvasJSAxisY { },
@@ -180,10 +183,12 @@ namespace AssetManager.Tags
                 output.CanvasJS.axisX.gridThickness = 0;
                 output.CanvasJS.axisY.gridThickness = 1;
                 output.CanvasJS.axisY.title = tag.UOM;
+                output.CanvasJS.axisY.includeZero = false;
                 output.CanvasJS.data.Add(new CanvasJSData
                 {
                     name = tag.Name,
                     type = tagType == TagType.Continuous ? "line" : "scatter",
+                    lineDashType = "solid",
                     markerColor = "rgba(0,75,141,0.7)",
                     markerType = tagType == TagType.Continuous ? "none" : "circle",
                     xValueType = "dateTime",

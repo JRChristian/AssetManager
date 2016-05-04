@@ -9,6 +9,10 @@
 
             vm.localize = abp.localization.getSource('AssetManager');
 
+            vm.variable = {
+                id: $stateParams.Id > 0 ? $stateParams.Id : null
+            };
+
             vm.canvasChart = new CanvasJS.Chart("chartContainer", {
                 title: { text: "Chart Title" },
                 axisX: { gridThickness: 1 },
