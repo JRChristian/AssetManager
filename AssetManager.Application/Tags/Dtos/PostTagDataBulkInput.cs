@@ -1,4 +1,5 @@
 ﻿using Abp.Application.Services.Dto;
+using AssetManager.DomainServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace AssetManager.Tags.Dtos
 {
     public class PostTagDataBulkInput : IInputDto
     {
-        public List<TagDataBulkDto> TagDataRaw { get; set; }
+        public List<TagDataName> TagDataName { get; set; }
     }
 }

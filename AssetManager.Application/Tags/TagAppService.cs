@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using Abp.AutoMapper;
+using AssetManager.DomainServices;
 using AssetManager.Entities;
 using AssetManager.Tags.Dtos;
 using AssetManager.Utilities;
@@ -16,10 +17,12 @@ namespace AssetManager.Tags
     {
         //These members set in constructor using constructor injection.
         private readonly ITagRepository _tagRepository;
+        private readonly ITagManager _tagManager;
 
-        public TagAppService(ITagRepository tagRepository)
+        public TagAppService(ITagRepository tagRepository, ITagManager tagManager)
         {
             _tagRepository = tagRepository;
+            _tagManager = tagManager;
         }
 
         public TagDto GetOneTag(GetOneTagInput input)
@@ -27,11 +30,10 @@ namespace AssetManager.Tags
             TagDto output = new TagDto { Name = input.Name, Description = "", UOM = "" };
             Tag tag = null;
 
-            // If the input includes a tag name, treat it as a wild card match. Otherwise, get all tags.
             if (input.Id.HasValue)
-                tag = _tagRepository.FirstOrDefault(t => t.Id == input.Id.Value);
+                tag = _tagManager.FirstOrDefaultTag(input.Id.Value);
             else
-                tag = _tagRepository.FirstOrDefault(t => t.Name == input.Name);
+                tag = _tagManager.FirstOrDefaultTag(input.Name);
 
             output = tag.MapTo<TagDto>();
             return output;
@@ -43,30 +45,13 @@ namespace AssetManager.Tags
 
             // If the input includes a tag name, treat it as a wild card match. Otherwise, get all tags.
             if (!string.IsNullOrEmpty(input.Name))
-                tags = _tagRepository.GetAll().Where(p => p.Name.Contains(input.Name)).OrderBy(p => p.Name).ToList();
+                tags = _tagManager.GetAllListTag(p => p.Name.Contains(input.Name));
             else
-                tags = _tagRepository.GetAll().OrderBy(p => p.Name).ToList();
+                tags = _tagManager.GetAllListTag();
 
             return new GetTagOutput
             {
                 Tags = tags.MapTo<List<TagDto>>()
-            };
-        }
-
-        public async Task<GetTagOutput> GetTagListAsync(GetTagInput input)
-        {
-            List<Tag> tags = null;
-
-            // If the input includes a tag name, treat it as a wild card match. Otherwise, get all tags.
-            if (!string.IsNullOrEmpty(input.Name))
-                tags = await _tagRepository.GetAllListAsync(p => p.Name.Contains(input.Name));
-            else
-                tags = await _tagRepository.GetAllListAsync();
-
-            var sorted = tags.OrderBy(p => p.Name);
-            return new GetTagOutput
-            {
-                Tags = sorted.MapTo<List<TagDto>>()
             };
         }
 
@@ -75,50 +60,40 @@ namespace AssetManager.Tags
             //We can use Logger, it's defined in ApplicationService class.
             Logger.Info("Creating a tag for input: " + input.Name);
 
-            TagDto output = new TagDto { Name = input.Name, Description = "", UOM = "" };
-
-            //Check to see if this name already exists
-            var tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
-            if (tag == null)
+            // Create a new tag object from the input
+            var New = new Tag
             {
-                // All tags belong to a tenant. If not specified, put them in the default tenant.
-                int tenantid = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
+                Name = input.Name,
+                Description = input.Description,
+                UOM = input.UOM,
+                Precision = input.Precision,
+                Type = input.Type.HasValue ? input.Type.Value : TagType.Continuous,
+                TenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1
+            };
 
-                // Create a new tag object from the input
-                var New = new Tag
-                {
-                    Name = input.Name,
-                    Description = input.Description,
-                    UOM = input.UOM,
-                    Precision = input.Precision,
-                    Type = input.Type.HasValue ? input.Type.Value : TagType.Continuous,
-                    TenantId = tenantid
-                };
+            // Create (or update) the new tag
+            _tagManager.InsertOrUpdateTag(New);
 
-                // Add the new tag to the repository
-                _tagRepository.Insert(New);
+            // Map the new tag to the return format, and return the new information
+            TagDto output = New.MapTo<TagDto>();
 
-                // Map the new tag to the return format, and return the new information
-                output = New.MapTo<TagDto>();
-            }
             return output;
         }
 
-        public void DeleteTag(DeleteTagInput input)
+        public bool DeleteTag(DeleteTagInput input)
         {
-            Tag tag = null;
+            bool success = false;
 
             //We can use Logger, it is defined in ApplicationService base class.
             Logger.Info("Deleting a tag for input Id= " + (input.Id.HasValue ? (input.Id.Value).ToString() : "n/a") + " Name= " + input.Name);
 
             //Get the Tag entity using either the Id or the name--whatever is passed through
             if (input.Id.HasValue)
-                tag = _tagRepository.Get(input.Id.Value);
-            else
-                tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
+                success = _tagManager.DeleteTag(input.Id.Value);
+            else if ( !string.IsNullOrEmpty(input.Name) )
+                success = _tagManager.DeleteTag(input.Name);
 
-            if (tag != null)
-                _tagRepository.Delete(tag);
+            return success;
         }
 
         public TagDto UpdateTag(UpdateTagInput input)
@@ -131,9 +106,9 @@ namespace AssetManager.Tags
             //FirstOrDefault() returns null if nothing is found.
             Tag tag = null;
             if (input.Id.HasValue)
-                tag = _tagRepository.FirstOrDefault(input.Id.Value);
-            else
-                tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
+                tag = _tagManager.FirstOrDefaultTag(input.Id.Value);
+            else if( !string.IsNullOrEmpty(input.Name) )
+                tag = _tagManager.FirstOrDefaultTag(input.Name);
 
             if (tag != null)
             {
@@ -151,30 +126,25 @@ namespace AssetManager.Tags
 
                 if (input.Type.HasValue)
                     tag.Type = input.Type.Value;
+            }
+            else if ( !string.IsNullOrEmpty(input.Name) && !string.IsNullOrEmpty(input.Description) )
+            {
+                tag = new Tag
+                {
+                    Name = input.Name,
+                    Description = input.Description,
+                    UOM = input.UOM,
+                    Precision = input.Precision,
+                    Type = input.Type.HasValue ? input.Type.Value : TagType.Continuous,
+                    TenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1
+                };
+            }
 
-                // Map the new tag to the return format, and return the new information
+            if( tag != null)
+            {
+                tag = _tagManager.InsertOrUpdateTag(tag);
                 output = tag.MapTo<TagDto>();
             }
-
-            else // No tag was found, so try to create a new tag, if that is possible
-            { if( !string.IsNullOrEmpty(input.Name) && !string.IsNullOrEmpty(input.Description) )
-                {
-                    var create = new CreateTagInput
-                    {
-                        Name = input.Name,
-                        Description = input.Description,
-                        UOM = input.UOM,
-                        Precision = input.Precision,
-                        Type = input.Type.HasValue ? input.Type.Value : TagType.Continuous
-                    };
-                    output = CreateTag(create);
-                }
-            }
-
-            //We even do not call Update method of the repository.
-            //Because an application service method is a 'unit of work' scope as default.
-            //ABP automatically saves all changes when a 'unit of work' scope ends (without any exception).
-
             return output;
         }
     }

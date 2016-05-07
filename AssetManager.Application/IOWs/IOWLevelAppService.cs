@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services;
 using Abp.AutoMapper;
 using Abp.Domain.Repositories;
+using AssetManager.DomainServices;
 using AssetManager.Entities;
 using AssetManager.IOWs.Dtos;
 using AutoMapper;
@@ -16,15 +17,17 @@ namespace AssetManager.IOWs
     {
         //These members set in constructor using constructor injection.
         private readonly IIOWLevelRepository _iowLevelRepository;
+        private readonly IIowManager _iowManager;
 
-        public IOWLevelAppService(IIOWLevelRepository iowLevelRepository)
+        public IOWLevelAppService(IIOWLevelRepository iowLevelRepository, IIowManager iowManager)
         {
             _iowLevelRepository = iowLevelRepository;
+            _iowManager = iowManager;
         }
 
         public GetIOWLevelOutput GetIOWLevels()
         {
-            var levels = _iowLevelRepository.GetAll().OrderBy(p => p.Criticality).ToList();
+            List<IOWLevel> levels = _iowManager.GetAllLevels();
             return new GetIOWLevelOutput
             {
                 IOWLevels = levels.MapTo<List<IOWLevelDto>>()
@@ -51,9 +54,9 @@ namespace AssetManager.IOWs
             //FirstOrDefault() returns null if nothing is found.
             IOWLevel theLevel = null;
             if (input.Id.HasValue)
-                theLevel = _iowLevelRepository.FirstOrDefault(input.Id.Value);
+                theLevel = _iowManager.FirstOrDefaultLevel(input.Id.Value);
             else
-                theLevel = _iowLevelRepository.FirstOrDefault(p => p.Name == input.Name);
+                theLevel = _iowManager.FirstOrDefaultLevel(input.Name);
 
             if(theLevel != null )
             {
@@ -71,11 +74,9 @@ namespace AssetManager.IOWs
 
                 if (!string.IsNullOrEmpty(input.MetricGoal))
                     theLevel.MetricGoal = input.MetricGoal;
-            }
 
-            //We even do not call Update method of the repository.
-            //Because an application service method is a 'unit of work' scope as default.
-            //ABP automatically saves all changes when a 'unit of work' scope ends (without any exception).
+                IOWLevel output = _iowManager.InsertOrUpdateLevel(theLevel);
+            }
         }
 
         public void CreateIOWLevel(CreateIOWLevelInput input)
@@ -100,7 +101,7 @@ namespace AssetManager.IOWs
                     TenantId = tenantid
                 };
 
-            _iowLevelRepository.Insert(New);
+                _iowManager.InsertOrUpdateLevel(New);
             }
         }
 

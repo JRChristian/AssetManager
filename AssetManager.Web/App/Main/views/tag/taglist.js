@@ -39,7 +39,7 @@
             vm.refreshLevels = function () {
                 abp.ui.setBusy( //Set whole page busy until getTagListAsync completes
                     null,
-                    tagService.getTagListAsync({ Name: '' }).success(function (data) {
+                    tagService.getTagList({ Name: '' }).success(function (data) {
                         vm.tags = data.tags;
                         vm.gridOptions.data = data.tags;
                     })

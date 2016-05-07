@@ -12,9 +12,8 @@ namespace AssetManager.Tags
     {
         TagDto GetOneTag(GetOneTagInput input);
         GetTagOutput GetTagList(GetTagInput input);
-        Task<GetTagOutput> GetTagListAsync(GetTagInput input);
         TagDto CreateTag(CreateTagInput input);
-        void DeleteTag(DeleteTagInput input);
+        bool DeleteTag(DeleteTagInput input);
         TagDto UpdateTag(UpdateTagInput input);
     }
 }

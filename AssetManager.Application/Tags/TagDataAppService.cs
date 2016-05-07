@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using Abp.AutoMapper;
+using AssetManager.DomainServices;
 using AssetManager.Entities;
 using AssetManager.Tags.Dtos;
 using AssetManager.Utilities;
@@ -14,137 +15,93 @@ namespace AssetManager.Tags
     public class TagDataAppService : AssetManagerAppServiceBase, ITagDataAppService
     {
         //These members set in constructor using constructor injection.
-        private readonly ITagRepository _tagRepository;
-        private readonly ITagDataRawRepository _tagDataRawRepository;
+        private readonly ITagManager _tagManager;
 
-        public TagDataAppService(ITagRepository tagRepository, ITagDataRawRepository tagDataRawRepository)
+        public TagDataAppService(ITagManager tagManager)
         {
-            _tagRepository = tagRepository;
-            _tagDataRawRepository = tagDataRawRepository;
+            _tagManager = tagManager;
         }
 
         public GetTagDataRawOutput GetTagDataRawList(GetTagDataRawInput input)
         {
-            Tag tag = null;
+            GetTagDataRawOutput output = null;
             List<TagDataRaw> data = null;
-            GetTagDataRawOutput output = new GetTagDataRawOutput
-            {
-                Name = input.Name,
-                Description = "",
-                UOM = "",
-                Precision = null,
-                TagDataRaw = new List<TagDataRawDto>()
-            };
 
-            //Get the tag information and confirm that the tag exists
+            //Get the raw data for the tag. This will return null if the tag does not exist OR there aren't any data.
             if (input.Id.HasValue)
-                tag = _tagRepository.Get(input.Id.Value);
-            else
-                tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
+                data = _tagManager.GetAllListData(input.Id.Value);
+            else if( !string.IsNullOrEmpty(input.Name))
+                data = _tagManager.GetAllListData(input.Name);
 
-            //If the tag exists, save the description and get values in the relevant time range
-            if (tag != null)
+            if (data != null && data.Count > 0)
             {
-                output.Name = tag.Name;
-                output.Description = tag.Description;
-                output.UOM = tag.UOM;
-                output.Precision = tag.Precision;
-
-                // Get data in the desired range
-                if (input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp >= input.StartTimestamp.Value && t.Timestamp <= input.EndTimestamp).OrderByDescending(t => t.Timestamp).ToList();
-                else if (input.StartTimestamp.HasValue && !input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp >= input.StartTimestamp.Value).OrderByDescending(t => t.Timestamp).ToList();
-                else if (!input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp <= input.EndTimestamp).OrderByDescending(t => t.Timestamp).ToList();
-                else
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id).OrderByDescending(t => t.Timestamp).ToList();
-
-                output.TagDataRaw = data.MapTo<List<TagDataRawDto>>();
+                Tag tag = data[0].Tag;
+                output = new GetTagDataRawOutput
+                {
+                    Name = tag.Name,
+                    Description = tag.Description,
+                    UOM = tag.UOM,
+                    Precision = tag.Precision,
+                    TagDataRaw = data.MapTo<List<TagDataRawDto>>()
+                };
             }
-
             return output;
         }
 
         public GetTagDataChartOutput GetTagDataChart(GetTagDataChartInput input)
         {
-            Tag tag = null;
-            GetTagDataChartOutput output = new GetTagDataChartOutput
-            {
-                Name = input.Name,
-                Description = "",
-                UOM = "",
-                Precision = null,
-                TagDataChart = new List<TagDataChartDto>()
-            };
+            GetTagDataChartOutput output = null;
+
+            //Get the raw data for the tag. This will return null if the tag does not exist OR there aren't any data.
             List<TagDataRaw> data = null;
-
-            //Get the tag information and confirm that the tag exists
             if (input.Id.HasValue)
-                tag = _tagRepository.Get(input.Id.Value);
-            else if( !string.IsNullOrEmpty(input.Name) )
-                tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
-            
-            //If the tag exists, save the description and get values in the relevant time range
-            if (tag != null)
-            {
-                output.Name = tag.Name;
-                output.Description = tag.Description;
-                output.UOM = tag.UOM;
-                output.Precision = tag.Precision;
+                data = _tagManager.GetAllListData(input.Id.Value, input.StartTimestamp, input.EndTimestamp);
+            else if (!string.IsNullOrEmpty(input.Name))
+                data = _tagManager.GetAllListData(input.Name, input.StartTimestamp, input.EndTimestamp);
 
-                // Get data in the desired range
-                if (input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp >= input.StartTimestamp.Value && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
-                else if (input.StartTimestamp.HasValue && !input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp >= input.StartTimestamp.Value).OrderBy(t => t.Timestamp).ToList();
-                else if (!input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
-                else
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id).OrderBy(t => t.Timestamp).ToList();
+            //If we got some data exist, work on the chart format.
+            if (data != null && data.Count > 0)
+            {
+                Tag tag = data[0].Tag;
+                output = new GetTagDataChartOutput
+                {
+                    Name = tag.Name,
+                    Description = tag.Description,
+                    UOM = tag.UOM,
+                    Precision = tag.Precision,
+                    TagDataChart = new List<TagDataChartDto>()
+                };
 
                 // Convert the entity data into the necessary charting format
                 foreach (TagDataRaw d in data )
                 {
                     // Charting time is in JavaScript ticks (milliseconds) since January 1, 1970
                     // C# datetime is in ticks (milliseconds) since January 1, 0000
-                    //TimeSpan ts = d.Timestamp - new DateTime(1970, 1, 1);
-                    //output.TagDataChart.Add(new TagDataChartDto { x = ts.TotalMilliseconds, y = d.Value });
                     output.TagDataChart.Add(new TagDataChartDto { x = d.Timestamp.ToJavaScriptMilliseconds(), y = d.Value });
                 }
 
-                if( data != null && data.Count > 0 )
+                // Calculate and store the time span
+                DateTime minTimestamp = input.StartTimestamp.HasValue ? input.StartTimestamp.Value : data[0].Timestamp;
+                DateTime maxTimestamp = input.EndTimestamp.HasValue ? input.EndTimestamp.Value : data[data.Count-1].Timestamp;
+                TimeSpan tsRange = maxTimestamp - minTimestamp;
+                if( tsRange.TotalDays > 1 )
                 {
-                    DateTime minTimestamp = input.StartTimestamp.HasValue ? input.StartTimestamp.Value : data[0].Timestamp;
-                    DateTime maxTimestamp = input.EndTimestamp.HasValue ? input.EndTimestamp.Value : data[data.Count-1].Timestamp;
-                    TimeSpan tsRange = maxTimestamp - minTimestamp;
-                    if( tsRange.TotalDays > 1 )
-                    {
-                        // Round the start back to the start of day
-                        minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, 0, 0, 0);
-                    }
-                    else if( tsRange.TotalHours > 1 )
-                    {
-                        // Round the start back to the start of the hour
-                        minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, minTimestamp.Hour, 0, 0);
-                    }
-
-                    //TimeSpan ts = minTimestamp - new DateTime(1970, 1, 1);
-                    //output.MinTimestampJS = ts.TotalMilliseconds;
-                    output.MinTimestampJS = minTimestamp.ToJavaScriptMilliseconds();
-
-                    //ts = maxTimestamp - new DateTime(1970, 1, 1);
-                    //output.MaxTimestampJS = ts.TotalMilliseconds;
-                    output.MaxTimestampJS = maxTimestamp.ToJavaScriptMilliseconds();
+                    // Round the start back to the start of day
+                    minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, 0, 0, 0);
                 }
+                else if( tsRange.TotalHours > 1 )
+                {
+                    // Round the start back to the start of the hour
+                    minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, minTimestamp.Hour, 0, 0);
+                }
+                output.MinTimestampJS = minTimestamp.ToJavaScriptMilliseconds();
+                output.MaxTimestampJS = maxTimestamp.ToJavaScriptMilliseconds();
             }
-
             return output;
         }
 
         public GetTagDataCanvasJSOutput GetTagDataCanvasJS(GetTagDataCanvasJSInput input)
         {
-            Tag tag = null;
             GetTagDataCanvasJSOutput output = new GetTagDataCanvasJSOutput
             {
                 Name = input.Name,
@@ -162,13 +119,13 @@ namespace AssetManager.Tags
                     data = new List<CanvasJSData>()
                 }
             };
-            List<TagDataRaw> data = null;
 
             //Get the tag information and confirm that the tag exists
+            Tag tag = null;
             if (input.Id.HasValue)
-                tag = _tagRepository.Get(input.Id.Value);
+                tag = _tagManager.FirstOrDefaultTag(input.Id.Value);
             else if (!string.IsNullOrEmpty(input.Name))
-                tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
+                tag = _tagManager.FirstOrDefaultTag(input.Name);
 
             //If the tag exists, save the description and get values in the relevant time range
             if (tag != null)
@@ -197,14 +154,7 @@ namespace AssetManager.Tags
                 });
 
                 // Get data in the desired range
-                if (input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp >= input.StartTimestamp.Value && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
-                else if (input.StartTimestamp.HasValue && !input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp >= input.StartTimestamp.Value).OrderBy(t => t.Timestamp).ToList();
-                else if (!input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
-                else
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tag.Id).OrderBy(t => t.Timestamp).ToList();
+                List<TagDataRaw> data = _tagManager.GetAllListData(tag.Id, input.StartTimestamp, input.EndTimestamp);
 
                 // Convert the entity data into the necessary charting format
                 foreach (TagDataRaw d in data)
@@ -217,24 +167,24 @@ namespace AssetManager.Tags
                 if (data != null && data.Count > 0)
                 {
                     string valueFormatString = null;
-                    DateTime minTimestamp = input.StartTimestamp.HasValue ? input.StartTimestamp.Value : data[0].Timestamp;
-                    DateTime maxTimestamp = input.EndTimestamp.HasValue ? input.EndTimestamp.Value : data[data.Count - 1].Timestamp;
-                    TimeSpan tsRange = maxTimestamp - minTimestamp;
+                    DateTime startTimestamp = input.StartTimestamp.HasValue ? input.StartTimestamp.Value : data[0].Timestamp;
+                    DateTime endTimestamp = input.EndTimestamp.HasValue ? input.EndTimestamp.Value : data[data.Count - 1].Timestamp;
+                    TimeSpan tsRange = endTimestamp - startTimestamp;
                     if (tsRange.TotalDays > 1)
                     {
                         // Round the start back to the start of day
-                        minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, 0, 0, 0);
+                        startTimestamp = new DateTime(startTimestamp.Year, startTimestamp.Month, startTimestamp.Day, 0, 0, 0);
                         valueFormatString = "DD-MMM HH:mm";
                     }
                     else if (tsRange.TotalHours > 1)
                     {
                         // Round the start back to the start of the hour
-                        minTimestamp = new DateTime(minTimestamp.Year, minTimestamp.Month, minTimestamp.Day, minTimestamp.Hour, 0, 0);
+                        startTimestamp = new DateTime(startTimestamp.Year, startTimestamp.Month, startTimestamp.Day, startTimestamp.Hour, 0, 0);
                         valueFormatString = "HH:mm";
                     }
 
-                    output.CanvasJS.axisX.minimum = minTimestamp.ToJavaScriptMilliseconds();
-                    output.CanvasJS.axisX.maximum = maxTimestamp.ToJavaScriptMilliseconds();
+                    output.CanvasJS.axisX.minimum = startTimestamp.ToJavaScriptMilliseconds();
+                    output.CanvasJS.axisX.maximum = endTimestamp.ToJavaScriptMilliseconds();
                     output.CanvasJS.axisX.valueFormatString = valueFormatString;
                 }
             }
@@ -242,98 +192,32 @@ namespace AssetManager.Tags
             return output;
         }
 
-
-        /*public Task<GetTagDataRawOutput> GetTagDataRawListAsync(GetTagDataRawInput input)
-        {
-
-        }*/
-
         public TagDataRawDto AddTagDataRaw(AddTagDataRawInput input)
         {
-            Tag tag = null;
-            TagDataRawDto output = new TagDataRawDto
+            TagDataName revised = new TagDataName
             {
-                Id = 0,
-                Timestamp = DateTime.Now,
-                Value = 0,
-                Quality = TagDataQuality.Bad
+
+                TagId = input.Id,
+                TagName = input.Name,
+                Timestamp = input.Timestamp,
+                Value = input.Value,
+                Quality = input.Quality
             };
-
-            // Get the tag information and confirm that the tag exists
-            if (input.Id.HasValue)
-                tag = _tagRepository.Get(input.Id.Value);
-            else
-                tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
-
-            // If the tag exists, add or update the value
-            if (tag != null)
-            {
-                TagDataRaw data = null;
-                DateTime timestamp = input.Timestamp.HasValue ? input.Timestamp.Value : DateTime.Now;
-
-                // Find out if there is already a tag with this value
-                data = _tagDataRawRepository.FirstOrDefault(p => p.TagId == tag.Id && p.Timestamp == timestamp);
-
-                if( data == null)
-                {
-                    // Did not found a match, so add all entries
-                    data = new TagDataRaw
-                        {
-                            TenantId = tag.TenantId,
-                            TagId = tag.Id,
-                            Timestamp = timestamp,
-                            Value = input.Value,
-                            Quality = input.Quality.HasValue ? input.Quality.Value : TagDataQuality.Good
-                        };
-                }
-                else
-                {
-                    // Found the record, so update only what has changed
-                    data.Value = input.Value;
-                    if( input.Quality.HasValue )
-                        data.Quality = input.Quality.Value;
-                }
-
-                data.Id = _tagDataRawRepository.InsertOrUpdateAndGetId(data);
-
-                output = data.MapTo<TagDataRawDto>();
-            }
+            TagDataRaw data = _tagManager.InsertOrUpdateDataByName(revised);
+            TagDataRawDto output = data.MapTo<TagDataRawDto>();
 
             return output;
         }
 
         public PostTagDataBulkOutput PostTagDataBulk(PostTagDataBulkInput input)
         {
-            PostTagDataBulkOutput output = new PostTagDataBulkOutput { Total = 0, Successes = 0 };
-            Tag tag = null;
-
-            foreach( TagDataBulkDto one in input.TagDataRaw )
+            PostTagDataBulkOutput output = new PostTagDataBulkOutput
             {
-                output.Total++;
+                Total = input.TagDataName.Count,
+                Successes = 0
+            };
 
-                // Get a tag id for the tag on this record.
-                // If the tag is the same as the previous record, no need to get it again.
-                if ( tag == null || one.Name != tag.Name )
-                    tag = _tagRepository.FirstOrDefault(p => p.Name == one.Name);
-
-                if ( tag != null )
-                {
-                    TagDataRaw data = new TagDataRaw
-                    {
-                        TenantId = tag.TenantId,
-                        TagId = tag.Id,
-                        Timestamp = one.Timestamp,
-                        Value = one.Value,
-                        Quality = one.Quality.HasValue ? one.Quality.Value : TagDataQuality.Good
-                    };
-
-                    data.Id = _tagDataRawRepository.InsertOrUpdateAndGetId(data);
-
-                    if (data.Id > 0)
-                        output.Successes++;
-                }
-            }
-
+            output.Successes = (int)_tagManager.InsertOrUpdateAllDataByName(input.TagDataName);
             return output;
         }
 

@@ -197,6 +197,10 @@
       <Project>{17298ea0-af73-4f30-b6f1-2066100d7d74}</Project>
       <Name>AssetManager.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AssetManager.EntityFramework\AssetManager.EntityFramework.csproj">
+      <Project>{3979F157-DEB0-4878-AB1D-4CEF6B5A1300}</Project>
+      <Name>AssetManager.EntityFramework</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
