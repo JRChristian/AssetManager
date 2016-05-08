@@ -283,6 +283,7 @@
     <Content Include="App\Main\views\asset\list.js" />
     <Content Include="App\Main\views\asset\edit.js" />
     <Content Include="App\Main\views\asset\new.js" />
+    <Content Include="App\Main\views\iow\leveledit.js" />
     <Content Include="App\Main\views\iow\LevelList.js" />
     <Content Include="App\Main\views\iow\main.js" />
     <Content Include="App\Main\views\iow\variablechart.js" />
@@ -427,6 +428,7 @@
     <Content Include="Abp\Framework\styles\abp.less" />
     <Content Include="Abp\Framework\styles\abp.css.map" />
     <Content Include="App\Main\views\iow\variablechart.cshtml" />
+    <Content Include="App\Main\views\iow\leveledit.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />

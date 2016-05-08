@@ -14,7 +14,7 @@
             vm.refreshLevels = function () {
                 abp.ui.setBusy( //Set whole page busy until getLevels completes
                     null,
-                    levelService.getIOWLevelsAsync().success(function (data) { vm.levels = data.iowLevels; })
+                    levelService.getIOWLevels().success(function (data) { vm.levels = data.iowLevels; })
                 );
             };
 

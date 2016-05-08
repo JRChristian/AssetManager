@@ -14,7 +14,7 @@ namespace AssetManager.IOWs.Dtos
         public string Name { get; set; }
         public string Description { get; set; }
         [Range(1, 5)]
-        public int? Criticality { get; set; }
+        public int Criticality { get; set; }
         public string ResponseGoal { get; set; }
         public string MetricGoal { get; set; }
     }

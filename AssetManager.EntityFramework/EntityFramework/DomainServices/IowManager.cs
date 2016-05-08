@@ -83,7 +83,6 @@ namespace AssetManager.DomainServices
         {
             IOWLevel level = _iowLevelRepository.FirstOrDefault(predicate);
             return DeleteLevel(level.Id);
-
         }
 
         public IOWLevel InsertOrUpdateLevel(IOWLevel input)

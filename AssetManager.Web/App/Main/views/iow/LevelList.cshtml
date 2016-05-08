@@ -3,29 +3,28 @@
         <div class="row">
             <h3 class="col-xs-6">@L("LevelList")</h3>
             <div class="col-xs-6 text-right">
-                <button ng-click="vm.createDefaults()" type="submit" class="btn btn-primary btn-sm">@L("CreateDefaultLevels")</button>
+                <a ui-sref="iowleveledit({ Id: 0 })" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> @L("CreateLevel")</a>
+                <button ng-click="vm.createDefaults()" type="submit" class="btn btn-default btn-sm">@L("CreateDefaultLevels")</button>
             </div>
         </div>
         <div class="row">
             <table class="table">
                 <thead>
                     <tr>
-                        <th class="col-sm-1"> </th>
                         <th class="col-sm-2">@L("Name")</th>
                         <th class="col-sm-3">@L("Description")</th>
                         <th class="col-sm-3">@L("ResponseGoal")</th>
-                        <th class="col-sm-2">@L("MetricGoal")</th>
+                        <th class="col-sm-3">@L("MetricGoal")</th>
                         <th class="col-sm-1"> </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="level in vm.levels">
-                        <td>{{level.criticality}}</td>
-                        <td>{{level.name}}</td>
+                        <td>{{level.criticality}} - {{level.name}}</td>
                         <td>{{level.description}}</td>
                         <td>{{level.responseGoal}}</td>
                         <td>{{level.metricGoal}}</td>
-                        <td><a ui-sref="Leveledit({ LevelId: level.id})"><i class="fa fa-wrench"></i></a> <i class="fa fa-trash"></i></td>
+                        <td><a ui-sref="iowleveledit({ levelId: level.id})"><i class="fa fa-wrench"></i></a> <i class="fa fa-trash"></i></td>
                     </tr>
                 </tbody>
             </table>

@@ -19,10 +19,9 @@ namespace AssetManager.IOWs
     /// </summary>
     public interface IIOWLevelAppService : IApplicationService
     {
+        IOWLevelDto GetOneIOWLevel(GetOneIOWLevelInput input);
         GetIOWLevelOutput GetIOWLevels();
-        Task<GetIOWLevelOutput> GetIOWLevelsAsync(); 
         void UpdateIOWLevel(UpdateIOWLevelInput input);
-        void CreateIOWLevel(CreateIOWLevelInput input);
         void DeleteIOWLevel(GetOneIOWLevelInput input);
         void CreateDefaultIOWLevels();
     }

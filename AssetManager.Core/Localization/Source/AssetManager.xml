@@ -37,6 +37,7 @@
     <text name="IOWs" value="IOWs" />
     <text name="IOWLevels" value="Levels" />
     <text name="IOWVariables" value="Variables" />
+    <text name="LevelDetails" value="IOW Level" />
     <text name="LevelList" value="IOW Levels" />
     <text name="IowVariableList" value="IOW Variables" />
     <text name="IowVariable" value="IOW Variable" />
@@ -46,12 +47,15 @@
     <text name="MetricGoal" value="Metric - last 30 days" />
     <text name="CreateDefaultLevels" value="Create default levels" />
     <text name="VariableName" value="Variable" />
+    <text name="UpdateTheLevel" value="Save changes" />
     <text name="UpdateTheVariable" value="Save changes" />
     <text name="Edit" value="Edit" />
     <text name="Chart" value="Chart" />
     <text name="Drawings" value="Drawings" />
     <text name="View" value="View" />
+    <text name="CreateLevel" value="Add a level" />
     <text name="CreateVariable" value="Add a variable" />
+    <text name="LevelUpdatedOk" value="Level {0} has been updated" />
     <text name="VariableUpdatedOk" value="Variable {0} has been updated" />
     <text name="Causes" value="Causes" />
     <text name="Consequences" value="Consequences" />

@@ -39,7 +39,7 @@ namespace AssetManager.Web
                     )
                     .AddItem(
                         new MenuItemDefinition(
-                            "IOWLevels",
+                            "IOWLevelList",
                             new LocalizableString("IOWLevels", AssetManagerConsts.LocalizationSourceName),
                             url: "#/iowlevellist",
                             icon: "fa fa-tasks"

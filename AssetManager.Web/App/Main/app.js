@@ -55,10 +55,15 @@
                      templateUrl: '/App/Main/views/iow/main.cshtml',
                      menu: 'IOWMain' //Matches to name of 'IOW' menu in AssetManagerNavigationProvider
                 })
-                .state('iowlevels', {
+                .state('iowleveledit', {
+                    url: '/iowleveledit?levelId',
+                    templateUrl: '/App/Main/views/iow/leveledit.cshtml',
+                    menu: 'IOWLevelEdit'
+                })
+                .state('iowlevellist', {
                      url: '/iowlevellist',
                      templateUrl: '/App/Main/views/iow/LevelList.cshtml',
-                     menu: 'IOWLevels' //Matches to name of 'IOWLevels' menu in AssetManagerNavigationProvider
+                     menu: 'IOWLevelList' //Matches to name of 'IOWLevels' menu in AssetManagerNavigationProvider
                 })
                 .state('iowvariablechart', {
                     url: '/iowvariablechart?Id',
