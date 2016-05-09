@@ -11,20 +11,20 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th class="col-sm-1"> </th>
                         <th class="col-sm-2">@L("Name")</th>
                         <th class="col-sm-3">@L("Description")</th>
                         <th class="col-sm-3">@L("ResponseGoal")</th>
                         <th class="col-sm-3">@L("MetricGoal")</th>
-                        <th class="col-sm-1"> </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="level in vm.levels">
+                        <td><a ui-sref="iowleveledit({ levelId: level.id})"><i class="fa fa-wrench"></i></a></i></td>
                         <td>{{level.criticality}} - {{level.name}}</td>
                         <td>{{level.description}}</td>
                         <td>{{level.responseGoal}}</td>
                         <td>{{level.metricGoal}}</td>
-                        <td><a ui-sref="iowleveledit({ levelId: level.id})"><i class="fa fa-wrench"></i></a> <i class="fa fa-trash"></i></td>
                     </tr>
                 </tbody>
             </table>

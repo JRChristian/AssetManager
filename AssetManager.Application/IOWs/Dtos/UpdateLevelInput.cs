@@ -8,18 +8,14 @@ using System.Threading.Tasks;
 
 namespace AssetManager.IOWs.Dtos
 {
-    public class CreateIOWLevelInput : IInputDto
+    public class UpdateLevelInput : IInputDto
     {
-        [Required]
+        public long? Id { get; set; }
         public string Name { get; set; }
-        [Required]
         public string Description { get; set; }
-        [Required]
-        [Range(1,5)]
+        [Range(1, 5)]
         public int Criticality { get; set; }
-        [Required]
         public string ResponseGoal { get; set; }
-        [Required]
         public string MetricGoal { get; set; }
     }
 }

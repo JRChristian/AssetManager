@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace AssetManager.IOWs.Dtos
 {
-    public class GetIOWLevelOutput : IOutputDto
+    public class GetAllLevelsOutput : IOutputDto
     {
-        public List<IOWLevelDto> IOWLevels { get; set; }
+        public List<IowLevelDto> IOWLevels { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace AssetManager.IOWs.Dtos
     /// <summary>
     /// A DTO class that can be used in various application service methods when needed to send/receive Level objects.
     /// </summary>
-    public class IOWLevelDto : EntityDto<long>
+    public class IowLevelDto : EntityDto<long>
     {
         public string Name { get; set; }
         public string Description { get; set; }

@@ -13,19 +13,17 @@ using System.Threading.Tasks;
 
 namespace AssetManager.IOWs
 {
-    public class IOWLevelAppService : AssetManagerAppServiceBase, IIOWLevelAppService
+    public class IowLevelAppService : AssetManagerAppServiceBase, IIowLevelAppService
     {
         //These members set in constructor using constructor injection.
-        private readonly IIOWLevelRepository _iowLevelRepository;
         private readonly IIowManager _iowManager;
 
-        public IOWLevelAppService(IIOWLevelRepository iowLevelRepository, IIowManager iowManager)
+        public IowLevelAppService(IIowManager iowManager)
         {
-            _iowLevelRepository = iowLevelRepository;
             _iowManager = iowManager;
         }
 
-        public IOWLevelDto GetOneIOWLevel(GetOneIOWLevelInput input)
+        public IowLevelDto GetLevel(GetLevelInput input)
         {
             IOWLevel level = null;
             if (input.Id.HasValue)
@@ -33,92 +31,67 @@ namespace AssetManager.IOWs
             else if( !string.IsNullOrEmpty(input.Name) )
                 level = _iowManager.FirstOrDefaultLevel(input.Name);
 
-            return level.MapTo<IOWLevelDto>();
+            return level.MapTo<IowLevelDto>();
         }
 
 
-        public GetIOWLevelOutput GetIOWLevels()
+        public GetAllLevelsOutput GetAllLevels()
         {
             List<IOWLevel> levels = _iowManager.GetAllLevels();
-            return new GetIOWLevelOutput
+            return new GetAllLevelsOutput
             {
-                IOWLevels = levels.MapTo<List<IOWLevelDto>>()
+                IOWLevels = levels.MapTo<List<IowLevelDto>>()
             };
         }
 
-        public void UpdateIOWLevel(UpdateIOWLevelInput input)
+        public IowLevelDto UpdateLevel(UpdateLevelInput input)
         {
+            //We can use Logger, it is defined in ApplicationService base class.
+            Logger.Info("Updating an IOW level for input: " + input.Name);
 
             // All assets belong to a tenant. If not specified, put them in the default tenant.
             int tenantid = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
 
-            //Retrieving an IOWLevel entity with given id (if specified) or name (if id is not specified).
-            //FirstOrDefault() returns null if nothing is found.
-            IOWLevel level = null;
+            IOWLevel level = new IOWLevel
+            {
+                Name = input.Name,
+                Description = input.Description,
+                Criticality = input.Criticality,
+                ResponseGoal = input.ResponseGoal,
+                MetricGoal = input.MetricGoal,
+                TenantId = tenantid
+            };
             if (input.Id.HasValue)
-                level = _iowManager.FirstOrDefaultLevel(input.Id.Value);
-            else
-                level = _iowManager.FirstOrDefaultLevel(input.Name);
+                level.Id = input.Id.Value;
 
-            if (level == null )
-            {
-                // Level does not exist
-                //We can use Logger, it is defined in ApplicationService base class.
-                Logger.Info("Creating an IOW level for input: " + input.Name);
-
-                IOWLevel New = new IOWLevel
-                {
-                    Name = input.Name,
-                    Description = input.Description,
-                    Criticality = input.Criticality,
-                    ResponseGoal = input.ResponseGoal,
-                    MetricGoal = input.MetricGoal,
-                    TenantId = tenantid
-                };
-            }
-            else // Level exists
-            {
-                //We can use Logger, it is defined in ApplicationService base class.
-                Logger.Info("Updating an IOW level for input: " + input.Name);
-
-                if (!string.IsNullOrEmpty(input.Name))
-                    level.Name = input.Name;
-
-                if (!string.IsNullOrEmpty(input.Description))
-                    level.Description = input.Description;
-
-                level.Criticality = input.Criticality;
-
-                if (!string.IsNullOrEmpty(input.ResponseGoal))
-                    level.ResponseGoal = input.ResponseGoal;
-
-                if (!string.IsNullOrEmpty(input.MetricGoal))
-                    level.MetricGoal = input.MetricGoal;
-            }
-
-            IOWLevel output = _iowManager.InsertOrUpdateLevel(level);
+            level = _iowManager.InsertOrUpdateLevel(level);
+            return level.MapTo<IowLevelDto>();
         }
 
-        public void DeleteIOWLevel(GetOneIOWLevelInput input)
+        public DeleteLevelOutput DeleteLevel(GetLevelInput input)
         {
-            bool success = false;
+            DeleteLevelOutput output = new DeleteLevelOutput
+            {
+                Id = input.Id.HasValue ? input.Id.Value : 0,
+                Name = input.Name,
+                Success = false
+            };
+            Logger.Info("Deleting an IOW level for input id: " + output.Id.ToString() + " name: " + input.Name);
 
             if (input.Id.HasValue)
-                success = _iowManager.DeleteLevel(input.Id.Value);
+                output.Success = _iowManager.DeleteLevel(input.Id.Value);
             else
-                success = _iowManager.DeleteLevel(input.Name);
+                output.Success = _iowManager.DeleteLevel(input.Name);
 
-            Logger.Info("Deleting an IOW level for input id: " + 
-                (input.Id.HasValue ? input.Id.Value.ToString() : "n/a") + " name: " + input.Name +
-                " with result: " + (success ? "succeeded" : "failed") );
+            return output;
         }
 
-        public void CreateDefaultIOWLevels()
+        public void CreateDefaultLevels()
         {
             //We can use Logger, it is defined in ApplicationService base class.
             Logger.Info("Creating default IOW levels");
 
-            UpdateIOWLevel(new UpdateIOWLevelInput {
+            UpdateLevel(new UpdateLevelInput {
                 Name = "Critical",
                 Description = "Critical limit. Failure occurs quickly.",
                 Criticality = 1,
@@ -126,7 +99,7 @@ namespace AssetManager.IOWs
                 MetricGoal = "Zero incidents"
             });
 
-            UpdateIOWLevel(new UpdateIOWLevelInput
+            UpdateLevel(new UpdateLevelInput
             {
                 Name = "Standard",
                 Description = "Standard limit. Failure occurs with sustained operations.",
@@ -135,7 +108,7 @@ namespace AssetManager.IOWs
                 MetricGoal = "Zero incidents laster longer than 24 hours"
             });
 
-            UpdateIOWLevel(new UpdateIOWLevelInput
+            UpdateLevel(new UpdateLevelInput
             {
                 Name = "Target",
                 Description = "Optimal operating range. Inefficient or uneconomical with sustained operations.",
@@ -144,7 +117,7 @@ namespace AssetManager.IOWs
                 MetricGoal = "Zero incidents lasting longer than 10 days"
             });
 
-            UpdateIOWLevel(new UpdateIOWLevelInput
+            UpdateLevel(new UpdateLevelInput
             {
                 Name = "Information",
                 Description = "Information only. No consequences expected with sustained operations.",

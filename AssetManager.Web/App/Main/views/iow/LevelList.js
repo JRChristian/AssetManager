@@ -3,7 +3,7 @@
 
     var controllerId = 'app.views.level.list';
     app.controller(controllerId, [
-        '$scope', '$location', 'abp.services.app.iOWLevel',
+        '$scope', '$location', 'abp.services.app.iowLevel',
         function ($scope, $location, levelService) {
             var vm = this;
 
@@ -14,12 +14,12 @@
             vm.refreshLevels = function () {
                 abp.ui.setBusy( //Set whole page busy until getLevels completes
                     null,
-                    levelService.getIOWLevels().success(function (data) { vm.levels = data.iowLevels; })
+                    levelService.getAllLevels().success(function (data) { vm.levels = data.iowLevels; })
                 );
             };
 
             vm.createDefaults = function () {
-                levelService.createDefaultIOWLevels();
+                levelService.createDefaultLevels();
                 vm.refreshLevels();
             };
 

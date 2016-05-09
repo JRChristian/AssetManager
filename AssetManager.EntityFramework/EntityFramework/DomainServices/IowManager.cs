@@ -87,13 +87,34 @@ namespace AssetManager.DomainServices
 
         public IOWLevel InsertOrUpdateLevel(IOWLevel input)
         {
-            // Make sure criticality is in the proper range
-            if (input.Criticality < minCriticality)
-                input.Criticality = minCriticality;
-            if (input.Criticality > maxCriticality)
-                input.Criticality = maxCriticality;
+            // Look to see if a level already exists. If so, fetch it.
+            IOWLevel level = _iowLevelRepository.FirstOrDefault(input.Id);
+            if( level == null )
+                level = _iowLevelRepository.FirstOrDefault(p => p.Name == input.Name );
 
-            return _iowLevelRepository.InsertOrUpdate(input);
+            if (level != null)
+            {
+                // Found a record. Use everything from the input except the Id and tenant.
+                // level.TenantId = input.TenantId;
+                level.Name = input.Name;
+                level.Description = input.Description;
+                level.Criticality = input.Criticality;
+                level.ResponseGoal = input.ResponseGoal;
+                level.MetricGoal = input.MetricGoal;
+            }
+            else
+            {
+                // Did not find a record. Use the input as is.
+                level = input;
+            }
+
+            // Make sure criticality is in the proper range
+            if (level.Criticality < minCriticality)
+                level.Criticality = minCriticality;
+            if (level.Criticality > maxCriticality)
+                level.Criticality = maxCriticality;
+
+            return _iowLevelRepository.InsertOrUpdate(level);
         }
 
         public List<IOWDeviation> DetectDeviations(TagDataRaw tagdata)

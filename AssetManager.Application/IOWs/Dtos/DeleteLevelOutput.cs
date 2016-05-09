@@ -1,16 +1,16 @@
 ﻿using Abp.Application.Services.Dto;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AssetManager.IOWs.Dtos
 {
-    public class GetOneIOWLevelInput : IInputDto
+    public class DeleteLevelOutput : IOutputDto
     {
-        public long? Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
+        public bool Success { get; set; }
     }
 }

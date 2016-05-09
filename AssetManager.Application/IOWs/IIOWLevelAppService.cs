@@ -17,12 +17,12 @@ namespace AssetManager.IOWs
     /// Application services works with DTOs (Data Transfer Objects).
     /// Service methods gets and returns DTOs.
     /// </summary>
-    public interface IIOWLevelAppService : IApplicationService
+    public interface IIowLevelAppService : IApplicationService
     {
-        IOWLevelDto GetOneIOWLevel(GetOneIOWLevelInput input);
-        GetIOWLevelOutput GetIOWLevels();
-        void UpdateIOWLevel(UpdateIOWLevelInput input);
-        void DeleteIOWLevel(GetOneIOWLevelInput input);
-        void CreateDefaultIOWLevels();
+        IowLevelDto GetLevel(GetLevelInput input);
+        GetAllLevelsOutput GetAllLevels();
+        IowLevelDto UpdateLevel(UpdateLevelInput input);
+        DeleteLevelOutput DeleteLevel(GetLevelInput input);
+        void CreateDefaultLevels();
     }
 }
