@@ -20,6 +20,7 @@
                 data: [],
                 enableSorting: false,
                 enableColumnResizing: true,
+                minRowsToShow: 4,
                 columnDefs: [
                     {
                         name: 'isActive', width: '10%', displayName: vm.localize('IsActive'), 

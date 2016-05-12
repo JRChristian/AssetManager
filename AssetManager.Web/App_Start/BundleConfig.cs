@@ -15,7 +15,10 @@ namespace AssetManager.Web
             bundles.Add(
                 new StyleBundle("~/Bundles/App/vendor/css")
                     .Include("~/Content/themes/base/all.css", new CssRewriteUrlTransform())
-                    .Include("~/Content/bootstrap-cosmo.min.css", new CssRewriteUrlTransform())
+                    .Include("~/Content/bootstrap-cerulean.min.css", new CssRewriteUrlTransform())
+                    //.Include("~/Content/bootstrap-cosmo.min.css", new CssRewriteUrlTransform())
+                    //.Include("~/Content/bootstrap-paper.min.css", new CssRewriteUrlTransform())
+                    //.Include("~/Content/bootstrap-simplex.min.css", new CssRewriteUrlTransform())
                     .Include("~/Content/toastr.min.css")
                     .Include("~/Scripts/sweetalert/sweet-alert.css")
                     .Include("~/Content/flags/famfamfam-flags.css", new CssRewriteUrlTransform())

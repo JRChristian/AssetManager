@@ -1,14 +1,7 @@
 ﻿<div ng-controller="app.views.variable.view as vm">
     <div class="container">
         <div class="row">
-            <div class="col-sm-9">
-                <h3>@L("IowVariable")</h3>
-            </div>
-            <div class="col-sm-3">
-                <a ui-sref="iowvariablechart({ Id: {{vm.variable.id}} })" class="btn btn-primary btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
-                <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>
-                <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-wrench"></i> @L("Edit")</a>
-            </div>
+            <h3>@L("IowVariable")</h3>
         </div>
         <div class="row">
             <form id="ViewVariableForm" class="form-horizontal" role="form" name="viewVariableForm" novalidate>
@@ -39,7 +32,38 @@
             </form>
         </div>
         <div class="row">
-            <div id="grid1" ui-grid="vm.gridlimits" class="grid"></div>
+            @* <div id="grid1" ui-grid="vm.gridlimits" class="grid"></div> *@
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>@L("Name")</th>
+                            <th>@L("LowLimit")</th>
+                            <th>@L("HighLimit")</th>
+                            <th>@L("Causes")</th>
+                            <th>@L("Consequences")</th>
+                            <th>@L("Action")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="limit in vm.variable.limits" ng-class="{'danger':limit.criticality==1,'warning':limit.criticality==2}">
+                            <td align="center">{{limit.criticality}}</td>
+                            <td>{{limit.name}}</td>
+                            <td align="center">{{limit.lowLimit}}</td>
+                            <td align="center">{{limit.highLimit}}</td>
+                            <td>{{limit.cause}}</td>
+                            <td>{{limit.consequences}}</td>
+                            <td>{{limit.action}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <a ui-sref="iowvariablechart({ Id: {{vm.variable.id}} })" class="btn btn-primary btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
+            <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>
+            <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-wrench"></i> @L("Edit")</a>
         </div>
     </div>
 </div>
