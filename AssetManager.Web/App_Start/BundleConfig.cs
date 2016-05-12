@@ -21,6 +21,7 @@ namespace AssetManager.Web
                     .Include("~/Content/flags/famfamfam-flags.css", new CssRewriteUrlTransform())
                     .Include("~/Content/font-awesome.min.css", new CssRewriteUrlTransform())
                     .Include("~/Content/ui-grid.min.css", new CssRewriteUrlTransform())     // Angular UI Grid
+                    .Include("~/Content/showErrors.css", new CssRewriteUrlTransform())     // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
                 );
 
             //~/Bundles/App/vendor/js
@@ -51,13 +52,16 @@ namespace AssetManager.Web
                         "~/Scripts/angular-ui/ui-bootstrap.min.js",
                         "~/Scripts/angular-ui/ui-bootstrap-tpls.min.js",
                         "~/Scripts/angular-ui/ui-utils.min.js",
-                        "~/Scripts/ui-grid.js", // Angular UI Grid
+                        "~/Scripts/ui-grid.js",                 // Angular UI Grid
 
                         "~/Scripts/flot/jquery.flot.min.js",    // Flot -- see http://www.flotcharts.org/
                         "~/Scripts/angular-flot.js",            // Flot helper library -- see https://docs.omniref.com/js/npm/angular-flot/0.0.6
 
-                        //"~/Scripts/jquery.canvasjs.min.js",     // CanvasJS -- see http://canvasjs.com/
-                        "~/Scripts/canvasjs.min.js",     // CanvasJS -- see http://canvasjs.com/
+                        //"~/Scripts/jquery.canvasjs.min.js",   // CanvasJS -- see http://canvasjs.com/
+                        "~/Scripts/canvasjs.min.js",            // CanvasJS -- see http://canvasjs.com/
+
+                        //"~/Scripts/validator.min.js",           // Bootstrap form validation -- see http://1000hz.github.io/bootstrap-validator/
+                        "~/Scripts/showErrors.min.js",          // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
 
                         "~/Abp/Framework/scripts/abp.js",
                         "~/Abp/Framework/scripts/libs/abp.jquery.js",

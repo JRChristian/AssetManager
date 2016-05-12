@@ -283,6 +283,7 @@
     <Content Include="App\Main\views\asset\list.js" />
     <Content Include="App\Main\views\asset\edit.js" />
     <Content Include="App\Main\views\asset\new.js" />
+    <Content Include="Content\showErrors.css" />
     <Content Include="App\Main\views\iow\leveledit.js" />
     <Content Include="App\Main\views\iow\LevelList.js" />
     <Content Include="App\Main\views\iow\main.js" />
@@ -1237,6 +1238,7 @@
     <Content Include="Scripts\others\respond.src.js" />
     <Content Include="Scripts\others\spinjs\jquery.spin.js" />
     <Content Include="Scripts\others\spinjs\spin.js" />
+    <Content Include="Scripts\showErrors.js" />
     <Content Include="Scripts\sweetalert\ie9.css" />
     <Content Include="Scripts\sweetalert\sweet-alert.css" />
     <Content Include="Scripts\sweetalert\sweet-alert.html" />
@@ -1246,6 +1248,9 @@
     <Content Include="Scripts\toastr.min.js" />
     <Content Include="Scripts\ui-grid.js" />
     <Content Include="Scripts\ui-grid.min.js" />
+    <Content Include="Scripts\validator.js" />
+    <Content Include="Scripts\validator.min.js" />
+    <Content Include="Scripts\validator.txt" />
     <Content Include="Views\Account\Login.css">
       <DependentUpon>Login.less</DependentUpon>
     </Content>
@@ -1305,6 +1310,7 @@
     <Content Include="Scripts\angular-aria.min.js.map" />
     <Content Include="Scripts\angular-animate.min.js.map" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
+    <Content Include="Scripts\showErrors.min.js" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

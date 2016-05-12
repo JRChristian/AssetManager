@@ -10,16 +10,14 @@ namespace AssetManager.IOWs
 {
     public interface IIowVariableAppService : IApplicationService
     {
-        IowVariableDto GetOneIowVariable(GetOneIowVariableInput input);
-        GetIowVariableOutput GetIowVariables(GetIowVariableInput input);
-        Task<GetIowVariableOutput> GetIowVariablesAsync(GetIowVariableInput input);
-        GetIowVariableLimitOutput GetIowVariableLimits(GetIowVariableInput input);
-        IowVariableDto CreateIowVariable(CreateIowVariableInput input);
-        IowVariableDto DeleteIowVariable(GetOneIowVariableInput input);
-        IowVariableDto UpdateIowVariable(UpdateIowVariableInput input);
+        GetVariableOutput GetVariable(GetVariableInput input);
+        GetAllVariablesOutput GetAllVariables(GetAllVariablesInput input);
+        GetVariableLimitsOutput GetVariableLimits(GetVariableLimitsInput input);
+        DeleteVariableOutput DeleteVariable(GetVariableInput input);
+        VariableDto UpdateVariable(UpdateVariableInput input);
 
-        GetIowLimitOutput GetIowLimits(GetIowLimitInput input);
-        IowLimitDto ChangeIowLimits(ChangeIowLimitInput input);
+        GetAllLimitsOutput GetAllLimits(GetAllLimitsInput input);
+        LimitDto UpdateLimit(UpdateLimitInput input);
 
         GetIowChartCanvasJSOutput GetIowChartCanvasJS(GetIowChartCanvasJSInput input);
     }

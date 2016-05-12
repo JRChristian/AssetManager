@@ -3,11 +3,11 @@
 
     var controllerId = 'app.views.variable.edit';
     app.controller(controllerId, [
-        '$scope', '$location', '$stateParams', 'abp.services.app.iowVariable', 'abp.services.app.tag',
-        function ($scope, $location, $stateParams, variableService, tagService) {
+        '$scope', '$location', '$stateParams', '$filter', 'abp.services.app.iowVariable', 'abp.services.app.tag',
+        function ($scope, $location, $stateParams, $filter, variableService, tagService) {
             var vm = this;
-
             vm.localize = abp.localization.getSource('AssetManager');
+            vm.deleteEnabled = true;
 
             vm.variable = {
                 id: $stateParams.Id > 0 ? $stateParams.Id : null,
@@ -42,14 +42,22 @@
             };
 
             vm.gridOptions.onRegisterApi = function (gridApi) {
-                //set gridApi on scope
                 vm.gridApi = gridApi;
             };
 
             abp.ui.setBusy(
                 null,
-                variableService.getOneIowVariable({ Id: vm.variable.id })
-                    .success(function (data) { vm.variable = data } )
+                variableService.getVariableLimits({ Id: vm.variable.id, IncludeUnusedLimits: true })
+                    .success(function (data) {
+                        vm.variable = data;
+                        vm.gridOptions.data = $filter('orderBy')(data.limits, "criticality", false);
+                    })
+                );
+            /*
+            abp.ui.setBusy(
+                null,
+                variableService.getVariable({ Id: vm.variable.id })
+                    .success(function (data) { vm.variable = data.variable } )
                 );
 
             vm.limits = [];
@@ -58,11 +66,12 @@
                 variableService.getIowLimits({ variableId: vm.variable.id })
                     .success(function (data) { vm.gridOptions.data = data.limits })
                 );
+            */
 
             vm.tags = [];
             abp.ui.setBusy(
                 null,
-                tagService.getTagListAsync({})
+                tagService.getTagList({})
                     .success(function (data) { vm.tags = data.tags })
                     );
 
@@ -70,13 +79,13 @@
                 abp.ui.setBusy(
                     null,
                     // Save the main part of the variable
-                    variableService.updateIowVariable(vm.variable)
+                    variableService.updateVariable(vm.variable)
                         .success(function (data) {
                             // Save any limit rows that changed
                             vm.variable.id = data.id;
                             vm.gridDirtyRows = vm.gridApi.rowEdit.getDirtyRows(vm.gridApi.grid);
                             for (var i = 0; i < vm.gridDirtyRows.length; i++) {
-                                variableService.changeIowLimits({
+                                variableService.updateLimit({
                                     IowVariableId: vm.variable.id,
                                     Name: vm.gridDirtyRows[i].entity.name,
                                     IsActive: vm.gridDirtyRows[i].entity.isActive,
@@ -92,6 +101,20 @@
                             $location.path('/iowvariablelist');
                         }));
             };
+
+            vm.deleteVariable = function () {
+                abp.ui.setBusy(
+                    null,
+                    variableService.deleteVariable({ Id: vm.variable.id })
+                        .success(function (data) {
+                            if (data.success == true)
+                                abp.notify.success(abp.utils.formatString(vm.localize("VariableDeletedOk"), data.name));
+                            else
+                                abp.notify.error(abp.utils.formatString(vm.localize("VariableNotDeleted"), data.name));
+                            $location.path('/iowvariablelist');
+                        }));
+            };
+
         }
     ]);
 })();

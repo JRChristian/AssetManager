@@ -7,22 +7,32 @@
         function ($scope, $location, $stateParams, levelService) {
             var vm = this;
             vm.localize = abp.localization.getSource('AssetManager');
+            vm.deleteEnabled = false;
             vm.level = { id: $stateParams.levelId > 0 ? $stateParams.levelId : null };
 
             abp.ui.setBusy(
                 null,
                 levelService.getLevel({ Id: vm.level.id })
-                    .success(function (data) { vm.level = data })
-                );
+                    .success(function (data) {
+                        vm.level = data.level;
+                        if (data.levelUseCount == 0 && data.level != null && data.level.id > 0)
+                            vm.deleteEnabled = true;
+                    }));
 
             vm.saveLevel = function () {
-                abp.ui.setBusy(
-                    null,
-                    levelService.updateLevel(vm.level)
+                $scope.$broadcast('show-errors-check-validity');
+                if ($scope.editLevelForm.$valid)
+                {
+                    abp.ui.setBusy(null, levelService.updateLevel(vm.level)
                         .success(function (data) {
-                            abp.notify.info(abp.utils.formatString(vm.localize("LevelUpdatedOk"), data.name));
+                            abp.notify.success(abp.utils.formatString(vm.localize("LevelUpdatedOk"), data.name));
                             $location.path('/iowlevellist');
                         }));
+                }
+                else
+                {
+                    abp.notify.error(abp.utils.formatString(vm.localize("LevelNotUpdated"), vm.level.name));
+                }
             };
 
             vm.deleteLevel = function () {
@@ -31,9 +41,9 @@
                     levelService.deleteLevel({ Id: vm.level.id, Name: vm.level.name })
                         .success(function (data) {
                             if( data.success == true )
-                                abp.notify.info(abp.utils.formatString(vm.localize("LevelDeletedOk"), data.name));
+                                abp.notify.success(abp.utils.formatString(vm.localize("LevelDeletedOk"), data.name));
                             else
-                                abp.notify.info(abp.utils.formatString(vm.localize("LevelNotDeleted"), data.name));
+                                abp.notify.error(abp.utils.formatString(vm.localize("LevelNotDeleted"), data.name));
                             $location.path('/iowlevellist');
                         }));
             };

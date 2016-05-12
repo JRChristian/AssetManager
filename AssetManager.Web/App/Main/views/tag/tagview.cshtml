@@ -1,14 +1,7 @@
 ﻿<div ng-controller="app.views.tag.view as vm">
     <div class="container">
         <div class="row">
-            <div class="col-sm-6">
-                <h3>@L("TagDetails")</h3>
-            </div>
-            <div class="col-sm-6 text-right">
-                <a ui-sref="tagdata({ tagId: {{vm.tag.id}} })" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
-                <a ui-sref="tagedit({ tagId: {{vm.tag.id}} })" class="btn btn-default btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>
-                <a ui-sref="tagedit({ tagId: {{vm.tag.id}} })" class="btn btn-primary btn-sm">@L("Edit")</a>
-            </div>
+            <h3>@L("TagDetails")</h3>
         </div>
         <div class="row">
             <form id="ViewTagForm" class="form-horizontal" role="form" name="viewTagForm" novalidate>
@@ -43,6 +36,11 @@
                     </div>
                 </div>
             </form>
+        </div>
+        <div class="row">
+            <a ui-sref="tagdata({ tagId: {{vm.tag.id}} })" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
+            <a ui-sref="tagedit({ tagId: {{vm.tag.id}} })" class="btn btn-default btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>
+            <a ui-sref="tagedit({ tagId: {{vm.tag.id}} })" class="btn btn-primary btn-sm">@L("Edit")</a>
         </div>
     </div>
 </div>

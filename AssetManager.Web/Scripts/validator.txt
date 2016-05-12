@@ -1,0 +1,8 @@
+Validator: A simple and user-friendly form validator plugin for Bootstrap 3
+
+Documentation: http://1000hz.github.io/bootstrap-validator/
+Source: https://github.com/1000hz/bootstrap-validator
+Downloaded: May 9, 2016
+Version: 0.10.2
+
+ 

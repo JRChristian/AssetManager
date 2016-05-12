@@ -12,11 +12,17 @@
         'ui.grid.edit',
         'ui.grid.rowEdit',
         'ui.grid.cellNav',
+        'ui.bootstrap.showErrors',  // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
 
         'angular-flot', // Flot helper library -- see https://docs.omniref.com/js/npm/angular-flot/0.0.6 
 
         'abp'
     ]);
+
+    // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
+    app.config(['showErrorsConfigProvider', function (showErrorsConfigProvider) {
+        showErrorsConfigProvider.showSuccess(true);
+    }]);
 
     //Configuration for Angular UI routing.
     //menu: entries *must* match names in AssetManagerNavigationProvider

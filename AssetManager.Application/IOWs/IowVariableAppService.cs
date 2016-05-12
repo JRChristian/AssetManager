@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services;
 using Abp.AutoMapper;
 using Abp.Domain.Repositories;
+using AssetManager.DomainServices;
 using AssetManager.Entities;
 using AssetManager.IOWs.Dtos;
 using AssetManager.Tags;
@@ -17,292 +18,172 @@ namespace AssetManager.IOWs
 {
     public class IowVariableAppService : AssetManagerAppServiceBase, IIowVariableAppService
     {
-        private readonly IIOWVariableRepository _iowVariableRepository;
-        private readonly IIOWLimitRepository _iowLimitRepository;
-        private readonly IIOWLevelRepository _iowLevelRepository;
-        private readonly ITagRepository _tagRepository;
-        private readonly ITagDataRawRepository _tagDataRawRepository;
+        private readonly IIowManager _iowManager;
+        private readonly ITagManager _tagManager;
 
         public IowVariableAppService(
-            IIOWVariableRepository iowVariableRepository, 
-            IIOWLimitRepository iowLimitRepository, 
-            IIOWLevelRepository iowLevelRepository, 
-            ITagRepository tagRepository, 
-            ITagDataRawRepository tagDataRawRepository)
+            IIowManager iowManager,
+            ITagManager tagManager)
         {
-            _iowVariableRepository = iowVariableRepository;
-            _iowLimitRepository = iowLimitRepository;
-            _iowLevelRepository = iowLevelRepository;
-            _tagRepository = tagRepository;
-            _tagDataRawRepository = tagDataRawRepository;
+            _iowManager = iowManager;
+            _tagManager = tagManager;
         }
 
 
-        public IowVariableDto GetOneIowVariable(GetOneIowVariableInput input)
+        public GetVariableOutput GetVariable(GetVariableInput input)
         {
-            IOWVariable variable = null;
+            IOWVariable variable = _iowManager.FirstOrDefaultVariable(input.Id, input.Name);
 
-            // Look for the variable
-            if (input.Id.HasValue)
-                variable = _iowVariableRepository.Get(input.Id.Value);
-            else if (!string.IsNullOrEmpty(input.Name))
-                variable = _iowVariableRepository.FirstOrDefault(p => p.Name == input.Name);
-
-            return variable.MapTo<IowVariableDto>();
-        }
-
-        public GetIowVariableOutput GetIowVariables(GetIowVariableInput input)
-        {
-            List<IOWVariable> variables = null;
-
-            // If the input includes a variable name or a tag name, treat those as wild card matches.
-            if( !string.IsNullOrEmpty(input.Name) && !string.IsNullOrEmpty(input.TagName) )
+            return new GetVariableOutput
             {
-                variables = _iowVariableRepository.GetAll()
-                    .Where(v => v.Name.Contains(input.Name) && v.Tag.Name.Contains(input.TagName))
-                    .OrderBy(v => v.Name)
-                    .ToList();
-            }
-            else if( !string.IsNullOrEmpty(input.Name) )
-            {
-                variables = _iowVariableRepository.GetAll()
-                    .Where(v => v.Name.Contains(input.Name))
-                    .OrderBy(v => v.Name)
-                    .ToList();
-            }
-            else if( !string.IsNullOrEmpty(input.TagName) )
-            {
-                variables = _iowVariableRepository.GetAll()
-                    .Where(v => v.Tag.Name.Contains(input.TagName))
-                    .OrderBy(v => v.Name)
-                    .ToList();
-            }
-            else
-            {
-                variables = _iowVariableRepository.GetAll()
-                    .OrderBy(v => v.Name)
-                    .ToList();
-            }
-
-            return new GetIowVariableOutput
-            {
-                IowVariables = variables.MapTo<List<IowVariableDto>>()
+                variable = variable.MapTo<VariableDto>(),
+                LimitCount = (variable != null) ? variable.IOWLimits.Count : 0
             };
         }
 
-        public async Task<GetIowVariableOutput> GetIowVariablesAsync(GetIowVariableInput input)
+        public GetAllVariablesOutput GetAllVariables(GetAllVariablesInput input)
         {
-            List<IOWVariable> variables = null;
+            List<IOWVariable> allVariables = null;
 
             // If the input includes a variable name or a tag name, treat those as wild card matches.
             if (!string.IsNullOrEmpty(input.Name) && !string.IsNullOrEmpty(input.TagName))
-            {
-                variables = await _iowVariableRepository.GetAllListAsync(v => v.Name.Contains(input.Name) && v.Tag.Name.Contains(input.TagName));
-            }
-            else if( !string.IsNullOrEmpty(input.Name) )
-            {
-                variables = await _iowVariableRepository.GetAllListAsync(v => v.Name.Contains(input.Name));
-            }
-            else if( !string.IsNullOrEmpty(input.TagName) )
-            {
-                variables = await _iowVariableRepository.GetAllListAsync(v => v.Tag.Name.Contains(input.TagName));
-            }
-            else
-            {
-                variables = await _iowVariableRepository.GetAllListAsync();
-            }
+                allVariables = _iowManager.GetAllVariables(v => v.Name.Contains(input.Name) && v.Tag.Name.Contains(input.TagName));
 
-            var sorted = variables.OrderBy(p => p.Name);
-
-            return new GetIowVariableOutput
-            {
-                IowVariables = sorted.MapTo<List<IowVariableDto>>()
-            };
-        }
-
-        public GetIowVariableLimitOutput GetIowVariableLimits(GetIowVariableInput input)
-        {
-            List<IOWVariable> variables = null;
-
-            // If the input includes a variable name or a tag name, treat those as wild card matches.
-            if (!string.IsNullOrEmpty(input.Name) && !string.IsNullOrEmpty(input.TagName))
-            {
-                variables = _iowVariableRepository.GetAll()
-                    .Where(v => v.Name.Contains(input.Name) && v.Tag.Name.Contains(input.TagName))
-                    .OrderBy(v => v.Name)
-                    .ToList();
-            }
             else if (!string.IsNullOrEmpty(input.Name))
-            {
-                variables = _iowVariableRepository.GetAll()
-                    .Where(v => v.Name.Contains(input.Name))
-                    .OrderBy(v => v.Name)
-                    .ToList();
-            }
+                allVariables = _iowManager.GetAllVariables(v => v.Name.Contains(input.Name));
+
             else if (!string.IsNullOrEmpty(input.TagName))
-            {
-                variables = _iowVariableRepository.GetAll()
-                    .Where(v => v.Tag.Name.Contains(input.TagName))
-                    .OrderBy(v => v.Name)
-                    .ToList();
-            }
-            else
-            {
-                variables = _iowVariableRepository.GetAll()
-                    .OrderBy(v => v.Name)
-                    .ToList();
-            }
+                allVariables = _iowManager.GetAllVariables(v => v.Name.Contains(input.Name) && v.Tag.Name.Contains(input.TagName));
 
-            return new GetIowVariableLimitOutput
+            else
+                allVariables = _iowManager.GetAllVariables();
+
+            return new GetAllVariablesOutput
             {
-                IowVariables = variables.MapTo<List<IowVariableLimitDto>>()
+                variables = allVariables.MapTo<List<VariableDto>>()
             };
         }
 
-
-        public IowVariableDto CreateIowVariable(CreateIowVariableInput input)
+        public GetVariableLimitsOutput GetVariableLimits(GetVariableLimitsInput input)
         {
-            Logger.Info("Creating a variable for input: " + input.Name);
+            int i, j;
+            IOWVariable variable = _iowManager.FirstOrDefaultVariable(input.Id, input.Name);
 
-            Tag tag = null;
-            IOWVariable variable = null;
-
-            // Check to see if a variable by this name already exists
-            variable = _iowVariableRepository.FirstOrDefault(p => p.Name == input.Name);
-            if( variable == null )
+            GetVariableLimitsOutput output = new GetVariableLimitsOutput
             {
-                // All variables belong to a tenant. If not specified, put them in the default tenant.
-                int tenantid = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
+                Id = variable.Id,
+                Name = variable.Name,
+                Description = variable.Description,
+                TagId = variable.TagId,
+                TagName = variable.Tag.Name,
+                UOM = variable.UOM,
+                Limits = new List<LimitDto>()
+            };
 
-                // Create a new variable object from the input
-                variable = new IOWVariable
+            // Get limits currently in use for this variable, sorted by name
+            List<IOWLimit> limits = variable.IOWLimits.OrderBy(p => p.Level.Id).ToList();
+
+            // Get all available levels defined at this site, sorted by name
+            List<IOWLevel> levels = _iowManager.GetAllLevels().OrderBy(p => p.Id).ToList();
+
+            // Now build the output the hard way, since we have our own logic.
+            // "j" is our counter into the list of limits. This list will have between zero items
+            // and the number of items in the level list.
+            j = limits.Count > 0 ? 0 : levels.Count + 1;
+
+            for (i = 0; i < levels.Count; i++)
+            {
+                // Increment j (index into existing limits) to match the level, if possible
+                for (; j < limits.Count && limits[j].Level.Id < levels[i].Id; j++) ;
+
+                // If j (the index into the list of limits for this variable) <= i (index into the list of all levels)
+                // then the limit matches the level, and this level matches an active limit.
+                // Otherwise, this level is not currently active for this variable.
+                bool isLimitPresent = (j < limits.Count) && limits[j].Level.Id == levels[i].Id;
+
+                if( isLimitPresent || input.IncludeUnusedLimits )
                 {
-                    Name = input.Name,
-                    Description = input.Description,
-                    UOM = input.UOM,
-                    TenantId = tenantid
-                };
-
-                // Having a tag is optional. The caller may have specified a tag id or name, or neither.
-                // If a tag is specified but not found, ignore it.
-                if (input.TagId.HasValue)
-                    tag = _tagRepository.FirstOrDefault(p => p.Id == input.TagId);
-                else if ( !string.IsNullOrEmpty(input.TagName) )
-                    tag = _tagRepository.FirstOrDefault(p => p.Name == input.TagName);
-
-                if (tag != null)
-                {
-                    variable.TagId = tag.Id;
-                    // If UOM was not specified for the variable AND the tag has a UOM, then use the tag's UOM
-                    if (string.IsNullOrEmpty(variable.UOM) && !string.IsNullOrEmpty(tag.UOM))
-                        variable.UOM = tag.UOM;
+                    output.Limits.Add(new LimitDto
+                    {
+                        Id = isLimitPresent ? limits[j].Id : 0,
+                        IOWVariableId = variable.Id,
+                        IsActive = isLimitPresent,
+                        IOWLevelId = levels[i].Id,
+                        Name = levels[i].Name,
+                        Description = levels[i].Description,
+                        Criticality = levels[i].Criticality,
+                        ResponseGoal = levels[i].ResponseGoal,
+                        MetricGoal = levels[i].MetricGoal,
+                        Cause = isLimitPresent ? limits[j].Cause : "",
+                        Consequences = isLimitPresent ? limits[j].Consequences : "",
+                        Action = isLimitPresent ? limits[j].Action : "",
+                        LowLimit = isLimitPresent ? limits[j].LowLimit : null,
+                        HighLimit = isLimitPresent ? limits[j].HighLimit : null
+                    });
                 }
-
-                // Add the new variable to the repository
-                variable.Id = _iowVariableRepository.InsertAndGetId(variable);
-            }
-            return variable.MapTo<IowVariableDto>();
+            } // for (i = 0; i < levels.Count; i++)
+            output.Limits = output.Limits.OrderBy(p => p.Name).ToList();
+            return output;
         }
 
-        public IowVariableDto DeleteIowVariable(GetOneIowVariableInput input)
+        public DeleteVariableOutput DeleteVariable(GetVariableInput input)
         {
-            IOWVariable variable = null;
-
             Logger.Info("Delete a variable for input Id= " + (input.Id.HasValue ? (input.Id.Value).ToString() : "n/a") + " Name= " + input.Name);
 
-            // Look for the variable
-            if (input.Id.HasValue)
-                variable = _iowVariableRepository.Get(input.Id.Value);
-            else if ( !string.IsNullOrEmpty(input.Name) )
-                variable = _iowVariableRepository.FirstOrDefault(p => p.Name == input.Name);
-
-            if (variable != null)
-                _iowVariableRepository.Delete(variable);
-
-            return variable.MapTo<IowVariableDto>();
+            bool success = _iowManager.DeleteVariable(input.Id, input.Name);
+            return new DeleteVariableOutput
+            {
+                Id = input.Id.HasValue ? input.Id.Value : 0,
+                Name = input.Name,
+                Success = success
+            };
         }
 
-        public IowVariableDto UpdateIowVariable(UpdateIowVariableInput input)
+        public VariableDto UpdateVariable(UpdateVariableInput input)
         {
-            IOWVariable variable = null;
-            Tag tag = null;
-
             Logger.Info("Update a variable for input Id= " + (input.Id.HasValue ? (input.Id.Value).ToString() : "n/a") + " Name= " + input.Name);
 
             // Look for the variable
-            if (input.Id.HasValue)
-                variable = _iowVariableRepository.Get(input.Id.Value);
-            else if (input.Name != "")
-                variable = _iowVariableRepository.FirstOrDefault(p => p.Name == input.Name);
+            IOWVariable variable = _iowManager.FirstOrDefaultVariable(input.Id, input.Name);
 
-            // If we find a variable, update its properties
-            if (variable != null)
+            if( variable == null && !string.IsNullOrEmpty(input.Name) )
             {
-                if (!string.IsNullOrEmpty(input.Name))
-                    variable.Name = input.Name;
-
-                if (!string.IsNullOrEmpty(input.Description))
-                    variable.Description = input.Description;
-                
-                // If tag information (id or name) was specified, then look for this tag
-                if (input.TagId.HasValue && input.TagId.Value != variable.TagId)
-                    variable.TagId = input.TagId.Value;
-                else if (!string.IsNullOrEmpty(input.TagName) && input.TagName != variable.Tag.Name)
-                {
-                    tag = _tagRepository.FirstOrDefault(p => p.Name == input.TagName);
-                    if (tag != null)
-                        variable.TagId = tag.Id;
-                }
-
-                // If a not-null UOM was passed in, use it, even if the empty string was passed in. Ignore null inputs.
-                if ( input.UOM != null)
-                    variable.UOM = input.UOM;
-                // If UOM does not exist for the variable AND the tag has a UOM, then use the tag's UOM
-                if (string.IsNullOrEmpty(variable.UOM))
-                {
-                    if (tag != null && !string.IsNullOrEmpty(tag.UOM))
-                        variable.UOM = tag.UOM;
-                    else if (variable.Tag != null)
-                        variable.UOM = variable.Tag.UOM;
-               }
-            }
-            // If we did not find a variable, attempt to create one. This will work if all required fields are specified.
-            else
-            {
-                return CreateIowVariable(new CreateIowVariableInput
+                // No variable, so create one
+                variable = new IOWVariable
                 {
                     Name = input.Name,
-                    Description = input.Description,
-                    TagId = input.TagId.HasValue ? input.TagId.Value : 0,
-                    TagName = input.TagName,
-                    UOM = input.UOM
-                });
+                    TenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1
+                };
             }
 
+            if( variable != null )
+            {
+                variable.Description = input.Description;
+                variable.UOM = input.UOM;
 
-            //We do not call Update method of the repository.
-            //Because an application service method is a 'unit of work' scope as default.
-            //ABP automatically saves all changes when a 'unit of work' scope ends (without any exception).
+                // Check the tag
+                Tag tag = _tagManager.FirstOrDefaultTag(input.TagId, input.Name);
+                if( tag != null )
+                    variable.TagId = tag.Id;
 
-            return variable.MapTo<IowVariableDto>();
+                variable = _iowManager.InsertOrUpdateVariable(variable);
+            }
+            return variable.MapTo<VariableDto>();
         }
 
-        public GetIowLimitOutput GetIowLimits(GetIowLimitInput input)
+        public GetAllLimitsOutput GetAllLimits(GetAllLimitsInput input)
         {
-            IOWVariable variable = null;
-            List<IOWLimit> limits = null;
-            List<IOWLevel> levels = null;
-            List<IowLimitDto> output = new List<IowLimitDto>();
+            List<LimitDto> output = new List<LimitDto>();
             int i, j;
 
             // Look for the variable. This will NOT throw an error if the variable id is not found.
-            variable = _iowVariableRepository.FirstOrDefault(input.VariableId);
+            IOWVariable variable = _iowManager.FirstOrDefaultVariable(input.VariableId);
 
             // Get limits for this variable.
-            limits = _iowLimitRepository.GetAll().Where(v => v.IOWVariableId == input.VariableId).OrderBy(c => c.Level.Criticality).ToList();
+            List<IOWLimit> limits = _iowManager.GetAllLimits(input.VariableId);
 
             // Get all available levels defined at this site.
-            levels = _iowLevelRepository.GetAll().OrderBy(c => c.Criticality).ToList();
+            List<IOWLevel> levels = _iowManager.GetAllLevels();
 
             // Now build the output DTO. Do it the hard way, since we have our own logic.
             // "j" is our counter into the list of limits. This list will have between zero items
@@ -318,7 +199,7 @@ namespace AssetManager.IOWs
                 // If j (the index into the list of limits for this variable) <= i (index into the list of all levels)
                 // then the limit matches the level, and this level matches an active limit.
                 // Otherwise, this level is not currently active for this variable.
-                output.Add(new IowLimitDto
+                output.Add(new LimitDto
                 {
                     Id = haveLimit ? limits[j].Id : 0,
                     IsActive = haveLimit ? true : false,
@@ -337,137 +218,89 @@ namespace AssetManager.IOWs
                 });
             }
 
-            return new GetIowLimitOutput
+            return new GetAllLimitsOutput
             {
-                Limits = new List<IowLimitDto>(output)
+                Limits = new List<LimitDto>(output)
             };
         }
 
-        public IowLimitDto ChangeIowLimits(ChangeIowLimitInput input)
+        public LimitDto UpdateLimit(UpdateLimitInput input)
         {
             // This method accepts one limit for one variable.
             // If the limit does not exist, it is added.
             // If the limit exists, it is changed or deleted.
 
-            IOWVariable variable = null;
-            IOWLimit limit = null;
-            IOWLevel level = null;
-            IowLimitDto output = null;
+            LimitDto output = null;
             bool inputIsValid = false;
             bool isActive = input.IsActive.HasValue ? input.IsActive.Value : true;
 
             // Look for the variable.
-            if( input.IOWLevelId.HasValue)
-                variable = _iowVariableRepository.Get(input.IowVariableId.Value);
-            else if ( !string.IsNullOrEmpty(input.IowVariableName) )
-                variable = _iowVariableRepository.FirstOrDefault(x => x.Name == input.IowVariableName);
+            IOWVariable variable = _iowManager.FirstOrDefaultVariable(input.IowVariableId, input.IowVariableName);
 
             if( variable != null )
             {
 
                 // Does the specified limit exist? If so, get it. This will return null if nothing is found.
-                if ( input.Id.HasValue )
-                {
-                    limit = _iowLimitRepository.FirstOrDefault( input.Id.Value );
-                    if ( limit != null )
-                        level = _iowLevelRepository.FirstOrDefault( limit.IOWLevelId );
-                }
-                else if ( input.IOWLevelId.HasValue )
-                {   
-                    limit = _iowLimitRepository.FirstOrDefault( x => x.IOWVariableId == variable.Id && x.IOWLevelId == input.IOWLevelId.Value );
-                    if (limit != null)
-                        level = _iowLevelRepository.FirstOrDefault(limit.IOWLevelId);
-                }
-                else if ( !string.IsNullOrEmpty(input.Name) )
-                {
-                    level = _iowLevelRepository.FirstOrDefault( x => x.Name == input.Name );
-                    if ( level != null )
-                        limit = _iowLimitRepository.FirstOrDefault(x => x.IOWVariableId == variable.Id && x.IOWLevelId == level.Id );
-                }
-                else if ( input.Criticality.HasValue )
-                {
-                    level = _iowLevelRepository.FirstOrDefault(x => x.Criticality == input.Criticality.Value);
-                    if (level != null)
-                        limit = _iowLimitRepository.FirstOrDefault(x => x.IOWVariableId == variable.Id && x.IOWLevelId == level.Id);
-                }
+                IOWLimit limit = _iowManager.FirstOrDefaultLimit(variable.Id, input.Id, input.Name);
 
-                // There are four possibilities at this point:
-                //   1) We did not find a limit and the level is not valid ==> bad input, do nothing
-                //   2) We did not find a limit and the level is valid ==> insert a new limit if possible
-                //   3) We found a limit and the IsActive flag is true ==> update an existing limit
-                //   4) We found a limit and the InActive flag is false ==> delete an existing limit
+                // Does the specified level exist? It should.
+                IOWLevel level = _iowManager.FirstOrDefaultLevel(input.IOWLevelId, input.Name);
 
-                if ( limit == null && level == null )
+                // There are five possibilities at this point:
+                //   1) We did not find a level ==> bad input, do nothing
+                //   2) We found a level, found a limit, isActive flag is true ==> update an existing limit
+                //   3) We found a level, found a limit, IsActive flag is false ==> delete an existing limit
+                //   4) We found a level, did not find a limit, IsActive flag is true ==> insert a new limit
+                //   5) We found a level, did not find a limit, IsActive flag is false ==> do nothing
+
+                if ( level == null )
                 {
                     // Case 1: Bad input
                 }
-                else if ( limit == null && level != null && isActive )
-                {
-                    // Case 2: Limit does not exist, so insert a new limit
-
-                    // All assets belong to a tenant. If not specified, put them in the default tenant.
-                    int tenantid = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
-
-                    double? lowLimit = null, highLimit = null;
-                    if (input.LowLimit.HasValue)
-                        lowLimit = input.LowLimit.Value;
-                    if (input.HighLimit.HasValue)
-                        highLimit = input.HighLimit.Value;
-
-                    limit = new IOWLimit
-                    {
-                        IOWVariableId = variable.Id,
-                        IOWLevelId = level.Id,
-                        Cause = input.Cause,
-                        Consequences = input.Consequences,
-                        Action = input.Action,
-                        LowLimit = lowLimit,
-                        HighLimit = highLimit,
-                        LastCheckDate = null,
-                        LastStatus = IOWStatus.Normal,
-                        LastDeviationStartDate = null,
-                        LastDeviationEndDate = null,
-                        TenantId = tenantid
-                    };
-
-                    limit.Id = _iowLimitRepository.InsertAndGetId(limit);
-
-                    inputIsValid = true;
-                }
                 else if ( isActive )
                 {
-                    // Case 3: Limit exists and should be updated.
-                    if (!string.IsNullOrEmpty(input.Cause))
-                        limit.Cause = input.Cause;
+                    // Case 2: IsActive is true AND limit exists ==> update an existing limit
+                    // Case 4: IsActive is true AND limit does not exist ==> insert a new limit
 
-                    if (!string.IsNullOrEmpty(input.Consequences))
-                        limit.Consequences = input.Consequences;
+                    // For case 4 (limit does not exist), need to create a limit record to continue
+                    if ( limit == null )
+                        limit = new IOWLimit
+                        {
+                            IOWVariableId = variable.Id,
+                            IOWLevelId = level.Id,
+                            LastCheckDate = null,
+                            LastStatus = IOWStatus.Normal,
+                            LastDeviationStartDate = null,
+                            LastDeviationEndDate = null,
+                            TenantId = variable.TenantId
+                        };
 
-                    if (!string.IsNullOrEmpty(input.Action))
-                        limit.Action = input.Action;
+                    limit.Cause = input.Cause;
+                    limit.Consequences = input.Consequences;
+                    limit.Action = input.Action;
 
-                    // Replace the low and high limits in all situation, even if incoming values are null
                     double? lowLimit = null, highLimit = null;
                     if (input.LowLimit.HasValue)
                         lowLimit = input.LowLimit.Value;
                     if (input.HighLimit.HasValue)
                         highLimit = input.HighLimit.Value;
-
                     limit.LowLimit = lowLimit;
                     limit.HighLimit = highLimit;
 
+                    limit.Id = _iowManager.InsertOrUpdateLimitAndGetId(limit);
+
                     inputIsValid = true;
                 }
-                else if ( !isActive )
+                else if ( limit != null && !isActive )
                 {
-                    // Case 4: Limit exists and should be deleted
-                    _iowLimitRepository.Delete(limit.Id);
+                    // Case 3: Limit exists and should be deleted
+                    _iowManager.DeleteLimit(limit.Id);
 
                     inputIsValid = true;
                 }
 
                 if( inputIsValid )
-                    output = new IowLimitDto
+                    output = new LimitDto
                     {
                         Id = limit.Id,
                         IOWVariableId = variable.Id,
@@ -482,7 +315,6 @@ namespace AssetManager.IOWs
                         HighLimit = limit.HighLimit
                     };
             }
-
             return output;
         }
 
@@ -498,7 +330,6 @@ namespace AssetManager.IOWs
                     "rgba(100,100,100,0.7)" // 5 - lighter gray
                 };
 
-            IOWVariable variable = null;
             GetIowChartCanvasJSOutput output = new GetIowChartCanvasJSOutput
             {
                 Name = input.Name,
@@ -519,10 +350,7 @@ namespace AssetManager.IOWs
             };
 
             // Look for the variable
-            if (input.Id.HasValue)
-                variable = _iowVariableRepository.FirstOrDefault(p => p.Id == input.Id.Value);
-            else if (!string.IsNullOrEmpty(input.Name))
-                variable = _iowVariableRepository.FirstOrDefault(p => p.Name == input.Name);
+            IOWVariable variable = _iowManager.FirstOrDefaultVariable(input.Id, input.Name);
 
             if( variable != null )
             {
@@ -532,7 +360,6 @@ namespace AssetManager.IOWs
                 output.TagName = variable.Tag.Name;
                 output.UOM = !string.IsNullOrEmpty(variable.UOM) ? variable.UOM : variable.Tag.UOM;
                 
-                List<TagDataRaw> data = null;
 
                 TagType tagType = variable.Tag.Type.HasValue ? variable.Tag.Type.Value : TagType.Continuous;
 
@@ -556,14 +383,7 @@ namespace AssetManager.IOWs
                 });
 
                 // Get data in the desired range
-                if (input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == output.TagId && t.Timestamp >= input.StartTimestamp.Value && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
-                else if (input.StartTimestamp.HasValue && !input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == output.TagId && t.Timestamp >= input.StartTimestamp.Value).OrderBy(t => t.Timestamp).ToList();
-                else if (!input.StartTimestamp.HasValue && input.EndTimestamp.HasValue)
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == output.TagId && t.Timestamp <= input.EndTimestamp).OrderBy(t => t.Timestamp).ToList();
-                else
-                    data = _tagDataRawRepository.GetAll().Where(t => t.TagId == output.TagId).OrderBy(t => t.Timestamp).ToList();
+                List<TagDataRaw> data = _tagManager.GetAllListData(output.TagId, input.StartTimestamp, input.EndTimestamp);
 
                 // Convert the entity data into the necessary charting format
                 foreach (TagDataRaw d in data)

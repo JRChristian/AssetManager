@@ -13,13 +13,15 @@ namespace AssetManager.DomainServices
     {
         Tag FirstOrDefaultTag(long id);
         Tag FirstOrDefaultTag(string name);
+        Tag FirstOrDefaultTag(long? id, string name);
         Tag FirstOrDefaultTag(Expression<Func<Tag, bool>> predicate);
         List<Tag> GetAllListTag();
         List<Tag> GetAllListTag(Expression<Func<Tag, bool>> predicate);
         bool DeleteTag(long id);
         bool DeleteTag(string name);
+        bool DeleteTag(long? id, string name);
         bool DeleteTag(Expression<Func<Tag, bool>> predicate);
-        Tag InsertOrUpdateTag(Tag tag);
+        Tag InsertOrUpdateTag(Tag input);
         long InsertOrUpdateAndGetIdTag(Tag tag);
 
         List<TagDataRaw> GetAllListData(long tagId);

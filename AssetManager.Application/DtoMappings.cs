@@ -16,10 +16,10 @@ namespace AssetManager
         public static void Map()
         {
             Mapper.CreateMap<Asset, AssetDto>();
-            Mapper.CreateMap<IOWLevel, IowLevelDto>();
-            Mapper.CreateMap<IOWVariable, IowVariableDto>();
-            Mapper.CreateMap<IOWLimit, IowLimitDto>();
-            Mapper.CreateMap<IOWVariable, IowVariableLimitDto>();
+            Mapper.CreateMap<IOWLevel, LevelDto>();
+            Mapper.CreateMap<IOWVariable, VariableDto>();
+            Mapper.CreateMap<IOWLimit, LimitDto>();
+            Mapper.CreateMap<IOWVariable, VariableLimitDto>();
             Mapper.CreateMap<Tag, TagDto>();
             Mapper.CreateMap<TagDataRaw, TagDataRawDto>();
         }

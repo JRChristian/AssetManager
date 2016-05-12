@@ -49,6 +49,7 @@
     <text name="VariableName" value="Variable" />
     <text name="DeleteTheLevel" value="Delete this level" />
     <text name="UpdateTheLevel" value="Save changes" />
+    <text name="DeleteTheVariable" value="Delete this variable" />
     <text name="UpdateTheVariable" value="Save changes" />
     <text name="Edit" value="Edit" />
     <text name="Chart" value="Chart" />
@@ -57,8 +58,15 @@
     <text name="CreateLevel" value="Add a level" />
     <text name="CreateVariable" value="Add a variable" />
     <text name="LevelUpdatedOk" value="Level {0} has been updated" />
+    <text name="LevelIsRequired" value="Level name is required" />
+    <text name="DescriptionIsRequired" value="Level description is required" />
+    <text name="CriticalityIsRequired" value="Criticality level (a number) is required" />
+    <text name="CriticalityIsNotInRange" value="Criticality level must be between {0} and {1}" />
+    <text name="LevelNotUpdated" value="Level {0} cannot be updated as the input is not correct" />
     <text name="LevelDeletedOk" value="Level {0} has been deleted" />
     <text name="LevelNotDeleted" value="Level {0} was not (could not be) deleted" />
+    <text name="VariableDeletedOk" value="Variable {0} has been deleted" />
+    <text name="VariableNotDeleted" value="Variable {0} was not (could not be) deleted" />
     <text name="VariableUpdatedOk" value="Variable {0} has been updated" />
     <text name="Causes" value="Causes" />
     <text name="Consequences" value="Consequences" />
@@ -113,7 +121,10 @@
     <text name="CreateTag" value="Add a tag" />
     <text name="NumberOfTagsTotal" value="Total tags:" />
     <text name="NumberOfTagsVisible" value="Number of filtered tags:" />
-  
+    <text name="TagNameIsRequired" value="Tag name is required" />
+    <text name="TagDescriptionIsRequired" value="Tag description is required" />
+    <text name="PrecisionIsNotInRange" value="Precision must be between {0} and {1}" />
+ 
     <text name="QualityGood" value="OK" />
     <text name="QualityUncertain" value="?" />
     <text name="QualityBad" value="Bad" />

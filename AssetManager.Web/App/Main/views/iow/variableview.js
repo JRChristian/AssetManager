@@ -3,10 +3,9 @@
 
     var controllerId = 'app.views.variable.view';
     app.controller(controllerId, [
-        '$scope', '$location', '$stateParams', 'abp.services.app.iowVariable', 
-        function ($scope, $location, $stateParams, variableService) {
+        '$scope', '$location', '$stateParams', '$filter', 'abp.services.app.iowVariable', 
+        function ($scope, $location, $stateParams, $filter, variableService) {
             var vm = this;
-
             vm.localize = abp.localization.getSource('AssetManager');
 
             vm.variable = {
@@ -45,15 +44,11 @@
 
             abp.ui.setBusy(
                 null,
-                variableService.getOneIowVariable({ Id: vm.variable.id })
-                    .success(function (data) { vm.variable = data })
-                );
-
-            vm.limits = [];
-            abp.ui.setBusy(
-                null,
-                variableService.getIowLimits({ variableId: vm.variable.id })
-                    .success(function (data) { vm.gridlimits.data = data.limits })
+                variableService.getVariableLimits({ Id: vm.variable.id, IncludeUnusedLimits: false })
+                    .success(function (data) {
+                        vm.variable = data;
+                        vm.gridlimits.data = $filter('orderBy')(data.limits, "criticality", false);
+                    })
                 );
         }
     ]);

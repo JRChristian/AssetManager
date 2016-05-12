@@ -19,9 +19,9 @@ namespace AssetManager.IOWs
     /// </summary>
     public interface IIowLevelAppService : IApplicationService
     {
-        IowLevelDto GetLevel(GetLevelInput input);
+        GetLevelOutput GetLevel(GetLevelInput input);
         GetAllLevelsOutput GetAllLevels();
-        IowLevelDto UpdateLevel(UpdateLevelInput input);
+        LevelDto UpdateLevel(UpdateLevelInput input);
         DeleteLevelOutput DeleteLevel(GetLevelInput input);
         void CreateDefaultLevels();
     }

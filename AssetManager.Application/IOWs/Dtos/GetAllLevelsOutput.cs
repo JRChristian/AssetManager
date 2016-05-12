@@ -10,6 +10,6 @@ namespace AssetManager.IOWs.Dtos
 {
     public class GetAllLevelsOutput : IOutputDto
     {
-        public List<IowLevelDto> IOWLevels { get; set; }
+        public List<LevelDto> IOWLevels { get; set; }
     }
 }

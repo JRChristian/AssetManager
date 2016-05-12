@@ -1,13 +1,13 @@
 ﻿<div ng-controller="app.views.variable.list as vm">
     <div class="container">
-        <div class="col-sm-6">
+        <div class="row">
             <h3>@L("IowVariableList")</h3>
         </div>
-        <div class="col-sm-6 text-right">
+        <div class="row">
+            <div id="grid1" ui-grid="vm.gridOptions" class="grid"></div>
+        </div>
+        <div class="row">
             <a ui-sref="iowvariableedit({ })" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> @L("CreateVariable")</a>
         </div>
-    </div>
-    <div class="row">
-        <div id="grid1" ui-grid="vm.gridOptions" class="grid"></div>
     </div>
 </div>

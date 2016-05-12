@@ -23,15 +23,15 @@ namespace AssetManager.IOWs
             _iowManager = iowManager;
         }
 
-        public IowLevelDto GetLevel(GetLevelInput input)
+        public GetLevelOutput GetLevel(GetLevelInput input)
         {
-            IOWLevel level = null;
-            if (input.Id.HasValue)
-                level = _iowManager.FirstOrDefaultLevel(input.Id.Value);
-            else if( !string.IsNullOrEmpty(input.Name) )
-                level = _iowManager.FirstOrDefaultLevel(input.Name);
+            IOWLevel level = _iowManager.FirstOrDefaultLevel(input.Id, input.Name);
 
-            return level.MapTo<IowLevelDto>();
+            return new GetLevelOutput
+            {
+                level = level.MapTo<LevelDto>(),
+                LevelUseCount = (level != null) ? level.IOWLimits.Count : 0
+            };
         }
 
 
@@ -40,11 +40,11 @@ namespace AssetManager.IOWs
             List<IOWLevel> levels = _iowManager.GetAllLevels();
             return new GetAllLevelsOutput
             {
-                IOWLevels = levels.MapTo<List<IowLevelDto>>()
+                IOWLevels = levels.MapTo<List<LevelDto>>()
             };
         }
 
-        public IowLevelDto UpdateLevel(UpdateLevelInput input)
+        public LevelDto UpdateLevel(UpdateLevelInput input)
         {
             //We can use Logger, it is defined in ApplicationService base class.
             Logger.Info("Updating an IOW level for input: " + input.Name);
@@ -55,17 +55,17 @@ namespace AssetManager.IOWs
             IOWLevel level = new IOWLevel
             {
                 Name = input.Name,
-                Description = input.Description,
+                Description = !string.IsNullOrEmpty(input.Description) ? input.Description : input.Name,
                 Criticality = input.Criticality,
-                ResponseGoal = input.ResponseGoal,
-                MetricGoal = input.MetricGoal,
+                ResponseGoal = !string.IsNullOrEmpty(input.ResponseGoal) ? input.ResponseGoal : "",
+                MetricGoal = !string.IsNullOrEmpty(input.MetricGoal) ? input.MetricGoal : "",
                 TenantId = tenantid
             };
             if (input.Id.HasValue)
                 level.Id = input.Id.Value;
 
             level = _iowManager.InsertOrUpdateLevel(level);
-            return level.MapTo<IowLevelDto>();
+            return level.MapTo<LevelDto>();
         }
 
         public DeleteLevelOutput DeleteLevel(GetLevelInput input)
@@ -78,10 +78,7 @@ namespace AssetManager.IOWs
             };
             Logger.Info("Deleting an IOW level for input id: " + output.Id.ToString() + " name: " + input.Name);
 
-            if (input.Id.HasValue)
-                output.Success = _iowManager.DeleteLevel(input.Id.Value);
-            else
-                output.Success = _iowManager.DeleteLevel(input.Name);
+            output.Success = _iowManager.DeleteLevel(input.Id, input.Name);
 
             return output;
         }

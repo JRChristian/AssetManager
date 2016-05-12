@@ -15,22 +15,21 @@
                 enableColumnResizing: true,
                 rowHeight: 33,
                 columnDefs: [
-                    { name: 'name', width: '30%', minWidth: 50, displayName: vm.localize('Name') },
-                    { name: 'description', width: '30%', displayName: vm.localize('Description') },
-                    { name: 'tagName', width: '20%', displayName: vm.localize('TagName') },
-                    { name: 'uom', width: '10%', displayName: vm.localize('UOM') },
                     {
                         name: 'id', width: '10%', displayName: vm.localize('Action'), enableSorting: false,
                         cellTemplate: '<div class="ui-grid-cell-contents"><a ui-sref="iowvariablechart({ Id: row.entity.id })"><i class="fa fa-line-chart"></i></a> <a ui-sref="iowvariableview({ Id: row.entity.id })"><i class="fa fa-binoculars"></i></a> <a ui-sref="iowvariableedit({ Id: row.entity.id })"><i class="fa fa-wrench"></i></a></div>'
-                    }]
-                //{ name: 'id', cellTemplate: '<div class="ui-grid-cell-contents"><button class="btn btn-primary" ng-click="grid.appScope.vm.tagdata( row.entity.id )">Click Me</button></div>' }]
+                    },
+                    { name: 'name', width: '30%', minWidth: 50, displayName: vm.localize('Name') },
+                    { name: 'description', width: '30%', displayName: vm.localize('Description') },
+                    { name: 'tagName', width: '20%', displayName: vm.localize('TagName') },
+                    { name: 'uom', width: '10%', displayName: vm.localize('UOM') }]
             };
 
             vm.refreshLevels = function () {
-                abp.ui.setBusy( //Set whole page busy until getTagListAsync completes
+                abp.ui.setBusy( //Set whole page busy until the service completes
                     null,
-                    variableService.getIowVariablesAsync({ }).success(function (data) {
-                        vm.gridOptions.data = data.iowVariables;
+                    variableService.getAllVariables({ }).success(function (data) {
+                        vm.gridOptions.data = data.variables;
                     })
                 );
             };

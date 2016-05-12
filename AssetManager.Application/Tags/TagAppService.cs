@@ -27,16 +27,9 @@ namespace AssetManager.Tags
 
         public TagDto GetOneTag(GetOneTagInput input)
         {
-            TagDto output = new TagDto { Name = input.Name, Description = "", UOM = "" };
-            Tag tag = null;
+            Tag tag = _tagManager.FirstOrDefaultTag(input.Id, input.Name);
 
-            if (input.Id.HasValue)
-                tag = _tagManager.FirstOrDefaultTag(input.Id.Value);
-            else
-                tag = _tagManager.FirstOrDefaultTag(input.Name);
-
-            output = tag.MapTo<TagDto>();
-            return output;
+            return tag.MapTo<TagDto>();
         }
 
         public GetTagOutput GetTagList(GetTagInput input)
@@ -88,10 +81,7 @@ namespace AssetManager.Tags
             Logger.Info("Deleting a tag for input Id= " + (input.Id.HasValue ? (input.Id.Value).ToString() : "n/a") + " Name= " + input.Name);
 
             //Get the Tag entity using either the Id or the name--whatever is passed through
-            if (input.Id.HasValue)
-                success = _tagManager.DeleteTag(input.Id.Value);
-            else if ( !string.IsNullOrEmpty(input.Name) )
-                success = _tagManager.DeleteTag(input.Name);
+            success = _tagManager.DeleteTag(input.Id, input.Name);
 
             return success;
         }
@@ -100,48 +90,31 @@ namespace AssetManager.Tags
         {
             Logger.Info("Updating a tag for input Id= " + (input.Id.HasValue ? (input.Id.Value).ToString() : "n/a") + " Name= " + input.Name);
 
-            TagDto output = new TagDto { Name = "", Description = "", UOM = "" };
+            TagDto output = null;
 
             //Retrieving an Tag entity with given id (if specified) or name (if id is not specified).
             //FirstOrDefault() returns null if nothing is found.
-            Tag tag = null;
-            if (input.Id.HasValue)
-                tag = _tagManager.FirstOrDefaultTag(input.Id.Value);
-            else if( !string.IsNullOrEmpty(input.Name) )
-                tag = _tagManager.FirstOrDefaultTag(input.Name);
+            Tag tag = _tagManager.FirstOrDefaultTag(input.Id, input.Name);
 
-            if (tag != null)
+            if( tag == null && !string.IsNullOrEmpty(input.Name) && !string.IsNullOrEmpty(input.Description) )
             {
-                if (!string.IsNullOrEmpty(input.Name))
-                    tag.Name = input.Name;
-
-                if (!string.IsNullOrEmpty(input.Description))
-                    tag.Description = input.Description;
-
-                if (!string.IsNullOrEmpty(input.Name))
-                    tag.UOM = input.UOM;
-
-                if (input.Precision.HasValue)
-                    tag.Precision = input.Precision.Value;
-
-                if (input.Type.HasValue)
-                    tag.Type = input.Type.Value;
-            }
-            else if ( !string.IsNullOrEmpty(input.Name) && !string.IsNullOrEmpty(input.Description) )
-            {
+                // No tag, so create one
                 tag = new Tag
                 {
                     Name = input.Name,
-                    Description = input.Description,
-                    UOM = input.UOM,
-                    Precision = input.Precision,
-                    Type = input.Type.HasValue ? input.Type.Value : TagType.Continuous,
                     TenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1
                 };
             }
 
-            if( tag != null)
+            if (tag != null)
             {
+                tag.Description = input.Description;
+                tag.UOM = input.UOM;
+                if( tag.Precision.HasValue )
+                    tag.Precision = input.Precision.Value;
+                if (input.Type.HasValue)
+                    tag.Type = input.Type.Value;
+
                 tag = _tagManager.InsertOrUpdateTag(tag);
                 output = tag.MapTo<TagDto>();
             }

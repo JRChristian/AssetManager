@@ -1,35 +1,45 @@
 ﻿<div ng-controller="app.views.level.edit as vm">
     <div class="container">
         <div class="row">
-            <div class="col-sm-6">
-                <h3>@L("LevelDetails")</h3>
-            </div>
-            <div class="col-sm-6 text-right">
-                <button ng-click="vm.saveLevel()" ng-disabled="EditLevelForm.$invalid" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> @L("UpdateTheLevel")</button>
-                <button ng-click="vm.deleteLevel()" ng-disabled="EditLevelForm.$invalid" type="submit" class="btn btn-default btn-sm"><i class="fa fa-trash"></i> @L("DeleteTheLevel")</button>
-            </div>
+            <h3>@L("LevelDetails")</h3>
         </div>
-        <form id="EditLevelForm" class="form-horizontal" role="form" name="editLevelForm" novalidate>
-            <div class="form-group">
-                <label class="col-sm-2" control-label for="LevelCriticality">@L("Criticality")</label>
-                <div class="col-sm-1"><input type="number" min="1" max="5" id="LevelCriticality" ng-model="vm.level.criticality" class="form-control"></div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2" control-label for="LevelName">@L("Name")</label>
-                <div class="col-sm-10"><input type="text" id="LevelName" ng-model="vm.level.name" class="form-control" required></div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2" control-label for="LevelDescription">@L("Description")</label>
-                <div class="col-sm-10"><textarea id="LevelDescription" ng-model="vm.level.description" class="form-control" rows="3" required></textarea></div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2" control-label for="LevelResponseGoal">@L("ResponseGoal")</label>
-                <div class="col-sm-10"><textarea id="LevelResponseGoal" ng-model="vm.level.responseGoal" class="form-control" rows="3" required></textarea></div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2" control-label for="LevelMetricGoal">@L("MetricGoal")</label>
-                <div class="col-sm-10"><textarea id="LevelMetricGoal" ng-model="vm.level.metricGoal" class="form-control" rows="3" required></textarea></div>
-            </div>
-        </form>
+        <div class="row">
+            <form id="editLevelForm" name="editLevelForm" class="form-horizontal" role="form" novalidate="">
+                <div class="form-group" show-errors>
+                    <label class="col-sm-2" control-label for="LevelCriticality">@L("Criticality")</label>
+                    <div class="col-sm-2"><input id="levelCriticality" name="levelCriticality" class="form-control" type="number" min="1" max="5" ng-model="vm.level.criticality" required></div>
+                    <p class="help-block" ng-if="editLevelForm.levelCriticality.$error.required">@L("CriticalityIsRequired")</p>
+                    <p class="help-block" ng-if="editLevelForm.levelCriticality.$error.max">@L("CriticalityIsNotInRange", 1, 5)</p>
+                    <p class="help-block" ng-if="editLevelForm.levelCriticality.$error.min">@L("CriticalityIsNotInRange", 1, 5)</p>
+                </div>
+                <div class="form-group" show-errors>
+                    <label class="col-sm-2" control-label for="LevelName">@L("Name")</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="levelName" name="levelName" class="form-control" ng-model="vm.level.name" required>
+                        <p class="help-block" ng-if="editLevelForm.levelName.$error.required">@L("LevelIsRequired")</p>
+                    </div>
+                </div>
+                <div class="form-group" show-errors>
+                    <label class="col-sm-2" control-label for="LevelDescription">@L("Description")</label>
+                    <div class="col-sm-10">
+                        <textarea id="levelDescription" name="levelDescription" class="form-control" ng-model="vm.level.description" rows="3" required></textarea>
+                        <p class="help-block" ng-if="editLevelForm.levelDescription.$error.required">@L("DescriptionIsRequired")</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="LevelResponseGoal">@L("ResponseGoal")</label>
+                    <div class="col-sm-10"><textarea id="LevelResponseGoal" class="form-control" ng-model="vm.level.responseGoal" rows="3"></textarea></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="LevelMetricGoal">@L("MetricGoal")</label>
+                    <div class="col-sm-10"><textarea id="LevelMetricGoal" class="form-control" ng-model="vm.level.metricGoal" rows="3"></textarea></div>
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <button ng-click="vm.saveLevel()" ng-disabled="editLevelForm.$invalid" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> @L("UpdateTheLevel")</button>
+            <a ui-sref="iowlevellist" class="btn btn-default btn-sm"><i class="fa fa-tasks"></i> @L("LevelList")</a>
+            <button ng-show="vm.deleteEnabled" ng-click="vm.deleteLevel()" type="submit" class="btn btn-default btn-sm"><i class="fa fa-trash"></i> @L("DeleteTheLevel")</button>
+        </div>
     </div>
 </div>

@@ -1,35 +1,48 @@
 ﻿<div ng-controller="app.views.tag.edit as vm">
     <div class="container">
         <div class="row">
-            <div class="col-sm-6">
-                <h3>@L("TagDetails")</h3>
-            </div>
-            <div class="col-sm-6 text-right">
-                <button ng-click="vm.saveTag()" ng-disabled="EditTagForm.$invalid" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> @L("UpdateTheTag")</button>
-                <a ui-sref="tagdata({ tagId: {{vm.tag.id}} })" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
-            </div>
+            <h3>@L("TagDetails")</h3>
         </div>
-        <form id="EditTagForm" class="form-horizontal" role="form" name="editTagForm" novalidate>
-            <div class="form-group">
-                <label class="col-sm-2" control-label for="TagName">@L("TagName")</label>
-                <div class="col-sm-10"><input type="text" id="TagName" ng-model="vm.tag.name" class="form-control" required></div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2" control-label for="TagDescription">@L("Description")</label>
-                <div class="col-sm-10"><textarea id="TagDescription" ng-model="vm.tag.description" class="form-control" rows="3" required></textarea></div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2" control-label for="TagUOM">@L("UOM")</label>
-                <div class="col-sm-10"><input  type="text" id="TagUOM" ng-model="vm.tag.uom" class="form-control"></div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2" control-label for="TagPrecision">@L("Precision")</label>
-                <div class="col-sm-2"><input type="number" min="-10" max="10" id="TagPrecision" ng-model="vm.tag.precision" class="form-control"></div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2" control-label for="TagType">@L("TagType")</label>
-                <div class="col-sm-2"><select id="TagType" ng-model="vm.tag.type" ng-options="x.id as x.name for x in vm.tagTypes" class="form-control"></div>
-            </div>
-        </form>
+        <div class="row">
+            <form id="editTagForm" name="editTagForm" class="form-horizontal" role="form" novalidate>
+                <div class="form-group" show-errors>
+                    <label class="col-sm-2" control-label for="TagName">@L("TagName")</label>
+                    <div class="col-sm-10">
+                        <input id="tagName" name="tagName" class="form-control" type="text" ng-model="vm.tag.name" required>
+                        <p class="help-block" ng-if="editTagForm.tagName.$error.required">@L("TagNameIsRequired")</p>
+                    </div>
+                </div>
+                <div class="form-group" show-errors>
+                    <label class="col-sm-2" control-label for="TagDescription">@L("Description")</label>
+                    <div class="col-sm-10">
+                        <textarea id="tagDescription" name="tagDescription" class="form-control" ng-model="vm.tag.description" rows="3" required></textarea>
+                        <p class="help-block" ng-if="editTagForm.tagDescription.$error.required">@L("TagDescriptionIsRequired")</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="TagUOM">@L("UOM")</label>
+                    <div class="col-sm-10"><input id="tagUOM" name="tagUOM" class="form-control" type="text" ng-model="vm.tag.uom"></div>
+                </div>
+                <div class="form-group" show-errors>
+                    <label class="col-sm-2" control-label for="TagPrecision">@L("Precision")</label>
+                    <div class="col-sm-2">
+                        <input id="tagPrecision" name="tagPrecision" class="form-control" type="number" min="-6" max="6" ng-model="vm.tag.precision">
+                        <p class="help-block" ng-if="editTagForm.tagPrecision.$error.max">@L("PrecisionIsNotInRange", -6, 6)</p>
+                        <p class="help-block" ng-if="editTagForm.tagPrecision.$error.min">@L("PrecisionIsNotInRange", -6, 6)</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="TagType">@L("TagType")</label>
+                    <div class="col-sm-2">
+                        <select id="tagType" name="tagType" class="form-control" ng-model="vm.tag.type" ng-options="x.id as x.name for x in vm.tagTypes" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <button ng-click="vm.saveTag()" ng-disabled="editTagForm.$invalid" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> @L("UpdateTheTag")</button>
+            <a ui-sref="taglist" class="btn btn-default btn-sm"><i class="fa fa-database"></i> @L("Tags")</a>
+            <a ng-show="vm.chartEnabled" ui-sref="tagdata({ tagId: {{vm.tag.id}} })" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
+        </div>
     </div>
 </div>

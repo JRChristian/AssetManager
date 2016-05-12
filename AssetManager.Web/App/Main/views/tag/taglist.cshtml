@@ -1,12 +1,7 @@
 ﻿<div ng-controller="app.views.tag.list as vm">
     <div class="container">
         <div class="row">
-            <div class="col-sm-6">
-                <h3>@L("TagList")</h3>
-            </div>
-            <div class="col-sm-6 text-right">
-                <a ui-sref="tagedit({ Id: 0 })" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> @L("CreateTag")</a>
-            </div>
+            <h3>@L("TagList")</h3>
         </div>
         <div class="row">
 @* --Remove the duplicate list of tags, but keep it here for future reference
@@ -45,6 +40,9 @@
 *@
             <div id="grid1" ui-grid="vm.gridOptions" class="grid"></div>
             <div>@L("NumberOfTagsTotal") {{vm.gridOptions.data.length}} @L("NumberOfTagsVisible") {{vm.gridApi.grid.getVisibleRows().length}}</div>
+        </div>
+        <div class="row">
+            <a ui-sref="tagedit({ Id: 0 })" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> @L("CreateTag")</a>
         </div>
     </div>
 </div>

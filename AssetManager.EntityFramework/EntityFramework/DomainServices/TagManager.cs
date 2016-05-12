@@ -18,6 +18,10 @@ namespace AssetManager.DomainServices
         private readonly TagRepository _tagRepository;
         private readonly TagDataRawRepository _tagDataRawRepository;
 
+        // Validation information
+        private static int minPrecision = -10;
+        private static int maxPrecision = 10;
+
         public TagManager( TagRepository tagRepository, TagDataRawRepository tagDataRawRepository )
         {
             _tagRepository = tagRepository;
@@ -32,6 +36,16 @@ namespace AssetManager.DomainServices
         public Tag FirstOrDefaultTag(string name)
         {
             return _tagRepository.FirstOrDefault(p => p.Name == name);
+        }
+
+        public Tag FirstOrDefaultTag(long? id, string name)
+        {
+            Tag tag = null;
+            if ( id.HasValue )
+                tag = _tagRepository.FirstOrDefault(id.Value);
+            else if ( !string.IsNullOrEmpty(name) )
+                tag = _tagRepository.FirstOrDefault(p => p.Name == name);
+            return tag;
         }
 
         public Tag FirstOrDefaultTag(Expression<Func<Tag, bool>> predicate)
@@ -63,6 +77,18 @@ namespace AssetManager.DomainServices
             return true;
         }
 
+        public bool DeleteTag(long? id, string name)
+        {
+            // Should check first to see if the tag is in use, and prevent deleting tags in use
+            if( id.HasValue )
+                _tagRepository.Delete(id.Value);
+
+            else if( !string.IsNullOrEmpty(name) )
+                _tagRepository.Delete(p => p.Name == name);
+
+            return true;
+        }
+
         public bool DeleteTag(Expression<Func<Tag, bool>> predicate)
         {
             // Should check first to see if the tag is in use, and prevent deleting tags in use
@@ -70,17 +96,62 @@ namespace AssetManager.DomainServices
             return true;
         }
 
-        public Tag InsertOrUpdateTag(Tag tag)
+        public Tag InsertOrUpdateTag(Tag input)
         {
-            if (!tag.Type.HasValue)
-                tag.Type = TagType.Continuous;
+            Tag tag = null;
+
+            // Check to see if a tag already exists. If so, fetch and update it. Otherwise create a new tag.
+            if (input.Id > 0)
+                tag = _tagRepository.FirstOrDefault(input.Id);
+            else if (!string.IsNullOrEmpty(input.Name))
+                tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
+
+            // No tag? Then create one
+            if (tag == null)
+            {
+                tag = new Tag { Name = input.Name };
+            }
+            tag.Description = input.Description;
+            tag.Precision = input.Precision;
+            tag.UOM = input.UOM;
+            tag.Type = input.Type.HasValue ? input.Type.Value : TagType.Continuous;
+            tag.TenantId = input.TenantId;
+
+            // Make sure precision is in the proper range
+            if(tag.Precision.HasValue)
+                tag.Precision = tag.Precision.Value.Clamp(minPrecision, maxPrecision);
+
             return _tagRepository.InsertOrUpdate(tag);
         }
 
-        public long InsertOrUpdateAndGetIdTag(Tag tag)
+        public long InsertOrUpdateAndGetIdTag(Tag input)
         {
-            if (!tag.Type.HasValue)
-                tag.Type = TagType.Continuous;
+            Tag tag = null;
+
+            // Check to see if a tag already exists. If so, fetch and update it. Otherwise create a new tag.
+            if (input.Id > 0)
+                tag = _tagRepository.FirstOrDefault(input.Id);
+            else if (!string.IsNullOrEmpty(input.Name))
+                tag = _tagRepository.FirstOrDefault(p => p.Name == input.Name);
+
+            // No tag? Then create one
+            if (tag == null)
+            {
+                tag = new Tag
+                {
+                    Name = input.Name
+                };
+            }
+            tag.Description = input.Description;
+            tag.Precision = input.Precision;
+            tag.UOM = input.UOM;
+            tag.Type = input.Type.HasValue ? input.Type.Value : TagType.Continuous;
+            tag.TenantId = input.TenantId;
+
+            // Make sure precision is in the proper range
+            if (tag.Precision.HasValue)
+                tag.Precision = tag.Precision.Value.Clamp(minPrecision, maxPrecision);
+
             return _tagRepository.InsertOrUpdateAndGetId(tag);
         }
 
