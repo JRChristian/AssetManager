@@ -166,6 +166,14 @@
     <Compile Include="Migrations\201605022123467_AddTagType.Designer.cs">
       <DependentUpon>201605022123467_AddTagType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605130115264_ChangeLimitHandling.cs" />
+    <Compile Include="Migrations\201605130115264_ChangeLimitHandling.Designer.cs">
+      <DependentUpon>201605130115264_ChangeLimitHandling.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605140144544_UpdateDeviationHandling.cs" />
+    <Compile Include="Migrations\201605140144544_UpdateDeviationHandling.Designer.cs">
+      <DependentUpon>201605140144544_UpdateDeviationHandling.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -213,6 +221,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605022123467_AddTagType.resx">
       <DependentUpon>201605022123467_AddTagType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605130115264_ChangeLimitHandling.resx">
+      <DependentUpon>201605130115264_ChangeLimitHandling.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605140144544_UpdateDeviationHandling.resx">
+      <DependentUpon>201605140144544_UpdateDeviationHandling.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

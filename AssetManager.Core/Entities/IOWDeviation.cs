@@ -1,6 +1,7 @@
 ﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using AssetManager.MultiTenancy;
+using AssetManager.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,16 @@ namespace AssetManager.Entities
         public long IOWLimitId { get; set; }
         public virtual IOWLimit IOWLimits { get; set; }
 
-        public DateTime StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
-        public double? LowLimit { get; set; }
-        public double? HighLimit { get; set; }
-        public double? WorstValue { get; set; }
+        public DateTime StartTimestamp { get; set; }
+        public DateTime? EndTimestamp { get; set; }
+        public double LimitValue { get; set; }
+        public double WorstValue { get; set; }
+        public Direction Direction { get; set; }
+
+        public IOWStatus Status
+        {
+            get { return (EndTimestamp == null ? IOWStatus.OpenDeviation : IOWStatus.Deviation); }
+            private set { }
+        }
     }
 }

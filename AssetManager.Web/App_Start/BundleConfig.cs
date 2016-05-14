@@ -56,6 +56,7 @@ namespace AssetManager.Web
                         "~/Scripts/angular-ui/ui-bootstrap-tpls.min.js",
                         "~/Scripts/angular-ui/ui-utils.min.js",
                         "~/Scripts/ui-grid.js",                 // Angular UI Grid
+                        "~/Scripts/ui-bootstrap-tpls-1.3.2.min.js", // UI Bootstrap -- see https://angular-ui.github.io/bootstrap/
 
                         "~/Scripts/flot/jquery.flot.min.js",    // Flot -- see http://www.flotcharts.org/
                         "~/Scripts/angular-flot.js",            // Flot helper library -- see https://docs.omniref.com/js/npm/angular-flot/0.0.6

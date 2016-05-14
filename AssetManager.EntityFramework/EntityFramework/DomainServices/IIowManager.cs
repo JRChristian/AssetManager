@@ -44,6 +44,6 @@ namespace AssetManager.DomainServices
         bool DeleteLimit(long id);
 
         // Deviations
-        List<IOWDeviation> DetectDeviations(TagDataRaw tagdata);
+        void DetectDeviations(Tag tag, DateTime startTimestamp, DateTime? endTimestamp);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Extensions;
-using AssetManager.Entities;
+using AssetManager.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,11 +22,20 @@ namespace AssetManager.IOWs.Dtos
         public string ResponseGoal { get; set; }
         public string MetricGoal { get; set; }
 
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public Direction Direction { get; set; }
+        public double Value { get; set; }
         public string Cause { get; set; }
         public string Consequences { get; set; }
         public string Action { get; set; }
 
-        public double? LowLimit { get; set; }
-        public double? HighLimit { get; set; }
+        public int SortOrder
+        {
+            get
+            {
+                return Direction != Direction.Low ? Criticality : 100-Criticality;
+            }
+        }
     }
 }

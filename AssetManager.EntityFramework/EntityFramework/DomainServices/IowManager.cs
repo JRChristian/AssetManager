@@ -313,15 +313,17 @@ namespace AssetManager.DomainServices
                     IOWLevelId = input.IOWLevelId
                 };
 
+            limit.StartDate = input.StartDate;
+            limit.EndDate = input.EndDate;
+            limit.Direction = input.Direction;
+            limit.Value = input.Value;
             limit.Cause = input.Cause;
             limit.Consequences = input.Consequences;
             limit.Action = input.Action;
-            limit.LowLimit = input.LowLimit;
-            limit.HighLimit = input.HighLimit;
             limit.LastCheckDate = input.LastCheckDate;
             limit.LastStatus = input.LastStatus;
-            limit.LastDeviationStartDate = input.LastDeviationEndDate;
-            limit.LastDeviationEndDate = input.LastDeviationEndDate;
+            limit.LastDeviationStartTimestamp = input.LastDeviationStartTimestamp;
+            limit.LastDeviationEndTimestamp = input.LastDeviationEndTimestamp;
 
             return _iowLimitRespository.InsertOrUpdateAndGetId(limit);
         }
@@ -335,120 +337,160 @@ namespace AssetManager.DomainServices
 
         // Deviations
 
-        public List<IOWDeviation> DetectDeviations(TagDataRaw tagdata)
+        public void DetectDeviations(Tag tag, DateTime startTimestamp, DateTime? endTimestampx)
         {
-            List<IOWDeviation> output = new List<IOWDeviation>();
+            DateTime lastCheckDate = DateTime.Now;
 
-            // Only consider good data
-            if ( tagdata.Quality == TagDataQuality.Good )
+            // If an end time isn't specified, look as far as one hour ahead of now.
+            DateTime endTimestamp = endTimestampx.HasValue ? endTimestampx.Value : DateTime.Now.AddHours(1);
+
+            // Get all the data for the specified tag in the specified time range. Only consider good data.
+            List<TagDataRaw> tagdata = _tagManager.GetAllListData(p => p.TagId == tag.Id && p.Timestamp >= startTimestamp && p.Timestamp <= endTimestamp && p.Quality == TagDataQuality.Good);
+
+            // Continue only if we found some data.
+            if (tagdata != null)
             {
-
                 // Get all variables associated with this tag
-                List<IOWVariable> variables = _iowVariableRepository.GetAllList(t => t.TagId == tagdata.TagId);
+                List<IOWVariable> variables = _iowVariableRepository.GetAllList(t => t.TagId == tag.Id);
 
-                foreach(IOWVariable v in variables )
+                foreach (IOWVariable v in variables)
                 {
-                    foreach( IOWLimit limit in v.IOWLimits )
+                    foreach (IOWLimit limit in v.IOWLimits)
                     {
-                        double? lowLimit = null, highLimit = null;
-                        if (limit.HighLimit.HasValue)
-                            highLimit = limit.HighLimit.Value;
-                        if (limit.LowLimit.HasValue)
-                            lowLimit = limit.LowLimit.Value;
+                        IOWDeviation deviation = null;
+                        bool isFirstData = true;
 
-                        // Do we already have a deviation record?
-                        // Find a deviation record (if one exists) matching the current limit AND 
-                        // where the time period of the deviation record overlaps the current tag value.
-                        IOWDeviation deviation = _iowDeviationRepository.FirstOrDefault(x => 
-                            x.IOWLimitId == limit.Id && x.StartDate < tagdata.Timestamp && 
-                                (!x.EndDate.HasValue || x.EndDate.Value > tagdata.Timestamp));
-
-                        if( deviation != null )
+                        foreach (TagDataRaw data in tagdata)
                         {
-                            // Found an old record, so update it as necessary. May need to add an additional record.
-                            double worstValue = deviation.WorstValue.HasValue ? deviation.WorstValue.Value : tagdata.Value;
+                            // There are several cases here.
+                            //  1. A deviation already exists. With new data:
+                            //     A. Still a deviation ==> update the existing deviation
+                            //     B. Deviation is over ==> update the existing deviation and close the record
+                            //  2. There isn't an existing deviation. WIth new data:
+                            //     A. A deviation has started ==> insert a new one
+                            //     B. No deviation ==> do nothing
 
-                            // If the old record has the same deviation type (low or high) as the input
-                            // then update the old record in place. The start and end times should not change, since either the
-                            // end time is missing (for an ongoing deviation) or the end time is later than our current time.
-                            if( WhatDeviationType(tagdata.Value, lowLimit, highLimit) == WhatDeviationType(worstValue, lowLimit, highLimit) )
+                            // Do we have a deviation with this particular tag record?
+                            Direction newDirection = WhatDeviationType(limit.Direction, limit.Value, data.Value);
+                            bool isDeviation = IsDeviation(limit.Direction, limit.Value, data.Value);
+
+                            // For the first value in the data array, check so see if we already have a deviation record.
+                            // Find a deviation record (if one exists) matching the current limit AND 
+                            // where the time period of the deviation record overlaps the current tag value.
+                            // No need to do this after the first value in the tag data collection.
+                            if( isFirstData )
                             {
-                                deviation.LowLimit = lowLimit;
-                                deviation.HighLimit = highLimit;
-                                if (WhatDeviationType(tagdata.Value, lowLimit, highLimit) == DeviationType.Low)
-                                    deviation.WorstValue = Math.Min(tagdata.Value, worstValue);
+                                deviation = _iowDeviationRepository.FirstOrDefault(x =>
+                                    x.IOWLimitId == limit.Id && x.StartTimestamp < data.Timestamp &&
+                                    (!x.EndTimestamp.HasValue || x.EndTimestamp.Value > data.Timestamp));
+                                isFirstData = false;
+                            }
+
+                            if (deviation != null)
+                            {
+                                // Case 1 - A deviation already exists
+                                if (isDeviation)
+                                {
+                                    // Case 1A - The existing deviation continues ==> update the new record and leave it open
+                                    // No need to update timestamps, since the current time must fall within the deviation time range OR 
+                                    // there isn't an end time to the existing deviation.
+                                    if (deviation.Direction == Direction.Low)
+                                    {
+                                        deviation.LimitValue = Math.Min(deviation.LimitValue, limit.Value);
+                                        deviation.WorstValue = Math.Min(deviation.WorstValue, data.Value);
+                                    }
+                                    else if (deviation.Direction == Direction.High)
+                                    {
+                                        deviation.LimitValue = Math.Max(deviation.LimitValue, limit.Value);
+                                        deviation.WorstValue = Math.Max(deviation.WorstValue, data.Value);
+                                    }
+                                    _iowDeviationRepository.Update(deviation);
+
+                                    // No updates needed to the overall limit record
+                                }
                                 else
-                                    deviation.WorstValue = Math.Max(tagdata.Value, worstValue);
-
-                                output.Add(deviation);
-                            }
-
-                            // The old record has a different deviation type (low or high) as the input, so close the old record
-                            // and create a new one. This handles the case where the new data is later than anything already processed,
-                            // so the status is swinging from low to high (or vice versa) and we need to close the "low" record and
-                            // create a new "high" record. There is the possibility, not handled here, that the new data are showing up
-                            // out of order. Suppose a new "low" value shows up in the midst of a "high" deviation. We need to split
-                            // the old deviation record. The new situation could be any of the following: high/low/high or high/low.
-                            // We can't tell these cases apart with the information at hand--we need more raw data just before and just
-                            // after the data passed as input. A problem to be solved later. For now, assume that the high/low case.
-                            else
-                            {
-                                deviation.EndDate = tagdata.Timestamp.AddMinutes(-1);
-                                output.Add(deviation);
-
-                                deviation = new IOWDeviation
                                 {
-                                    TenantId = v.TenantId,
-                                    IOWLimitId = limit.Id,
-                                    StartDate = tagdata.Timestamp,
-                                    //EndDate = tagdata.Timestamp, // No end time
-                                    LowLimit = lowLimit,
-                                    HighLimit = highLimit,
-                                    WorstValue = tagdata.Value
-                                };
-                                output.Add(deviation);
-                            }
-                        } // if( deviation != null )
-                        else // if( deviation == null )
-                        {
-                            // Didn't find an old record. 
-                            // Check for a deviation in the input data and create a new record if necessary.
-                            if ( IsDeviation(tagdata.Value, lowLimit, highLimit ) )
+                                    // Case 1B - The existing deviation is over ==> update and close the old record
+                                    deviation.EndTimestamp = data.Timestamp.AddMinutes(-1);
+                                    _iowDeviationRepository.Update(deviation);
+                                    deviation = null;
+
+                                    // Update the overall limit record -- maybe (not if the overall record describes a future deviation)
+                                    if( limit.LastDeviationStartTimestamp < data.Timestamp )
+                                    {
+                                        limit.LastStatus = IOWStatus.Normal;
+                                        limit.LastDeviationEndTimestamp = data.Timestamp.AddMinutes(-1);
+                                    }
+                                }
+                            } // if( deviation != null )
+                            else // if( deviation == null )
                             {
-                                deviation = new IOWDeviation
+                                // Case 2 - There isn't already a deviation
+                                if (isDeviation)
                                 {
-                                    TenantId = v.TenantId,
-                                    IOWLimitId = limit.Id,
-                                    StartDate = tagdata.Timestamp,
-                                    //EndDate = tagdata.Timestamp, // No end time
-                                    LowLimit = lowLimit,
-                                    HighLimit = highLimit,
-                                    WorstValue = tagdata.Value
-                                };
-                                output.Add(deviation);
-                            }
-                        } // if( deviation == null )
+                                    // Case 2A - A new deviation has started ==> insert a new record
+                                    deviation = new IOWDeviation
+                                    {
+                                        TenantId = v.TenantId,
+                                        IOWLimitId = limit.Id,
+                                        StartTimestamp = data.Timestamp,
+                                        //EndTimestamp = tagdata.Timestamp, // No end time
+                                        Direction = newDirection,
+                                        LimitValue = limit.Value,
+                                        WorstValue = data.Value,
+                                    };
+
+                                    // Insert the new record. We may need to update it later.
+                                    long Id = _iowDeviationRepository.InsertAndGetId(deviation);
+                                    deviation.Id = Id;
+
+                                    // Update the overall limit record -- maybe
+                                    if( !limit.LastDeviationStartTimestamp.HasValue || limit.LastDeviationStartTimestamp.Value < data.Timestamp )
+                                    {
+                                        limit.LastStatus = IOWStatus.OpenDeviation;
+                                        limit.LastDeviationStartTimestamp = data.Timestamp;
+                                        limit.LastDeviationEndTimestamp = null;
+                                    }
+                                }
+                                else
+                                {
+                                    // Case 2B - there wasn't a deviation and still isn't one ==> do nothing
+
+                                    // No updates needed to the overall limit record
+                                }
+
+                            } // if( deviation == null )
+                        } // foreach (TagDataRaw data in tagdata)
+
+                        // Okay, we processed all the data for this limit. Update the overall limit information.
+                        limit.LastCheckDate = lastCheckDate;
+                        _iowLimitRespository.Update(limit);
+
                     }  // foreach( IOWLimit limit in v.IOWLimits )
                 } // foreach(IOWVariable v in variables )
-            } //if ( tagdata.Quality == TagDataQuality.Good )
+            } // if( tagdata != null )
+            return;
+        }
+
+        private bool IsDeviation(Direction LimitDirection, double LimitValue, double Value)
+        {
+            if ((LimitDirection == Direction.Low && Value < LimitValue) ||
+                (LimitDirection == Direction.High && Value > LimitValue))
+                return true;
+            else
+                return false;
+        }
+
+        private Direction WhatDeviationType(Direction LimitDirection, double LimitValue, double Value )
+        {
+            Direction output = Direction.None;
+
+            if (LimitDirection == Direction.Low && Value < LimitValue)
+                output = Direction.Low;
+            else if (LimitDirection == Direction.High && Value > LimitValue)
+                output = Direction.High;
 
             return output;
-        }
-
-        private enum DeviationType { None, Low, High }
-
-        private DeviationType WhatDeviationType( double value, double? low, double? high)
-        {
-            if (low.HasValue && value < low.Value)
-                return DeviationType.Low;
-            else if (high.HasValue && value > high.Value)
-                return DeviationType.High;
-            else return DeviationType.None;
-        }
-
-        private bool IsDeviation(double value, double? low, double? high)
-        {
-            return (low.HasValue && value < low.Value) || (high.HasValue && value > high.Value);
         }
     }
 }

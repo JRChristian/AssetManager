@@ -115,6 +115,8 @@
     <Compile Include="Assets\Dtos\AssetDto.cs" />
     <Compile Include="Assets\Dtos\AssetTypeDto.cs" />
     <Compile Include="Assets\Dtos\CreateAssetInput.cs" />
+    <Compile Include="IOWs\Dtos\DetectDeviationsInput.cs" />
+    <Compile Include="IOWs\IIowDeviationAppService.cs" />
     <Compile Include="IOWs\Dtos\UpdateLimitInput.cs" />
     <Compile Include="IOWs\Dtos\DeleteLevelOutput.cs" />
     <Compile Include="IOWs\Dtos\DeleteVariableOutput.cs" />
@@ -135,6 +137,7 @@
     <Compile Include="IOWs\Dtos\UpdateVariableInput.cs" />
     <Compile Include="IOWs\Dtos\UpdateLevelInput.cs" />
     <Compile Include="IOWs\IIowVariableAppService.cs" />
+    <Compile Include="IOWs\IowDeviationAppService.cs" />
     <Compile Include="IOWs\IowVariableAppService.cs" />
     <Compile Include="Tags\Dtos\AddTagDataRawInput.cs" />
     <Compile Include="Tags\Dtos\CreateTagInput.cs" />

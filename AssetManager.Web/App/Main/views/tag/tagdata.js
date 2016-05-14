@@ -6,10 +6,7 @@
         '$scope', '$location', '$stateParams', 'abp.services.app.tagData',
         function ($scope, $location, $stateParams, tagDataService) {
             var vm = this;
-
             vm.localize = abp.localization.getSource('AssetManager');
-
-            vm.qualitystatus = new Array(vm.localize('QualityBad'), vm.localize('QualityUncertain'), vm.localize('QualityGood'));
 
             vm.canvasChart = new CanvasJS.Chart("chartContainer", {
                 title: { text: "Chart Title" },

@@ -80,29 +80,29 @@ namespace AssetManager.IOWs
                 Limits = new List<LimitDto>()
             };
 
-            // Get limits currently in use for this variable, sorted by name
-            List<IOWLimit> limits = variable.IOWLimits.OrderBy(p => p.Level.Id).ToList();
+            // Get limits currently in use for this variable, sorted by level name and direction. There could be 0, 1 or 2 limits for each level name.
+            List<IOWLimit> limits = variable.IOWLimits.OrderBy(p => p.Level.Name).ThenBy(p => p.Direction).ToList();
 
-            // Get all available levels defined at this site, sorted by name
-            List<IOWLevel> levels = _iowManager.GetAllLevels().OrderBy(p => p.Id).ToList();
+            // Get all available levels defined at this site, sorted by name.
+            List<IOWLevel> levels = _iowManager.GetAllLevels().OrderBy(p => p.Name).ToList();
 
             // Now build the output the hard way, since we have our own logic.
             // "j" is our counter into the list of limits. This list will have between zero items
-            // and the number of items in the level list.
-            j = limits.Count > 0 ? 0 : levels.Count + 1;
+            // and twice the number of levels. (One each--potentially--for the low and high limit.)
+            j = 0;
+            bool isLimitPresent = false;
 
+            // Loop through the levels. For each level, there will be 0, 1 or 2 limits to consider.
             for (i = 0; i < levels.Count; i++)
             {
-                // Increment j (index into existing limits) to match the level, if possible
-                for (; j < limits.Count && limits[j].Level.Id < levels[i].Id; j++) ;
-
-                // If j (the index into the list of limits for this variable) <= i (index into the list of all levels)
-                // then the limit matches the level, and this level matches an active limit.
-                // Otherwise, this level is not currently active for this variable.
-                bool isLimitPresent = (j < limits.Count) && limits[j].Level.Id == levels[i].Id;
-
-                if( isLimitPresent || input.IncludeUnusedLimits )
+                // Is the low limit present?
+                // It is *IF* we haven't run out of limits AND the names match AND the direction is low
+                isLimitPresent = j < limits.Count && 
+                    limits[j].Level.Name == levels[i].Name && 
+                    limits[j].Direction == Direction.Low;
+                if (isLimitPresent || input.IncludeUnusedLimits)
                 {
+                    // Add a low limit to the working list
                     output.Limits.Add(new LimitDto
                     {
                         Id = isLimitPresent ? limits[j].Id : 0,
@@ -114,15 +114,53 @@ namespace AssetManager.IOWs
                         Criticality = levels[i].Criticality,
                         ResponseGoal = levels[i].ResponseGoal,
                         MetricGoal = levels[i].MetricGoal,
+                        StartDate = isLimitPresent ? limits[j].StartDate : new DateTime(2014, 1, 1),
+                        EndDate = isLimitPresent ? limits[j].EndDate : null,
+                        Direction = isLimitPresent ? limits[j].Direction : Direction.Low,
+                        Value = isLimitPresent ? limits[j].Value : double.NaN,
                         Cause = isLimitPresent ? limits[j].Cause : "",
                         Consequences = isLimitPresent ? limits[j].Consequences : "",
-                        Action = isLimitPresent ? limits[j].Action : "",
-                        LowLimit = isLimitPresent ? limits[j].LowLimit : null,
-                        HighLimit = isLimitPresent ? limits[j].HighLimit : null
+                        Action = isLimitPresent ? limits[j].Action : ""
                     });
+                    if( isLimitPresent) // If we "used up" a limit, move on to the next one
+                        j++;
                 }
+
+                // Is the high limit present?
+                // It is *IF* we haven't run out of limits AND the names match AND the direction is high
+                isLimitPresent = j < limits.Count &&
+                    limits[j].Level.Name == levels[i].Name &&
+                    limits[j].Direction == Direction.High;
+                if (isLimitPresent || input.IncludeUnusedLimits)
+                {
+                    // Add a High limit to the working list
+                    output.Limits.Add(new LimitDto
+                    {
+                        Id = isLimitPresent ? limits[j].Id : 0,
+                        IOWVariableId = variable.Id,
+                        IsActive = isLimitPresent,
+                        IOWLevelId = levels[i].Id,
+                        Name = levels[i].Name,
+                        Description = levels[i].Description,
+                        Criticality = levels[i].Criticality,
+                        ResponseGoal = levels[i].ResponseGoal,
+                        MetricGoal = levels[i].MetricGoal,
+                        StartDate = isLimitPresent ? limits[j].StartDate : new DateTime(2014, 1, 1),
+                        EndDate = isLimitPresent ? limits[j].EndDate : null,
+                        Direction = isLimitPresent ? limits[j].Direction : Direction.High,
+                        Value = isLimitPresent ? limits[j].Value : double.NaN,
+                        Cause = isLimitPresent ? limits[j].Cause : "",
+                        Consequences = isLimitPresent ? limits[j].Consequences : "",
+                        Action = isLimitPresent ? limits[j].Action : ""
+                    });
+                    if (isLimitPresent)  // If we "used up" a limit, move on to the next one
+                        j++;
+                }
+
             } // for (i = 0; i < levels.Count; i++)
-            output.Limits = output.Limits.OrderBy(p => p.Name).ToList();
+
+            // The working list is currently sorted by limit name. Provide a better sort for consumers.
+            output.Limits = output.Limits.OrderBy(p => p.SortOrder).ToList();
             return output;
         }
 
@@ -210,11 +248,13 @@ namespace AssetManager.IOWs
                     Criticality = levels[i].Criticality,
                     ResponseGoal = levels[i].ResponseGoal,
                     MetricGoal = levels[i].MetricGoal,
+                    StartDate = limits[j].StartDate,
+                    EndDate = limits[j].EndDate,
+                    Direction = limits[j].Direction,
+                    Value = limits[j].Value,
                     Cause = haveLimit ? limits[j].Cause : "",
                     Consequences = haveLimit ? limits[j].Consequences : "",
-                    Action = haveLimit ? limits[j].Action : "",
-                    LowLimit = haveLimit ? limits[j].LowLimit : null,
-                    HighLimit = haveLimit ? limits[j].HighLimit : null
+                    Action = haveLimit ? limits[j].Action : ""
                 });
             }
 
@@ -226,6 +266,8 @@ namespace AssetManager.IOWs
 
         public LimitDto UpdateLimit(UpdateLimitInput input)
         {
+            DateTime oldestDate = new DateTime(2014, 1, 1);
+
             // This method accepts one limit for one variable.
             // If the limit does not exist, it is added.
             // If the limit exists, it is changed or deleted.
@@ -235,16 +277,16 @@ namespace AssetManager.IOWs
             bool isActive = input.IsActive.HasValue ? input.IsActive.Value : true;
 
             // Look for the variable.
-            IOWVariable variable = _iowManager.FirstOrDefaultVariable(input.IowVariableId, input.IowVariableName);
+            IOWVariable variable = _iowManager.FirstOrDefaultVariable(input.IOWVariableId, input.VariableName);
 
             if( variable != null )
             {
 
                 // Does the specified limit exist? If so, get it. This will return null if nothing is found.
-                IOWLimit limit = _iowManager.FirstOrDefaultLimit(variable.Id, input.Id, input.Name);
+                IOWLimit limit = _iowManager.FirstOrDefaultLimit(variable.Id, input.Id, input.LevelName);
 
                 // Does the specified level exist? It should.
-                IOWLevel level = _iowManager.FirstOrDefaultLevel(input.IOWLevelId, input.Name);
+                IOWLevel level = _iowManager.FirstOrDefaultLevel(input.IOWLevelId, input.LevelName);
 
                 // There are five possibilities at this point:
                 //   1) We did not find a level ==> bad input, do nothing
@@ -270,22 +312,18 @@ namespace AssetManager.IOWs
                             IOWLevelId = level.Id,
                             LastCheckDate = null,
                             LastStatus = IOWStatus.Normal,
-                            LastDeviationStartDate = null,
-                            LastDeviationEndDate = null,
+                            LastDeviationStartTimestamp = null,
+                            LastDeviationEndTimestamp = null,
                             TenantId = variable.TenantId
                         };
 
+                    limit.StartDate = new DateTime(Math.Max(input.StartDate.Ticks, oldestDate.Ticks));
+                    limit.EndDate = input.EndDate;
+                    limit.Direction = input.Direction;
+                    limit.Value = input.Value;
                     limit.Cause = input.Cause;
                     limit.Consequences = input.Consequences;
                     limit.Action = input.Action;
-
-                    double? lowLimit = null, highLimit = null;
-                    if (input.LowLimit.HasValue)
-                        lowLimit = input.LowLimit.Value;
-                    if (input.HighLimit.HasValue)
-                        highLimit = input.HighLimit.Value;
-                    limit.LowLimit = lowLimit;
-                    limit.HighLimit = highLimit;
 
                     limit.Id = _iowManager.InsertOrUpdateLimitAndGetId(limit);
 
@@ -308,11 +346,13 @@ namespace AssetManager.IOWs
                         IOWLevelId = limit.IOWLevelId,
                         Name = level.Name,
                         Criticality = level.Criticality,
+                        StartDate = limit.StartDate,
+                        EndDate = limit.EndDate,
+                        Direction = limit.Direction,
+                        Value = limit.Value,
                         Cause = limit.Cause,
                         Consequences = limit.Consequences,
-                        Action = limit.Action,
-                        LowLimit = limit.LowLimit,
-                        HighLimit = limit.HighLimit
+                        Action = limit.Action
                     };
             }
             return output;
@@ -432,7 +472,7 @@ namespace AssetManager.IOWs
                     string color = limit.Level.Criticality > 0 && limit.Level.Criticality < colors.Length
                         ? colors[limit.Level.Criticality] : colors[colors.Length-1];
 
-                    if(limit.HighLimit.HasValue)
+                    if(limit.Direction == Direction.High)
                     {
                         output.CanvasJS.data.Add(new CanvasJSData
                         {
@@ -444,7 +484,7 @@ namespace AssetManager.IOWs
                             xValueType = "dateTime",
                             color = color,
                             showInLegend = true,
-                            legendText = limit.Level.Name + "- high",
+                            legendText = limit.Level.Name + "-high",
                             dataPoints = new List<CanvasJSDataPoints>()
                         });
 
@@ -452,12 +492,12 @@ namespace AssetManager.IOWs
                         // C# datetime is in ticks (milliseconds) since January 1, 0000
                         int index = output.CanvasJS.data.Count - 1;
                         output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
-                            { x = minTimestamp.ToJavaScriptMilliseconds(), y = limit.HighLimit.Value });
+                            { x = minTimestamp.ToJavaScriptMilliseconds(), y = limit.Value });
                         output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
-                            { x = maxTimestamp.ToJavaScriptMilliseconds(), y = limit.HighLimit.Value });
+                            { x = maxTimestamp.ToJavaScriptMilliseconds(), y = limit.Value });
                     }
 
-                    if (limit.LowLimit.HasValue)
+                    else if (limit.Direction == Direction.Low)
                     {
                         output.CanvasJS.data.Add(new CanvasJSData
                         {
@@ -469,7 +509,7 @@ namespace AssetManager.IOWs
                             xValueType = "dateTime",
                             color = color,
                             showInLegend = true,
-                            legendText = limit.Level.Name + "- low",
+                            legendText = limit.Level.Name + "-low",
                             dataPoints = new List<CanvasJSDataPoints>()
                         });
 
@@ -477,9 +517,9 @@ namespace AssetManager.IOWs
                         // C# datetime is in ticks (milliseconds) since January 1, 0000
                         int index = output.CanvasJS.data.Count - 1;
                         output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
-                            { x = minTimestamp.ToJavaScriptMilliseconds(), y = limit.LowLimit.Value });
+                            { x = minTimestamp.ToJavaScriptMilliseconds(), y = limit.Value });
                         output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
-                            { x = maxTimestamp.ToJavaScriptMilliseconds(), y = limit.LowLimit.Value });
+                            { x = maxTimestamp.ToJavaScriptMilliseconds(), y = limit.Value });
                     }
                 }
             }

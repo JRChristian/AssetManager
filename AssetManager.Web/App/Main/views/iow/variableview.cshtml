@@ -39,8 +39,8 @@
                         <tr>
                             <th></th>
                             <th>@L("Name")</th>
-                            <th>@L("LowLimit")</th>
-                            <th>@L("HighLimit")</th>
+                            <th>@L("Direction")</th>
+                            <th>@L("Limit")</th>
                             <th>@L("Causes")</th>
                             <th>@L("Consequences")</th>
                             <th>@L("Action")</th>
@@ -49,9 +49,9 @@
                     <tbody>
                         <tr ng-repeat="limit in vm.variable.limits" ng-class="{'danger':limit.criticality==1,'warning':limit.criticality==2}">
                             <td align="center">{{limit.criticality}}</td>
-                            <td>{{limit.name}}</td>
-                            <td align="center">{{limit.lowLimit}}</td>
-                            <td align="center">{{limit.highLimit}}</td>
+                            <td uib-tooltip="Description: {{limit.description}}  Response goal: {{limit.responseGoal}}" tooltip-append-to-body=true>{{limit.name}}</td>
+                            <td align="center">{{limit.direction | direction}}</td>
+                            <td align="center">{{limit.value}}</td>
                             <td>{{limit.cause}}</td>
                             <td>{{limit.consequences}}</td>
                             <td>{{limit.action}}</td>
@@ -61,6 +61,7 @@
             </div>
         </div>
         <div class="row">
+            <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
             <a ui-sref="iowvariablechart({ Id: {{vm.variable.id}} })" class="btn btn-primary btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
             <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>
             <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-wrench"></i> @L("Edit")</a>

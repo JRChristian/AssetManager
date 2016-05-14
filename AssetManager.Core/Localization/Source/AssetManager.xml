@@ -70,8 +70,12 @@
     <text name="VariableUpdatedOk" value="Variable {0} has been updated" />
     <text name="Causes" value="Causes" />
     <text name="Consequences" value="Consequences" />
-    <text name="LowLimit" value="Low limit" />
-    <text name="HighLimit" value="High limit" />
+    <text name="Limit" value="Limit" />
+    <text name="Direction" value="Direction" />
+    <text name="DirectionNone" value="None" />
+    <text name="DirectionLow" value="Low" />
+    <text name="DirectionFocus" value="Focus" />
+    <text name="DirectionHigh" value="High" />
     <text name="IsActive" value="Active?" />
 
     <text name="Actions" value="Actions" />

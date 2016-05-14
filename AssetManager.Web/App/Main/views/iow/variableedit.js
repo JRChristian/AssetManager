@@ -21,22 +21,22 @@
                 enableSorting: false,
                 enableColumnResizing: true,
                 enableCellEditOnFocus: true,
-                minRowsToShow: 5,
+                minRowsToShow: 8,
                 columnDefs: [
                     {
-                        name: 'isActive', width: '10%', displayName: vm.localize('IsActive'), enableCellEdit: true,
-                        type: 'boolean' //cellTemplate: '<div class="ui-grid-cell-contents">{{COL_FIELD ? "X" : ""}}</div>'
+                        name: 'isActive', width: '50', displayName: vm.localize('IsActive'), enableCellEdit: true,
+                        type: 'boolean', cellTemplate: '<input type="checkbox" ng-model="row.entity.isActive">'
                     },
                     {
-                        name: 'name', width: '10%', displayName: vm.localize('Name'), enableCellEdit: false,
+                        name: 'name', width: '100', displayName: vm.localize('Name'), enableCellEdit: false,
                         cellTemplate: '<div class="grid-tooltip" tooltip="{{ row.entity.description }}" tooltip-placement="top" tooltip-append-to-body="true">'
                             + '<div class="ui-grid-cell-contents">{{ COL_FIELD }}</div></div>'
                     },
-                    { name: 'lowLimit', width: '10%', displayName: vm.localize('LowLimit'), enableCellEdit: true },
-                    { name: 'highLimit', width: '10%', displayName: vm.localize('HighLimit'), enableCellEdit: true },
-                    { name: 'cause', width: '20%', displayName: vm.localize('Causes'), enableCellEdit: true },
-                    { name: 'consequences', width: '20%', displayName: vm.localize('Consequences'), enableCellEdit: true },
-                    { name: 'action', width: '20%', displayName: vm.localize('Action'), enableCellEdit: true }
+                    { name: 'direction', width: '50', displayName: vm.localize('Direction'), enableCellEdit: false, cellFilter: 'direction' },
+                    { name: 'value', width: '50', displayName: vm.localize('Limit'), enableCellEdit: true, cellTemplate: '<div class="ui-grid-cell-contents"><div align="center">{{ COL_FIELD }}</div></div>' },
+                    { name: 'cause', width: '*', displayName: vm.localize('Causes'), enableCellEdit: true },
+                    { name: 'consequences', width: '*', displayName: vm.localize('Consequences'), enableCellEdit: true },
+                    { name: 'action', width: '*', displayName: vm.localize('Action'), enableCellEdit: true }
                 ],
                 rowEditWaitInterval: -1
             };
@@ -50,7 +50,12 @@
                 variableService.getVariableLimits({ Id: vm.variable.id, IncludeUnusedLimits: true })
                     .success(function (data) {
                         vm.variable = data;
-                        vm.gridOptions.data = $filter('orderBy')(data.limits, "criticality", false);
+                        vm.gridOptions.minRowsToShow = data.limits.length;
+                        for (i = 0; i < data.limits.length; i++) {
+                            if (isNaN(data.limits[i].value))
+                                data.limits[i].value = null;
+                        }
+                        vm.gridOptions.data = $filter('orderBy')(data.limits, "sortOrder", false);
                     })
                 );
             /*
@@ -87,14 +92,14 @@
                             for (var i = 0; i < vm.gridDirtyRows.length; i++) {
                                 variableService.updateLimit({
                                     IowVariableId: vm.variable.id,
-                                    Name: vm.gridDirtyRows[i].entity.name,
+                                    LevelName: vm.gridDirtyRows[i].entity.name,
                                     IsActive: vm.gridDirtyRows[i].entity.isActive,
                                     IOWLevelId: vm.gridDirtyRows[i].entity.iowLevelId,
                                     Cause: vm.gridDirtyRows[i].entity.cause,
                                     Consequences: vm.gridDirtyRows[i].entity.consequences,
                                     Action: vm.gridDirtyRows[i].entity.action,
-                                    LowLimit: vm.gridDirtyRows[i].entity.lowLimit,
-                                    HighLimit: vm.gridDirtyRows[i].entity.highLimit
+                                    Value: vm.gridDirtyRows[i].entity.value,
+                                    Direction: vm.gridDirtyRows[i].entity.direction
                                 });
                             }
                             abp.notify.info(abp.utils.formatString(vm.localize("VariableUpdatedOk"), vm.variable.name));
