@@ -31,6 +31,14 @@ namespace AssetManager.Web
                     )
                     .AddItem(
                         new MenuItemDefinition(
+                            "IOWVariableStatus",
+                            new LocalizableString("IOWVariableStatus", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/iowvariablestatus",
+                            icon: "fa fa-sitemap"
+                            )
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
                             "IOWVariables",
                             new LocalizableString("IOWVariables", AssetManagerConsts.LocalizationSourceName),
                             url: "#/iowvariablelist",

@@ -86,6 +86,11 @@
                     templateUrl: '/App/Main/views/iow/variablelist.cshtml',
                     menu: 'IOWVariables' //Matches to name in AssetManagerNavigationProvider
                 })
+                .state('iowvariablestatus', {
+                    url: '/iowvariablestatus',
+                    templateUrl: '/App/Main/views/iow/variablestatus.cshtml',
+                    menu: 'IOWVariableStatus' //Matches to name in AssetManagerNavigationProvider
+                })
                 .state('iowvariableview', {
                     url: '/iowvariableview?Id',
                     templateUrl: '/App/Main/views/iow/variableview.cshtml',

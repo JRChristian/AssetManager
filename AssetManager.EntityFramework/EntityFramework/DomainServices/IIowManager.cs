@@ -40,6 +40,7 @@ namespace AssetManager.DomainServices
         IOWLimit FirstOrDefaultLimit(string variableName, string levelName);
         IOWLimit FirstOrDefaultLimit(long variableId, long? levelId, string levelName);
         List<IOWLimit> GetAllLimits(long variableId);
+        List<IOWLimit> GetAllLimits(string VariableName, string LevelName);
         long InsertOrUpdateLimitAndGetId(IOWLimit input);
         bool DeleteLimit(long id);
 

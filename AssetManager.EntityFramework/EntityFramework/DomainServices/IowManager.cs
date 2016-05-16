@@ -294,6 +294,22 @@ namespace AssetManager.DomainServices
             return _iowLimitRespository.GetAll().Where(p => p.IOWVariableId == variableId).OrderBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
         }
 
+        public List<IOWLimit> GetAllLimits(string VariableName, string LevelName)
+        {
+            List<IOWLimit> output = null;
+
+            if ( !string.IsNullOrEmpty(VariableName) && !string.IsNullOrEmpty(LevelName) )
+                output = _iowLimitRespository.GetAll().Where(p => p.Variable.Name == VariableName && p.Level.Name == LevelName).OrderBy(p => p.Variable.Name).ThenBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
+            else if (!string.IsNullOrEmpty(VariableName) )
+                output = _iowLimitRespository.GetAll().Where(p => p.Variable.Name == VariableName).OrderBy(p => p.Variable.Name).ThenBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
+            else if (!string.IsNullOrEmpty(LevelName))
+                output = _iowLimitRespository.GetAll().Where(p => p.Level.Name == LevelName).OrderBy(p => p.Variable.Name).ThenBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
+            else
+                output = _iowLimitRespository.GetAll().OrderBy(p => p.Variable.Name).ThenBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
+
+            return output;
+        }
+
         public long InsertOrUpdateLimitAndGetId(IOWLimit input)
         {
             IOWLimit limit = null;

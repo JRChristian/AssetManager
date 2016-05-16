@@ -21,6 +21,10 @@ namespace AssetManager.Entities
         public int? Precision { get; set; }
         public TagType? Type { get; set; }
 
+        public DateTime? LastTimestamp { get; set; }
+        public double? LastValue { get; set; }
+        public TagDataQuality? LastQuality { get; set; }
+
         public virtual ICollection<TagDataRaw> TagDataRaw { get; set; }
         public virtual ICollection<IOWVariable> IOWVariables { get; set; }
     }

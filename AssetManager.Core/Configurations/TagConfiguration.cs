@@ -18,6 +18,9 @@ namespace AssetManager.Configurations
             Property(x => x.UOM).IsOptional().HasMaxLength(40);
             Property(x => x.Precision).IsOptional();
             Property(x => x.Type).IsOptional();
+            Property(x => x.LastTimestamp).IsOptional();
+            Property(x => x.LastValue).IsOptional();
+            Property(x => x.LastQuality).IsOptional();
         }
     }
 }

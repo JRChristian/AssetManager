@@ -20,4 +20,11 @@
             return all[input];
         };
     })
+    .filter('deviation', function () {
+        return function (input) {
+            var localize = abp.localization.getSource('AssetManager');
+            all = new Array(localize('DeviationNormal'), localize('DeviationClosed'), localize('DeviationOpen'));
+            return all[input];
+        };
+    })
 ;

@@ -28,6 +28,7 @@
         </div>
         <div class="row">
             <button ng-click="vm.saveVariable()" ng-disabled="EditVariableForm.$invalid" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-floppy-o"></i> @L("UpdateTheVariable")</button>
+            <a ui-sref="iowvariablestatus" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariableStatus")</a>
             <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
             <a ui-sref="iowvariablechart({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
             <a ui-sref="iowvariableview({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-binoculars"></i> @L("View")</a>

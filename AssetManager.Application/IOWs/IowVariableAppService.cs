@@ -77,6 +77,9 @@ namespace AssetManager.IOWs
                 TagId = variable.TagId,
                 TagName = variable.Tag.Name,
                 UOM = variable.UOM,
+                LastTimestamp = variable.Tag.LastTimestamp,
+                LastValue = variable.Tag.LastValue,
+                LastQuality = variable.Tag.LastQuality,
                 Limits = new List<LimitDto>()
             };
 
@@ -525,5 +528,48 @@ namespace AssetManager.IOWs
             }
             return output;
         }
+
+        public GetVariableLimitStatusOutput GetVariableLimitStatus(GetVariableLimitStatusInput input)
+        {
+            // Get all the variable/limit combinations that match the input
+            List<IOWLimit> limits = _iowManager.GetAllLimits(input.VariableName, input.LevelName);
+
+            // Transform into our output format
+            List<VariableLimitStatusDto> output = new List<VariableLimitStatusDto>();
+            foreach( IOWLimit limit in limits )
+            {
+                output.Add(new VariableLimitStatusDto
+                {
+                    VariableId = limit.Variable.Id,
+                    VariableName = limit.Variable.Name,
+                    VariableDescription = limit.Variable.Description,
+                    TagId = limit.Variable.TagId,
+                    TagName = limit.Variable.Tag.Name,
+                    UOM = limit.Variable.UOM,
+                    LastTimestamp = limit.Variable.Tag.LastTimestamp,
+                    LastValue = limit.Variable.Tag.LastValue,
+                    LastQuality = limit.Variable.Tag.LastQuality,
+
+                    IOWLevelId = limit.IOWLevelId,
+                    LevelName = limit.Level.Name,
+                    LevelDescription = limit.Level.Description,
+                    Criticality = limit.Level.Criticality,
+                    ResponseGoal = limit.Level.ResponseGoal,
+                    MetricGoal = limit.Level.MetricGoal,
+
+                    Direction = limit.Direction,
+                    LimitValue = limit.Value,
+                    Cause = limit.Cause,
+                    Consequences = limit.Consequences,
+                    Action = limit.Action,
+
+                    LastStatus = limit.LastStatus,
+                    LastDeviationStartTimestamp = limit.LastDeviationStartTimestamp,
+                    LastDeviationEndTimestamp = limit.LastDeviationEndTimestamp
+                });
+            }
+            return new GetVariableLimitStatusOutput { variablelimits = output };
+        }
+
     }
 }

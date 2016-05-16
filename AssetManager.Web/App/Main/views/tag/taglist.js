@@ -16,13 +16,14 @@
                 enableFiltering: true,
                 enableGridMenu: true,
                 columnDefs: [
-                    { name: 'id', width: '10%', displayName: vm.localize('Action'), enableSorting: false, enableFilter: false, enableColumnMenus: false,
+                    {
+                        name: 'id', displayName: vm.localize('Action'), width: '60', enableSorting: false, enableFiltering: false, enableColumnMenus: false,
                         cellTemplate: '<div class="ui-grid-cell-contents"><a ui-sref="tagdata({ tagId: row.entity.id })"><i class="fa fa-line-chart"></i></a> <a ui-sref="tagview({ tagId: row.entity.id })"><i class="fa fa-binoculars"></i></a> <a ui-sref="tagedit({ tagId: row.entity.id })"><i class="fa fa-wrench"></i></a></div>' },
-                    { name: 'name', width: '20%', minWidth: 50, displayName: vm.localize('Name'), enableHiding: false },
-                    { name: 'description', width: '50%', displayName: vm.localize('Description') },
-                    { name: 'uom', width: '10%', displayName: vm.localize('UOM') },
+                    { name: 'name', displayName: vm.localize('Name'), width: '20%', minWidth: 50, enableHiding: false },
+                    { name: 'description', displayName: vm.localize('Description'), width: '50%' },
+                    { name: 'uom', displayName: vm.localize('UOM'), width: '10%' },
                     //{ name: 'precision', width: '10%', displayName: vm.localize('Precision'), visible: true },
-                    { name: 'type', width: '10%', displayName: vm.localize('TagType'), cellFilter: 'tagType', visible: true }
+                    { name: 'type', displayName: vm.localize('TagType'), width: '10%', cellFilter: 'tagType', visible: true }
                 ]
             };
 

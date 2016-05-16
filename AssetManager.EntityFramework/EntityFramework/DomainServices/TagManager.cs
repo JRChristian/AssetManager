@@ -115,6 +115,9 @@ namespace AssetManager.DomainServices
             tag.Precision = input.Precision;
             tag.UOM = input.UOM;
             tag.Type = input.Type.HasValue ? input.Type.Value : TagType.Continuous;
+            tag.LastTimestamp = input.LastTimestamp;
+            tag.LastValue = input.LastValue;
+            tag.LastQuality = input.LastQuality;
             tag.TenantId = input.TenantId;
 
             // Make sure precision is in the proper range
@@ -146,6 +149,9 @@ namespace AssetManager.DomainServices
             tag.Precision = input.Precision;
             tag.UOM = input.UOM;
             tag.Type = input.Type.HasValue ? input.Type.Value : TagType.Continuous;
+            tag.LastTimestamp = input.LastTimestamp;
+            tag.LastValue = input.LastValue;
+            tag.LastQuality = input.LastQuality;
             tag.TenantId = input.TenantId;
 
             // Make sure precision is in the proper range
@@ -233,6 +239,17 @@ namespace AssetManager.DomainServices
             }
 
             data = _tagDataRawRepository.InsertOrUpdate(data);
+
+            // Update the latest value in the matching tag record. (Sorry, denormalization.)
+            Tag tag = _tagRepository.Get(data.TagId);
+            if( !tag.LastTimestamp.HasValue || tag.LastTimestamp.Value < data.Timestamp )
+            {
+                tag.LastTimestamp = data.Timestamp;
+                tag.LastValue = data.Value;
+                tag.LastQuality = data.Quality;
+                _tagRepository.Update(tag);
+            }
+
             return data;
         }
 
@@ -259,6 +276,15 @@ namespace AssetManager.DomainServices
                     Quality = input.Quality.HasValue ? input.Quality.Value : TagDataQuality.Good
                 };
                 data = InsertOrUpdateData(data);
+
+                // Update the latest value in the matching tag record. (Sorry, denormalization.)
+                if (!tag.LastTimestamp.HasValue || tag.LastTimestamp.Value < data.Timestamp)
+                {
+                    tag.LastTimestamp = data.Timestamp;
+                    tag.LastValue = data.Value;
+                    tag.LastQuality = data.Quality;
+                    _tagRepository.Update(tag);
+                }
             }
             return data;
         }
