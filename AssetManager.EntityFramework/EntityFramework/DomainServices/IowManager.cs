@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using AssetManager.Utilities;
+using System.Data.Entity.SqlServer;
 
 namespace AssetManager.DomainServices
 {
@@ -289,6 +290,18 @@ namespace AssetManager.DomainServices
                 return _iowLimitRespository.FirstOrDefault(p => p.Variable.Id == variableId && p.Level.Name == levelName);
         }
 
+        public IOWLimit FirstOrDefaultLimit(long? variableId, string VariableName, long? levelId, string levelName)
+        {
+            if (variableId.HasValue && levelId.HasValue)
+                return _iowLimitRespository.FirstOrDefault(p => p.Variable.Id == variableId && p.Level.Id == levelId.Value);
+            else if( variableId.HasValue )
+                return _iowLimitRespository.FirstOrDefault(p => p.Variable.Id == variableId && p.Level.Name == levelName);
+            else if (levelId.HasValue)
+                return _iowLimitRespository.FirstOrDefault(p => p.Variable.Name == VariableName && p.Level.Id == levelId.Value);
+            else
+                return _iowLimitRespository.FirstOrDefault(p => p.Variable.Name == VariableName && p.Level.Name == levelName);
+        }
+
         public List<IOWLimit> GetAllLimits(long variableId)
         {
             return _iowLimitRespository.GetAll().Where(p => p.IOWVariableId == variableId).OrderBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
@@ -352,6 +365,196 @@ namespace AssetManager.DomainServices
 
 
         // Deviations
+
+        public List<IOWDeviation> GetLimitDeviations(long limitId)
+        {
+            return _iowDeviationRepository.GetAllList(p => p.IOWLimitId == limitId).OrderBy(p => p.StartTimestamp).ToList();
+        }
+        
+
+        public List<VariableDeviation> GetDeviationSummary(bool includeAllVariables, int maxCriticality, double hoursBack)
+        {
+            List<VariableDeviation> output = new List<VariableDeviation>();
+            DateTime earliestTimestamp = DateTime.Now.AddHours(-hoursBack);
+
+            if ( includeAllVariables && maxCriticality > 0)
+            {
+                var deviations = _iowDeviationRepository.GetAll()
+                    .Where(t => SqlFunctions.DateDiff("hour", (t.EndTimestamp ?? SqlFunctions.GetDate()), SqlFunctions.GetDate()) < hoursBack && t.IOWLimits.Level.Criticality <= maxCriticality)
+                    .GroupBy(a => new
+                    {
+                        LimitId = a.IOWLimitId,
+                    })
+                    .Select(b => new
+                    {
+                        LimitId = b.Key.LimitId,
+                        DeviationCount = b.Count(),
+                        DurationHours = b.Sum(d => SqlFunctions.DateDiff("second", (d.StartTimestamp > earliestTimestamp ? d.StartTimestamp : earliestTimestamp), (d.EndTimestamp ?? DateTime.Now))) / 3600.0
+                    })
+                    .ToList();
+
+                var query =
+                    from lim in _iowLimitRespository.GetAllList(c => c.Level.Criticality <= maxCriticality)
+                    from dev in deviations
+                        .Where(dev => dev.LimitId == lim.Id)
+                        .DefaultIfEmpty()
+                    select new
+                    {
+                        VariableId = lim.Variable.Id,
+                        VariableName = lim.Variable.Name,
+                        TagId = lim.Variable.TagId,
+                        TagName = lim.Variable.Tag.Name,
+                        UOM = lim.Variable.UOM,
+                        LimitId = lim.Id,
+                        LevelName = lim.Level.Name,
+                        Criticality = lim.Level.Criticality,
+                        Direction = lim.Direction,
+                        DeviationCount = dev != null ? dev.DeviationCount : 0,
+                        DurationHours = dev != null ? dev.DurationHours : 0
+                    };
+                var results = query.ToList();
+                foreach( var r in results )
+                    output.Add(new VariableDeviation { VariableId=r.VariableId, VariableName=r.VariableName, TagId=r.TagId, TagName=r.TagName, UOM=r.UOM, LimitId=r.LimitId, LevelName=r.LevelName, Criticality=r.Criticality, Direction=r.Direction, DeviationCount=r.DeviationCount, DurationHours=r.DurationHours.HasValue ? r.DurationHours.Value : 0 });
+            }
+            else if( includeAllVariables && maxCriticality <= 0 )
+            {
+                var deviations = _iowDeviationRepository.GetAll()
+                    .Where(t => SqlFunctions.DateDiff("hour", (t.EndTimestamp ?? SqlFunctions.GetDate()), SqlFunctions.GetDate()) < hoursBack)
+                    .GroupBy(a => new
+                    {
+                        LimitId = a.IOWLimitId,
+                    })
+                    .Select(b => new
+                    {
+                        LimitId = b.Key.LimitId,
+                        DeviationCount = b.Count(),
+                        DurationHours = b.Sum(d => SqlFunctions.DateDiff("second", (d.StartTimestamp > earliestTimestamp ? d.StartTimestamp : earliestTimestamp), (d.EndTimestamp ?? DateTime.Now))) / 3600.0
+                    })
+                    .ToList();
+
+                var query =
+                    from lim in _iowLimitRespository.GetAllList()
+                    from dev in deviations
+                        .Where(dev => dev.LimitId == lim.Id)
+                        .DefaultIfEmpty()
+                    select new
+                    {
+                        VariableId = lim.Variable.Id,
+                        VariableName = lim.Variable.Name,
+                        TagId = lim.Variable.TagId,
+                        TagName = lim.Variable.Tag.Name,
+                        UOM = lim.Variable.UOM,
+                        LimitId = lim.Id,
+                        LevelName = lim.Level.Name,
+                        Criticality = lim.Level.Criticality,
+                        Direction = lim.Direction,
+                        DeviationCount = dev != null ? dev.DeviationCount : 0,
+                        DurationHours = dev != null ? dev.DurationHours : 0
+                    };
+                var results = query.ToList();
+                foreach (var r in results)
+                    output.Add(new VariableDeviation { VariableId = r.VariableId, VariableName = r.VariableName, TagId = r.TagId, TagName = r.TagName, UOM = r.UOM, LimitId = r.LimitId, LevelName = r.LevelName, Criticality = r.Criticality, Direction = r.Direction, DeviationCount = r.DeviationCount, DurationHours = r.DurationHours.HasValue ? r.DurationHours.Value : 0 });
+            }
+            else if (! includeAllVariables && maxCriticality > 0)
+            {
+                var deviations = _iowDeviationRepository.GetAll()
+                    .Where(t => SqlFunctions.DateDiff("hour", (t.EndTimestamp ?? SqlFunctions.GetDate()), SqlFunctions.GetDate()) < hoursBack && t.IOWLimits.Level.Criticality <= maxCriticality)
+                    .GroupBy(a => new
+                    {
+                        VariableId = a.IOWLimits.Variable.Id,
+                        VariableName = a.IOWLimits.Variable.Name,
+                        TagId = a.IOWLimits.Variable.TagId,
+                        TagName = a.IOWLimits.Variable.Tag.Name,
+                        UOM = a.IOWLimits.Variable.UOM,
+                        LimitId = a.IOWLimitId,
+                        LevelName = a.IOWLimits.Level.Name,
+                        Criticality = a.IOWLimits.Level.Criticality,
+                        Direction = a.Direction
+                    })
+                    .Select(b => new
+                    {
+                        VariableId = b.Key.VariableId,
+                        VariableName = b.Key.VariableName,
+                        TagId = b.Key.TagId,
+                        TagName = b.Key.TagName,
+                        UOM = b.Key.UOM,
+                        LimitId = b.Key.LimitId,
+                        LevelName = b.Key.LevelName,
+                        Criticality = b.Key.Criticality,
+                        Direction = b.Key.Direction,
+                        DeviationCount = b.Count(),
+                        DurationHours = b.Sum(d => SqlFunctions.DateDiff("second", (d.StartTimestamp > earliestTimestamp ? d.StartTimestamp : earliestTimestamp), (d.EndTimestamp ?? DateTime.Now))) / 3600.0
+                    })
+                    .ToList();
+                foreach (var r in deviations)
+                    output.Add(new VariableDeviation { VariableId = r.VariableId, VariableName = r.VariableName, TagId = r.TagId, TagName = r.TagName, UOM = r.UOM, LimitId = r.LimitId, LevelName = r.LevelName, Criticality = r.Criticality, Direction = r.Direction, DeviationCount = r.DeviationCount, DurationHours = r.DurationHours.HasValue ? r.DurationHours.Value : 0 });
+            }
+            else // !includeAllVariables && maxCriticality <= 0
+            {
+                var deviations = _iowDeviationRepository.GetAll()
+                    .Where(t => SqlFunctions.DateDiff("hour", (t.EndTimestamp ?? SqlFunctions.GetDate()), SqlFunctions.GetDate()) < hoursBack)
+                    .GroupBy(a => new
+                    {
+                        VariableId = a.IOWLimits.Variable.Id,
+                        VariableName = a.IOWLimits.Variable.Name,
+                        TagId = a.IOWLimits.Variable.TagId,
+                        TagName = a.IOWLimits.Variable.Tag.Name,
+                        UOM = a.IOWLimits.Variable.UOM,
+                        LimitId = a.IOWLimitId,
+                        LevelName = a.IOWLimits.Level.Name,
+                        Criticality = a.IOWLimits.Level.Criticality,
+                        Direction = a.Direction
+                    })
+                    .Select(b => new
+                    {
+                        VariableId = b.Key.VariableId,
+                        VariableName = b.Key.VariableName,
+                        TagId = b.Key.TagId,
+                        TagName = b.Key.TagName,
+                        UOM = b.Key.UOM,
+                        LimitId = b.Key.LimitId,
+                        LevelName = b.Key.LevelName,
+                        Criticality = b.Key.Criticality,
+                        Direction = b.Key.Direction,
+                        DeviationCount = b.Count(),
+                        DurationHours = b.Sum(d => SqlFunctions.DateDiff("second", (d.StartTimestamp > earliestTimestamp ? d.StartTimestamp : earliestTimestamp), (d.EndTimestamp ?? DateTime.Now))) / 3600.0
+                    })
+                    .ToList();
+                foreach (var r in deviations)
+                    output.Add(new VariableDeviation { VariableId = r.VariableId, VariableName = r.VariableName, TagId = r.TagId, TagName = r.TagName, UOM = r.UOM, LimitId = r.LimitId, LevelName = r.LevelName, Criticality = r.Criticality, Direction = r.Direction, DeviationCount = r.DeviationCount, DurationHours = r.DurationHours.HasValue ? r.DurationHours.Value : 0 });
+            }
+            /*
+            var query = 
+                from lim in _iowLimitRespository.GetAllList()
+                join dev in _iowDeviationRepository.GetAllList(t => SqlFunctions.DateDiff("hour", (t.EndTimestamp ?? SqlFunctions.GetDate()), SqlFunctions.GetDate()) < hoursBack)
+                    on lim.Id equals dev.IOWLimitId into all
+                from dev in all.DefaultIfEmpty() 
+                group all by new
+                {
+                    VariableId = lim.Variable.Id,
+                    VariableName = lim.Variable.Name,
+                    LimitId = lim.Id,
+                    LevelName = lim.Level.Name,
+                    Criticality = lim.Level.Criticality,
+                    Direction = lim.Direction
+                } into g
+                select new
+                {
+                    VariableId = g.Key.VariableId,
+                    VariableName = g.Key.VariableName,
+                    LimitId = g.Key.LimitId,
+                    LevelName = g.Key.LevelName,
+                    Criticality = g.Key.Criticality,
+                    Direction = g.Key.Direction,
+                    DeviationCount = g.Count(),
+                    DeviationHours = g.Sum(d => SqlFunctions.DateDiff("second", d.StartTimestamp, (d.EndTimestamp ?? DateTime.Now))) / 3600.0
+                }
+                //orderby g.VariableName ascending, g.Criticality ascending, g.Direction descending, g.LevelName ascending
+                ;*/
+
+            return output;
+        }
+
 
         public void DetectDeviations(Tag tag, DateTime startTimestamp, DateTime? endTimestampx)
         {

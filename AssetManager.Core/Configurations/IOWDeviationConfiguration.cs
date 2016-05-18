@@ -20,7 +20,6 @@ namespace AssetManager.Configurations
             Property(x => x.LimitValue).IsRequired();
             Property(x => x.WorstValue).IsRequired();
             Property(x => x.Direction).IsRequired();
-            Property(x => x.Status).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Computed);
         }
     }
 }

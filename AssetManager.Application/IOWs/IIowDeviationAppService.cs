@@ -10,6 +10,8 @@ namespace AssetManager.IOWs
 {
     public interface IIowDeviationAppService : IApplicationService
     {
+        GetVariableDeviationsOutput GetVariableDeviations(GetVariableDeviationsInput input);
+        GetDeviationSummaryOutput GetDeviationSummary(GetDeviationSummaryInput input);
         void DetectDeviations(DetectDeviationsInput input);
     }
 }

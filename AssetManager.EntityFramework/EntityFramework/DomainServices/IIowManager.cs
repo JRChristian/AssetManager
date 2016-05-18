@@ -39,12 +39,15 @@ namespace AssetManager.DomainServices
         IOWLimit FirstOrDefaultLimit(long variableId, long levelId);
         IOWLimit FirstOrDefaultLimit(string variableName, string levelName);
         IOWLimit FirstOrDefaultLimit(long variableId, long? levelId, string levelName);
+        IOWLimit FirstOrDefaultLimit(long? variableId, string VariableName, long? levelId, string levelName);
         List<IOWLimit> GetAllLimits(long variableId);
         List<IOWLimit> GetAllLimits(string VariableName, string LevelName);
         long InsertOrUpdateLimitAndGetId(IOWLimit input);
         bool DeleteLimit(long id);
 
         // Deviations
+        List<IOWDeviation> GetLimitDeviations(long limitId);
+        List<VariableDeviation> GetDeviationSummary(bool includeAllVariables, int maxCriticality, double hoursBack);
         void DetectDeviations(Tag tag, DateTime startTimestamp, DateTime? endTimestamp);
     }
 }

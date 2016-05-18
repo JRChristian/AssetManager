@@ -23,11 +23,5 @@ namespace AssetManager.Entities
         public double LimitValue { get; set; }
         public double WorstValue { get; set; }
         public Direction Direction { get; set; }
-
-        public IOWStatus Status
-        {
-            get { return (EndTimestamp == null ? IOWStatus.OpenDeviation : IOWStatus.Deviation); }
-            private set { }
-        }
     }
 }
