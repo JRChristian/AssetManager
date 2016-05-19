@@ -1,4 +1,5 @@
-﻿using Abp.Domain.Services;
+﻿using Abp.Domain.Repositories;
+using Abp.Domain.Services;
 using Abp.Runtime.Session;
 using AssetManager.EntityFramework.Repositories;
 using AssetManager.Entities;
@@ -17,15 +18,17 @@ namespace AssetManager.DomainServices
     {
         private readonly TagRepository _tagRepository;
         private readonly TagDataRawRepository _tagDataRawRepository;
+        private readonly TagDataRawUpdateRepository _tagDataRawUpdateRepository;
 
         // Validation information
         private static int minPrecision = -10;
         private static int maxPrecision = 10;
 
-        public TagManager( TagRepository tagRepository, TagDataRawRepository tagDataRawRepository )
+        public TagManager( TagRepository tagRepository, TagDataRawRepository tagDataRawRepository, TagDataRawUpdateRepository tagDataRawUpdateRepository )
         {
             _tagRepository = tagRepository;
             _tagDataRawRepository = tagDataRawRepository;
+            _tagDataRawUpdateRepository = tagDataRawUpdateRepository;
         }
 
         public Tag FirstOrDefaultTag(long id)
@@ -214,19 +217,17 @@ namespace AssetManager.DomainServices
             return;
         }
 
-        public TagDataRaw InsertOrUpdateData(TagDataRaw input)
+        private TagDataRaw InsertOrUpdateData(Tag tag, TagDataRaw input)
         {
-            TagDataRaw data = null;
-
             // Look to see if there is already a data record matching the tag and time
-            data = _tagDataRawRepository.FirstOrDefault(p => p.TagId == input.TagId && p.Timestamp == input.Timestamp);
+            TagDataRaw data = _tagDataRawRepository.FirstOrDefault(p => p.TagId == input.TagId && p.Timestamp == input.Timestamp);
 
             if (data == null)
             {
                 data = new TagDataRaw
                 {
-                    TenantId = input.Tag.TenantId,
-                    TagId = input.TagId,
+                    TenantId = tag.TenantId,
+                    TagId = tag.Id,
                     Timestamp = input.Timestamp,
                     Value = input.Value,
                     Quality = input.Quality
@@ -241,7 +242,6 @@ namespace AssetManager.DomainServices
             data = _tagDataRawRepository.InsertOrUpdate(data);
 
             // Update the latest value in the matching tag record. (Sorry, denormalization.)
-            Tag tag = _tagRepository.Get(data.TagId);
             if( !tag.LastTimestamp.HasValue || tag.LastTimestamp.Value < data.Timestamp )
             {
                 tag.LastTimestamp = data.Timestamp;
@@ -267,6 +267,7 @@ namespace AssetManager.DomainServices
 
             if (tag != null)
             {
+                // Insert or update the data
                 data = new TagDataRaw
                 {
                     TenantId = tag.TenantId,
@@ -275,31 +276,12 @@ namespace AssetManager.DomainServices
                     Value = input.Value,
                     Quality = input.Quality.HasValue ? input.Quality.Value : TagDataQuality.Good
                 };
-                data = InsertOrUpdateData(data);
+                data = InsertOrUpdateData(tag, data);
 
-                // Update the latest value in the matching tag record. (Sorry, denormalization.)
-                if (!tag.LastTimestamp.HasValue || tag.LastTimestamp.Value < data.Timestamp)
-                {
-                    tag.LastTimestamp = data.Timestamp;
-                    tag.LastValue = data.Value;
-                    tag.LastQuality = data.Quality;
-                    _tagRepository.Update(tag);
-                }
+                // Now update the working table
+                UpdateTagDataWorkingTable(tag, data.Timestamp, data.Timestamp);
             }
             return data;
-        }
-
-        public long InsertOrUpdateAllData(List<TagDataRaw> input)
-        {
-            long successes = 0;
-            List<TagDataRaw> sorted = input.OrderBy(p => p.TagId).ThenBy(p => p.Timestamp).ToList();
-
-            foreach ( TagDataRaw one in sorted )
-            {
-                if ( InsertOrUpdateData(one) != null )
-                    successes++;
-            }
-            return successes;
         }
 
         public long InsertOrUpdateAllDataByName(List<TagDataName> input)
@@ -308,20 +290,41 @@ namespace AssetManager.DomainServices
             // The most important point is to get/validate the tag information.
             long successes = 0;
             Tag tag = null;
+            DateTime startTimestamp = DateTime.Now;
+            DateTime endTimestamp = DateTime.Now;
 
             List<TagDataName> sorted = input.OrderBy(p => p.TagId).ThenBy(p => p.TagName).ThenBy(p => p.Timestamp).ToList();
 
+            // The dirty flag will keep track of whether we need to update the working table for the current tag
+            // True=update needed; false=no update needed
+            bool dirty = false;
+
+            // Loop through all the input records
             foreach (TagDataName one in sorted)
             {
+                DateTime timestamp = one.Timestamp.HasValue ? one.Timestamp.Value : DateTime.Now;
+
                 // If we don't have a tag OR the one we have doesn't match the data record, get a new tag
-                if( tag == null ||
+                if ( tag == null ||
                     (one.TagId.HasValue && one.TagId.Value != tag.Id) ||
                     (!string.IsNullOrEmpty(one.TagName) && one.TagName != tag.Name))
                 {
+                    // New tag. Do we need to write information to the working table?
+                    if( dirty )
+                    {
+                        UpdateTagDataWorkingTable(tag, startTimestamp, endTimestamp);
+                        dirty = false;
+                    }
+
                     if (one.TagId.HasValue)
                         tag = _tagRepository.FirstOrDefault(one.TagId.Value);
                     else
                         tag = _tagRepository.FirstOrDefault(p => p.Name == one.TagName);
+
+                    // New tag, so initialize the start/end timestamp range for this tag
+                    startTimestamp = timestamp;
+                    endTimestamp = timestamp;
+                    dirty = true;
                 }
 
                 if (tag != null)
@@ -330,16 +333,38 @@ namespace AssetManager.DomainServices
                     {
                         TenantId = tag.TenantId,
                         TagId = tag.Id,
-                        Timestamp = one.Timestamp.HasValue ? one.Timestamp.Value : DateTime.Now,
+                        Timestamp = timestamp,
                         Value = one.Value,
                         Quality = one.Quality.HasValue ? one.Quality.Value : TagDataQuality.Good
                     };
+                    endTimestamp = timestamp;
+                    dirty = true;
 
-                    if (InsertOrUpdateData(data) != null)
+                    if (InsertOrUpdateData(tag, data) != null)
                         successes++;
                 }
             }
+
+            // Update the working table with anything left over
+            if (dirty)
+                UpdateTagDataWorkingTable(tag, startTimestamp, endTimestamp);
+
             return successes;
+        }
+
+        private void UpdateTagDataWorkingTable(Tag tag, DateTime startTimestamp, DateTime endTimestamp)
+        {
+            // Insert information about new tag data, but only if the tag is used in IOW levels
+            if ( tag.IOWVariables.Count > 0)
+            {
+                _tagDataRawUpdateRepository.Insert(new TagDataRawUpdate
+                {
+                    TenantId = tag.TenantId,
+                    TagId = tag.Id,
+                    StartTimestamp = startTimestamp,
+                    EndTimestamp = endTimestamp
+                });
+            }
         }
     }
 }

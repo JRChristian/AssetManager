@@ -38,6 +38,8 @@
     <text name="IOWLevels" value="Levels" />
     <text name="IOWVariables" value="Variables" />
     <text name="IOWVariableStatus" value="Variable Status" />
+    <text name="IOWVariableDeviationSummary" value="Variable Summary" />
+    <text name="IOWVariableDeviationSummaryDetails" value="Summary for last {0} hours" />
     <text name="LevelDetails" value="IOW Level" />
     <text name="LevelList" value="IOW Levels" />
     <text name="IowVariableList" value="IOW Variables" />
@@ -84,6 +86,8 @@
     <text name="DeviationClosed" value="Closed" />
     <text name="DeviationOpen" value="Active" />
     <text name="TagValue" value="Value" />
+    <text name="DeviationCount" value="Number of Violations" />
+    <text name="DurationHours" value="Violation Hours" />
 
     <text name="Actions" value="Actions" />
     <text name="AllAssetTypes" value="All asset types" />

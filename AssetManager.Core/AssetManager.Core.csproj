@@ -111,6 +111,7 @@
     <Compile Include="Configurations\IOWVariableConfiguration.cs" />
     <Compile Include="Configurations\TagConfiguration.cs" />
     <Compile Include="Configurations\TagDataRawConfiguration.cs" />
+    <Compile Include="Configurations\TagDataRawUpdateConfiguration.cs" />
     <Compile Include="Entities\Asset.cs" />
     <Compile Include="Authorization\PermissionChecker.cs" />
     <Compile Include="Editions\EditionManager.cs" />
@@ -126,10 +127,12 @@
     <Compile Include="Entities\IOWStatus.cs" />
     <Compile Include="Entities\IOWVariable.cs" />
     <Compile Include="Entities\ITagDataRawRepository.cs" />
+    <Compile Include="Entities\ITagDataRawUpdateRepository.cs" />
     <Compile Include="Entities\ITagRepository.cs" />
     <Compile Include="Entities\Tag.cs" />
     <Compile Include="Entities\TagDataQuality.cs" />
     <Compile Include="Entities\TagDataRaw.cs" />
+    <Compile Include="Entities\TagDataRawUpdate.cs" />
     <Compile Include="Features\FeatureValueStore.cs" />
     <Compile Include="MultiTenancy\Tenant.cs" />
     <Compile Include="MultiTenancy\TenantManager.cs" />

@@ -68,21 +68,21 @@ namespace AssetManager.IOWs
             return output;
         }
 
-        public GetDeviationSummaryOutput GetDeviationSummary(GetDeviationSummaryInput input)
+        public GetVariableLimitCurrentOutput GetVariableLimitCurrent(GetVariableLimitCurrentInput input)
         {
             // Get the input and set defaults for any missing values (defaults: do NOT include all variables, all levels, last 24 hours)
             bool includeAllVariables = input.includeAllVariables.HasValue ? input.includeAllVariables.Value : false;
             int maxCriticality = input.maxCriticality.HasValue ? input.maxCriticality.Value : 0;
             double hoursBack = input.hoursBack.HasValue ? input.hoursBack.Value : 24;
 
-            GetDeviationSummaryOutput output = new GetDeviationSummaryOutput
+            GetVariableLimitCurrentOutput output = new GetVariableLimitCurrentOutput
             {
                 includeAllVariables = includeAllVariables,
                 maxCriticality = maxCriticality,
                 hoursBack = hoursBack,
-                deviations = new List<VariableDeviation>()
+                limitstatus = new List<VariableDeviation>()
             };
-            output.deviations = _iowManager.GetDeviationSummary(includeAllVariables, maxCriticality, hoursBack);
+            output.limitstatus = _iowManager.GetDeviationSummary(includeAllVariables, maxCriticality, hoursBack);
 
             return output;
         }

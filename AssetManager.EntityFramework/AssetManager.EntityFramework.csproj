@@ -126,6 +126,7 @@
     <Compile Include="EntityFramework\Repositories\IOWLimitRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IOWVariableRepository.cs" />
     <Compile Include="EntityFramework\Repositories\TagDataRawRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\TagDataRawUpdateRepository.cs" />
     <Compile Include="EntityFramework\Repositories\TagRepository.cs" />
     <Compile Include="Migrations\201603180414128_Initial.cs" />
     <Compile Include="Migrations\201603180414128_Initial.Designer.cs">
@@ -186,6 +187,18 @@
     <Compile Include="Migrations\201605171627177_RemovedComputedColumnsFromDeviationTable.cs" />
     <Compile Include="Migrations\201605171627177_RemovedComputedColumnsFromDeviationTable.Designer.cs">
       <DependentUpon>201605171627177_RemovedComputedColumnsFromDeviationTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605190152014_AddedTagDataWorkingTable.cs" />
+    <Compile Include="Migrations\201605190152014_AddedTagDataWorkingTable.Designer.cs">
+      <DependentUpon>201605190152014_AddedTagDataWorkingTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605190242399_AddedTagDataWorkingTable1.cs" />
+    <Compile Include="Migrations\201605190242399_AddedTagDataWorkingTable1.Designer.cs">
+      <DependentUpon>201605190242399_AddedTagDataWorkingTable1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605190342454_AddedTagDataWorkingTable3.cs" />
+    <Compile Include="Migrations\201605190342454_AddedTagDataWorkingTable3.Designer.cs">
+      <DependentUpon>201605190342454_AddedTagDataWorkingTable3.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
@@ -249,6 +262,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605171627177_RemovedComputedColumnsFromDeviationTable.resx">
       <DependentUpon>201605171627177_RemovedComputedColumnsFromDeviationTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605190152014_AddedTagDataWorkingTable.resx">
+      <DependentUpon>201605190152014_AddedTagDataWorkingTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605190242399_AddedTagDataWorkingTable1.resx">
+      <DependentUpon>201605190242399_AddedTagDataWorkingTable1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605190342454_AddedTagDataWorkingTable3.resx">
+      <DependentUpon>201605190342454_AddedTagDataWorkingTable3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,7 +1,7 @@
 ﻿<div ng-controller="app.views.variable.status as vm">
     <div class="container">
         <div class="row">
-            <h3>@L("IowVariableList")</h3>
+            <h3>@L("IOWVariableStatus")</h3>
         </div>
         <div class="row">
             <table class="table-condensed table-responsive">
@@ -30,7 +30,7 @@
                         <td align="right">{{x.limitValue}}</td>
                         <td uib-tooltip="{{x.tagName}}" tooltip-append-to-body=true>{{x.lastValue}}</td>
                         <td>{{x.uom}}</td>
-                        <td>{{x.lastStatus | deviation}}</td>
+                        <td><span ng-class="{'label label-danger':x.criticality==1&&x.lastStatus>0,'label label-warning':x.criticality==2&&x.lastStatus>0,'label label-info':x.lastStatus>0}">{{x.lastStatus | deviation}}</span></td>
                     </tr>
                 </tbody>
             </table>

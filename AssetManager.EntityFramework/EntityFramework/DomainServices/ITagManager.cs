@@ -30,9 +30,7 @@ namespace AssetManager.DomainServices
         List<TagDataRaw> GetAllListData(long tagId, DateTime? startTimestamp, DateTime? endTimestamp);
         List<TagDataRaw> GetAllListData(string tagName, DateTime? startTimestamp, DateTime? endTimestamp);
         void DeleteData(Expression<Func<TagDataRaw, bool>> predicate);
-        TagDataRaw InsertOrUpdateData(TagDataRaw input);
         TagDataRaw InsertOrUpdateDataByName(TagDataName input);
-        long InsertOrUpdateAllData(List<TagDataRaw> input);
         long InsertOrUpdateAllDataByName(List<TagDataName> input);
     }
 }
