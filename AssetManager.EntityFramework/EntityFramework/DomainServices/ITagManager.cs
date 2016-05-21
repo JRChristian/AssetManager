@@ -32,5 +32,7 @@ namespace AssetManager.DomainServices
         void DeleteData(Expression<Func<TagDataRaw, bool>> predicate);
         TagDataRaw InsertOrUpdateDataByName(TagDataName input);
         long InsertOrUpdateAllDataByName(List<TagDataName> input);
+
+        int UpdateTagDataForDemo(int daysToAdd);
     }
 }

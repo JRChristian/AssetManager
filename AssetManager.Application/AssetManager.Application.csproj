@@ -178,6 +178,8 @@
     <Compile Include="Tags\Dtos\TagDataRawDto.cs" />
     <Compile Include="Tags\Dtos\TagDto.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetInput.cs" />
+    <Compile Include="Tags\Dtos\UpdateTagDataForDemoInput.cs" />
+    <Compile Include="Tags\Dtos\UpdateTagDataForDemoOutput.cs" />
     <Compile Include="Tags\Dtos\UpdateTagInput.cs" />
     <Compile Include="Assets\IAssetAppService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -352,6 +352,41 @@ namespace AssetManager.DomainServices
             return successes;
         }
 
+        public int UpdateTagDataForDemo(int daysToAdd)
+        {
+            int numberUpdates = 0;
+            if (daysToAdd <= 0)
+                daysToAdd = 28;
+            DateTime cutoffTimestamp = DateTime.Now.AddDays(-daysToAdd);
+            DateTime startTimestamp, endTimestamp;
+
+            // Loop through all tags in the system, find all data, and update old data by the specified amount
+            List<Tag> tags = GetAllListTag();
+            foreach (Tag tag in tags)
+            {
+                // Get all data records for this tag that are older than the cutoff time, sorted in ascending date order
+                List<TagDataRaw> allData = GetAllListData(p => p.TagId == tag.Id && p.Timestamp < cutoffTimestamp).OrderBy(p => p.Timestamp).ToList();
+
+                if (allData != null && allData.Count > 0)
+                {
+                    // Keep track of the oldest and newest dates, so we can update the working table 
+                    startTimestamp = allData[0].Timestamp;
+                    endTimestamp = allData[allData.Count - 1].Timestamp;
+
+                    // Update each data record that is older than the cutoff date by adding a specified number of days
+                    foreach (TagDataRaw data in allData)
+                    {
+                        data.Timestamp = data.Timestamp.AddDays(daysToAdd);
+                        numberUpdates++;
+                    }
+
+                    // Update the working table, which will signal other processing to start
+                    UpdateTagDataWorkingTable(tag, startTimestamp, endTimestamp);
+                }
+            }
+            return numberUpdates;
+        }
+
         private void UpdateTagDataWorkingTable(Tag tag, DateTime startTimestamp, DateTime endTimestamp)
         {
             // Insert information about new tag data, but only if the tag is used in IOW levels
