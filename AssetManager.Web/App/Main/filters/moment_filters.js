@@ -6,7 +6,20 @@
     })
     .filter('momentFromNow2', function () {
         return function (input) {
-            return moment(input).format("MMM DD hh:mm:ss");
+            return moment(input).format("MMM DD HH:mm:ss");
+        };
+    })
+    .filter('momentFromNowBlankNull', function () {
+        return function (input) {
+            if (input != null)
+                return moment(input).format("MMM DD HH:mm:ss");
+            else
+                return '';
+        };
+    })
+    .filter('momentLocale', function () {
+        return function (input) {
+            return moment(input).format("LLL");
         };
     })
     .filter('moment', [

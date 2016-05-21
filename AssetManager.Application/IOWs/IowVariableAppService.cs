@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services;
 using Abp.AutoMapper;
 using Abp.Domain.Repositories;
+using Abp.Localization;
 using AssetManager.DomainServices;
 using AssetManager.Entities;
 using AssetManager.IOWs.Dtos;
@@ -20,13 +21,16 @@ namespace AssetManager.IOWs
     {
         private readonly IIowManager _iowManager;
         private readonly ITagManager _tagManager;
+        private readonly ILocalizationManager _localizationManager;
 
         public IowVariableAppService(
             IIowManager iowManager,
-            ITagManager tagManager)
+            ITagManager tagManager,
+            ILocalizationManager localizationManager)
         {
             _iowManager = iowManager;
             _tagManager = tagManager;
+            _localizationManager = localizationManager;
         }
 
 
@@ -363,6 +367,8 @@ namespace AssetManager.IOWs
 
         public GetIowChartCanvasJSOutput GetIowChartCanvasJS(GetIowChartCanvasJSInput input)
         {
+            var localize = _localizationManager.GetSource("AssetManager");
+
             string[] colors =
             {
                     "rgba(0,75,141,0.7)",   // 0 - blue
@@ -468,8 +474,9 @@ namespace AssetManager.IOWs
                 output.CanvasJS.axisX.maximum = maxTimestamp.ToJavaScriptMilliseconds();
                 output.CanvasJS.axisX.valueFormatString = valueFormatString;
 
-                // Add some limit information to the chart
-                foreach( IOWLimit limit in variable.IOWLimits)
+                // Add some limit information to the chart. Sort the limits so that high criticality items are last. This helps with area chart shading.
+                List<IOWLimit> allLimits = variable.IOWLimits.OrderByDescending(p => p.Direction).ThenBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
+                foreach( IOWLimit limit in allLimits)
                 {
                     // Get the color for this limit from the colors array.
                     string color = limit.Level.Criticality > 0 && limit.Level.Criticality < colors.Length
@@ -487,7 +494,7 @@ namespace AssetManager.IOWs
                             xValueType = "dateTime",
                             color = color,
                             showInLegend = true,
-                            legendText = limit.Level.Name + "-high",
+                            legendText = string.Format("{0}-", limit.Level.Criticality) + limit.Level.Name + "-" + localize.GetString("DirectionHigh"),
                             dataPoints = new List<CanvasJSDataPoints>()
                         });
 
@@ -505,14 +512,14 @@ namespace AssetManager.IOWs
                         output.CanvasJS.data.Add(new CanvasJSData
                         {
                             name = limit.Level.Name,
-                            type = "line",
-                            lineDashType = "dash",
+                            type = "area",
+                            lineDashType = "solid",
                             markerColor = color,
                             markerType = "none",
                             xValueType = "dateTime",
                             color = color,
                             showInLegend = true,
-                            legendText = limit.Level.Name + "-low",
+                            legendText = string.Format("{0}-", limit.Level.Criticality) + limit.Level.Name + "-" + localize.GetString("DirectionLow"),
                             dataPoints = new List<CanvasJSDataPoints>()
                         });
 
@@ -531,6 +538,14 @@ namespace AssetManager.IOWs
 
         public GetVariableLimitStatusOutput GetVariableLimitStatus(GetVariableLimitStatusInput input)
         {
+            var localize = _localizationManager.GetSource("AssetManager");
+            string[] localizedDirectionNames = new string[4] 
+            {
+                localize.GetString("DirectionNone"),
+                localize.GetString("DirectionLow"),
+                localize.GetString("DirectionFocus"),
+                localize.GetString("DirectionHigh") };
+
             // Get all the variable/limit combinations that match the input
             List<IOWLimit> limits = _iowManager.GetAllLimits(input.VariableName, input.LevelName);
 
@@ -538,6 +553,30 @@ namespace AssetManager.IOWs
             List<VariableLimitStatusDto> output = new List<VariableLimitStatusDto>();
             foreach( IOWLimit limit in limits )
             {
+                string severityMessage1 = "";
+                string severityMessage2 = "";
+                string severityClass = "";
+                if (limit.LastStatus == IOWStatus.OpenDeviation)
+                {
+                    severityMessage1 = limit.Level.Name;
+                    severityMessage2 = localize.GetString("IowMsgActive");
+                    if (limit.Level.Criticality == 1)
+                        severityClass = "label label-danger";
+                    else if (limit.Level.Criticality == 2)
+                        severityClass = "label label-warning";
+                    else if (limit.Level.Criticality == 3)
+                        severityClass = "label label-default";
+                }
+                else if (limit.LastDeviationEndTimestamp.HasValue && (DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalHours <= 24)
+                {
+                    severityMessage1 = limit.Level.Name;
+                    severityMessage2 = localize.GetString("IowMsgLast24Hours");
+                    if (limit.Level.Criticality == 1)
+                        severityClass = "label label-warning";
+                    else if (limit.Level.Criticality == 2)
+                        severityClass = "label label-default";
+                }
+
                 output.Add(new VariableLimitStatusDto
                 {
                     VariableId = limit.Variable.Id,
@@ -557,6 +596,7 @@ namespace AssetManager.IOWs
                     ResponseGoal = limit.Level.ResponseGoal,
                     MetricGoal = limit.Level.MetricGoal,
 
+                    LimitName = string.Format("{0}-", limit.Level.Criticality) + limit.Level.Name + "-" + localizedDirectionNames[Convert.ToInt32(limit.Direction)],
                     Direction = limit.Direction,
                     LimitValue = limit.Value,
                     Cause = limit.Cause,
@@ -565,7 +605,11 @@ namespace AssetManager.IOWs
 
                     LastStatus = limit.LastStatus,
                     LastDeviationStartTimestamp = limit.LastDeviationStartTimestamp,
-                    LastDeviationEndTimestamp = limit.LastDeviationEndTimestamp
+                    LastDeviationEndTimestamp = limit.LastDeviationEndTimestamp,
+
+                    SeverityMessage1 = severityMessage1,
+                    SeverityMessage2 = severityMessage2,
+                    SeverityClass = severityClass
                 });
             }
             return new GetVariableLimitStatusOutput { variablelimits = output };

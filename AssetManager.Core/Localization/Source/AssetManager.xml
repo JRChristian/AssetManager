@@ -88,6 +88,9 @@
     <text name="TagValue" value="Value" />
     <text name="DeviationCount" value="Number of Violations" />
     <text name="DurationHours" value="Violation Hours" />
+    <text name="IowMsgActive" value="active" />
+    <text name="IowMsgLast24Hours" value="last 24 hours" />
+    <text name="IowBtnDeviations" value="Deviations" />
 
     <text name="Actions" value="Actions" />
     <text name="AllAssetTypes" value="All asset types" />

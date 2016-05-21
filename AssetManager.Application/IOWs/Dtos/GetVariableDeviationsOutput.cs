@@ -9,13 +9,14 @@ namespace AssetManager.IOWs.Dtos
 {
     public class GetVariableDeviationsOutput : IOutputDto
     {
-        public long VariableId { get; set; }
-        public string VariableName { get; set; }
-        public long LevelId { get; set; }
-        public string LevelName { get; set; }
-        public int Criticality { get; set; }
-        public long LimitId { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public long TagId { get; set; }
+        public string TagName { get; set; }
+        public string UOM { get; set; }
+        public DateTime EarliestTimestamp { get; set; }
 
-        public List<DeviationsDto> Deviations { get; set; }
+        public List<LimitDeviationDto> Limits { get; set; }
     }
 }

@@ -86,6 +86,11 @@
                     templateUrl: '/App/Main/views/iow/variablelist.cshtml',
                     menu: 'IOWVariables' //Matches to name in AssetManagerNavigationProvider
                 })
+                .state('iowvariabledeviations', {
+                    url: '/iowvariabledeviations?Id',
+                    templateUrl: '/App/Main/views/iow/variabledeviations.cshtml',
+                    menu: 'IOWVariableDeviations' //Matches to name in AssetManagerNavigationProvider
+                })
                 .state('iowvariabledeviationsummary', {
                     url: '/iowvariabledeviationsummary',
                     templateUrl: '/App/Main/views/iow/variabledeviationsummary.cshtml',

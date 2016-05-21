@@ -6,7 +6,6 @@
         '$scope', '$location', 'abp.services.app.iowVariable',
         function ($scope, $location, variableService) {
             var vm = this;
-
             vm.localize = abp.localization.getSource('AssetManager');
 
             vm.gridOptions = {
@@ -18,13 +17,13 @@
                 enableGridMenu: true,
                 columnDefs: [
                     {
-                        name: 'id', width: '10%', displayName: vm.localize('Action'), enableSorting: false, enableFiltering: false, enableColumnMenus: false,
-                        cellTemplate: '<div class="ui-grid-cell-contents"><a ui-sref="iowvariablechart({ Id: row.entity.id })"><i class="fa fa-line-chart"></i></a> <a ui-sref="iowvariableview({ Id: row.entity.id })"><i class="fa fa-binoculars"></i></a> <a ui-sref="iowvariableedit({ Id: row.entity.id })"><i class="fa fa-wrench"></i></a></div>'
+                        name: 'id', displayName: vm.localize('Action'), width: 110, minWidth: 110, enableSorting: false, enableFiltering: false, enableColumnMenus: false,
+                        cellTemplate: '<div class="ui-grid-cell-contents"><div class="btn-group btn-group-xs"><a class="btn btn-default" ui-sref="iowvariablechart({ Id: row.entity.id })"><i class="fa fa-line-chart"></i></a> <a class="btn btn-default" ui-sref="iowvariabledeviations({ Id: row.entity.id })"><i class="fa fa-exclamation-circle"></i></a> <a class="btn btn-default" ui-sref="iowvariableview({ Id: row.entity.id })"><i class="fa fa-binoculars"></i></a> <a class="btn btn-default" ui-sref="iowvariableedit({ Id: row.entity.id })"><i class="fa fa-wrench"></i></a></div></div>'
                     },
-                    { name: 'name', width: '30%', minWidth: 50, displayName: vm.localize('Name') },
-                    { name: 'description', width: '30%', displayName: vm.localize('Description') },
-                    { name: 'tagName', width: '20%', displayName: vm.localize('TagName') },
-                    { name: 'uom', width: '10%', displayName: vm.localize('UOM') }]
+                    { name: 'name', displayName: vm.localize('Name'), width: '30%', minWidth: 50 },
+                    { name: 'description', displayName: vm.localize('Description'), width: '30%' },
+                    { name: 'tagName', displayName: vm.localize('TagName'), width: '20%' },
+                    { name: 'uom', displayName: vm.localize('UOM'), width: '10%' }]
             };
 
             function registerGridApi(gridApi) { vm.gridApi = gridApi; }

@@ -118,6 +118,7 @@
     <Compile Include="EntityFramework\DomainServices\TagDataName.cs" />
     <Compile Include="EntityFramework\DomainServices\TagManager.cs" />
     <Compile Include="EntityFramework\DomainServices\VariableDeviation.cs" />
+    <Compile Include="EntityFramework\EventHandlers\DeviationWriter.cs" />
     <Compile Include="EntityFramework\Repositories\AssetManagerRepositoryBase.cs" />
     <Compile Include="EntityFramework\Repositories\AssetRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IIOWDeviationRepository.cs" />

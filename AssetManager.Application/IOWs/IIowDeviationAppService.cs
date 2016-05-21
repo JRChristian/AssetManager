@@ -13,5 +13,6 @@ namespace AssetManager.IOWs
         GetVariableDeviationsOutput GetVariableDeviations(GetVariableDeviationsInput input);
         GetVariableLimitCurrentOutput GetVariableLimitCurrent(GetVariableLimitCurrentInput input);
         void DetectDeviations(DetectDeviationsInput input);
+        void ResetLastDeviationStatus();
     }
 }

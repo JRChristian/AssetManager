@@ -31,40 +31,66 @@ namespace AssetManager.IOWs
 
         public GetVariableDeviationsOutput GetVariableDeviations(GetVariableDeviationsInput input)
         {
-            DateTime now = DateTime.Now;
-            GetVariableDeviationsOutput output = new GetVariableDeviationsOutput
-            {
-                Deviations = new List<DeviationsDto>()
-            };
+            GetVariableDeviationsOutput output = null;
 
-            IOWLimit limit = _iowManager.FirstOrDefaultLimit(input.VariableId, input.VariableName, input.LevelId, input.LevelName);
-            if( limit != null )
-            {
-                output.VariableId = limit.Variable.Id;
-                output.VariableName = limit.Variable.Name;
-                output.LevelId = limit.Level.Id;
-                output.LevelName = limit.Level.Name;
-                output.Criticality = limit.Level.Criticality;
+            // Set the earliest time. If the argument is 0, use a default of 720 hours (30 days). Round back to a whole hour.
+            int hoursBack = (input.hoursBack.HasValue && input.hoursBack.Value > 0) ? input.hoursBack.Value : 720;
+            DateTime earliestTimestamp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0).AddHours(-hoursBack);
 
-                List<IOWDeviation> allDeviations = _iowManager.GetLimitDeviations(limit.Id);
-                foreach(IOWDeviation one in allDeviations)
+            // Make sure we a variable in the input
+            IOWVariable variable = _iowManager.FirstOrDefaultVariable(input.Id, input.VariableName);
+            if( variable != null )
+            {
+                output = new GetVariableDeviationsOutput
                 {
-                    // If not specified, use "now" as the end time of the deviation to calculate duration
-                    DateTime end = one.EndTimestamp.HasValue ? one.EndTimestamp.Value : now;
+                    Id = variable.Id,
+                    Name = variable.Name,
+                    Description = variable.Description,
+                    UOM = variable.UOM,
+                    TagId = variable.TagId,
+                    TagName = variable.Tag.Name,
+                    EarliestTimestamp = earliestTimestamp,
+                    Limits = new List<LimitDeviationDto>()
+                };
 
-                    output.Deviations.Add(new DeviationsDto
+                foreach( IOWLimit limit in variable.IOWLimits )
+                {
+                    output.Limits.Add(new LimitDeviationDto
                     {
-                        StartTimestamp = one.StartTimestamp,
-                        EndTimestamp = one.EndTimestamp,
-                        LimitValue = one.LimitValue,
-                        WorstValue = one.WorstValue,
-                        Direction = one.Direction,
-                        Status = one.EndTimestamp.HasValue ? IOWStatus.Deviation : IOWStatus.OpenDeviation,
-                        DurationHours = (end - one.StartTimestamp).TotalHours 
+                        Id = limit.Id,
+                        IOWLevelId = limit.IOWLevelId,
+                        LevelName = limit.Level.Name,
+                        LevelDescription = limit.Level.Description,
+                        Criticality = limit.Level.Criticality,
+                        ResponseGoal = limit.Level.ResponseGoal,
+                        MetricGoal = limit.Level.MetricGoal,
+                        Direction = limit.Direction,
+                        LimitValue = limit.Value,
+                        Cause = limit.Cause,
+                        Consequences = limit.Consequences,
+                        Action = limit.Action,
+                        Deviations = new List<DeviationDto>()
                     });
+
+                    // Get the array index of the limit we just added
+                    int i = output.Limits.Count - 1;
+                    var someDeviations = from one in limit.IOWDeviations
+                                         where !one.EndTimestamp.HasValue || one.EndTimestamp.Value >= earliestTimestamp
+                                         select one;
+               
+                    foreach (var one in someDeviations)
+                    {
+                        output.Limits[i].Deviations.Add(new DeviationDto
+                        {
+                            StartTimestamp = one.StartTimestamp,
+                            EndTimestamp = one.EndTimestamp,
+                            LimitValue = one.LimitValue,
+                            WorstValue = one.WorstValue
+                        });
+                    }
+                    output.Limits[i].Deviations = output.Limits[i].Deviations.OrderByDescending(p => p.StartTimestamp).ToList();
                 }
             }
-
             return output;
         }
 
@@ -107,6 +133,11 @@ namespace AssetManager.IOWs
                 if( tag != null )
                     _iowManager.DetectDeviations(tag, startTimestamp, endTimestamp);
             }
+        }
+
+        public void ResetLastDeviationStatus()
+        {
+            _iowManager.ResetLastDeviationStatus();
         }
     }
 }

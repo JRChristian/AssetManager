@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Extensions;
+using AssetManager.Entities;
 using AssetManager.Utilities;
 using System;
 using System.Collections.Generic;
@@ -16,5 +17,8 @@ namespace AssetManager.Tags.Dtos
         public string UOM { get; set; }
         public int? Precision { get; set; }
         public TagType? Type { get; set; }
+        public DateTime? LastTimestamp { get; set; }
+        public double? LastValue { get; set; }
+        public TagDataQuality? LastQuality { get; set; }
     }
 }

@@ -304,21 +304,42 @@ namespace AssetManager.DomainServices
 
         public List<IOWLimit> GetAllLimits(long variableId)
         {
-            return _iowLimitRespository.GetAll().Where(p => p.IOWVariableId == variableId).OrderBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
+            return GetAllLimits(variableId, null, null, null);
         }
 
-        public List<IOWLimit> GetAllLimits(string VariableName, string LevelName)
+        public List<IOWLimit> GetAllLimits(string variableName)
+        {
+            return GetAllLimits(null, variableName, null, null);
+        }
+        public List<IOWLimit> GetAllLimits(string variableName, string levelName)
+        {
+            return GetAllLimits(null, variableName, null, levelName);
+        }
+
+        public List<IOWLimit> GetAllLimits(long? variableId, string variableName, long? levelId, string levelName)
         {
             List<IOWLimit> output = null;
 
-            if ( !string.IsNullOrEmpty(VariableName) && !string.IsNullOrEmpty(LevelName) )
-                output = _iowLimitRespository.GetAll().Where(p => p.Variable.Name == VariableName && p.Level.Name == LevelName).OrderBy(p => p.Variable.Name).ThenBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
-            else if (!string.IsNullOrEmpty(VariableName) )
-                output = _iowLimitRespository.GetAll().Where(p => p.Variable.Name == VariableName).OrderBy(p => p.Variable.Name).ThenBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
-            else if (!string.IsNullOrEmpty(LevelName))
-                output = _iowLimitRespository.GetAll().Where(p => p.Level.Name == LevelName).OrderBy(p => p.Variable.Name).ThenBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
-            else
-                output = _iowLimitRespository.GetAll().OrderBy(p => p.Variable.Name).ThenBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
+            if ( variableId.HasValue && levelId.HasValue ) // Case 1: variable id and level id ==> high/low information for specified variable and level
+                output = _iowLimitRespository.GetAll().Where(p => p.Variable.Id == variableId.Value && p.Level.Id == levelId.Value).OrderBy(p => p.Direction).ToList();
+
+            else if (!string.IsNullOrEmpty(variableName) && levelId.HasValue) // Case 2: variable name and level id ==> high/low information for specified variable and level
+                output = _iowLimitRespository.GetAll().Where(p => p.Variable.Name == variableName && p.Level.Id == levelId.Value).OrderBy(p => p.Direction).ToList();
+
+            else if (variableId.HasValue && !string.IsNullOrEmpty(levelName)) // Case 3: variable id and level name ==> high/low information for specified variable and level
+                output = _iowLimitRespository.GetAll().Where(p => p.Variable.Id == variableId.Value && p.Level.Name == levelName).OrderBy(p => p.Direction).ToList();
+
+            else if (!string.IsNullOrEmpty(variableName) && !string.IsNullOrEmpty(levelName)) // Case 4: variable name and level name ==> high/low information for specified variable and level
+                output = _iowLimitRespository.GetAll().Where(p => p.Variable.Name == variableName && p.Level.Name == levelName).OrderBy(p => p.Direction).ToList();
+
+            else if (!string.IsNullOrEmpty(variableName)) // Case 5: variable name but nothing on levels ==> all levels for specified variable
+                output = _iowLimitRespository.GetAll().Where(p => p.Variable.Name == variableName).OrderBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ThenBy(p => p.Direction).ToList();
+
+            else if (!string.IsNullOrEmpty(levelName)) // Case 6: level name but nothing on variables ==> all variables for specified level
+                output = _iowLimitRespository.GetAll().Where(p => p.Level.Name == levelName).OrderBy(p => p.Variable.Name).ThenBy(p => p.Direction).ToList();
+
+            else // Case 7: neither variable nor level specified ==> all variables and all levels
+                output = _iowLimitRespository.GetAll().OrderBy(p => p.Variable.Name).ThenBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ThenBy(p => p.Direction).ToList();
 
             return output;
         }
@@ -601,7 +622,7 @@ namespace AssetManager.DomainServices
                             {
                                 deviation = _iowDeviationRepository.FirstOrDefault(x =>
                                     x.IOWLimitId == limit.Id && x.StartTimestamp < data.Timestamp &&
-                                    (!x.EndTimestamp.HasValue || x.EndTimestamp.Value > data.Timestamp));
+                                    (!x.EndTimestamp.HasValue || x.EndTimestamp.Value >= data.Timestamp));
                                 isFirstData = false;
                             }
 
@@ -635,7 +656,7 @@ namespace AssetManager.DomainServices
                                     deviation = null;
 
                                     // Update the overall limit record -- maybe (not if the overall record describes a future deviation)
-                                    if( limit.LastDeviationStartTimestamp < data.Timestamp )
+                                    if( !limit.LastDeviationStartTimestamp.HasValue || limit.LastDeviationStartTimestamp.Value < data.Timestamp )
                                     {
                                         limit.LastStatus = IOWStatus.Normal;
                                         limit.LastDeviationEndTimestamp = data.Timestamp.AddMinutes(-1);
@@ -663,8 +684,8 @@ namespace AssetManager.DomainServices
                                     long Id = _iowDeviationRepository.InsertAndGetId(deviation);
                                     deviation.Id = Id;
 
-                                    // Update the overall limit record -- maybe
-                                    if( !limit.LastDeviationStartTimestamp.HasValue || limit.LastDeviationStartTimestamp.Value < data.Timestamp )
+                                    // Update the overall limit record -- maybe (not if the overall record describes a future deviation)
+                                    if ( !limit.LastDeviationStartTimestamp.HasValue || limit.LastDeviationStartTimestamp.Value < data.Timestamp )
                                     {
                                         limit.LastStatus = IOWStatus.OpenDeviation;
                                         limit.LastDeviationStartTimestamp = data.Timestamp;
@@ -689,6 +710,33 @@ namespace AssetManager.DomainServices
                 } // foreach(IOWVariable v in variables )
             } // if( tagdata != null )
             return;
+        }
+
+        public void ResetLastDeviationStatus()
+        {
+            // Loop through all limits in the system
+            List<IOWLimit> allLimits = _iowLimitRespository.GetAllList();
+            foreach( IOWLimit limit in allLimits )
+            {
+                if( limit.IOWDeviations.Count > 0 )
+                {
+                    // There is at least one deviation. Get the latest
+                    DateTime latestStartTimestamp = _iowDeviationRepository.GetAllList(p => p.IOWLimitId == limit.Id).Max(p => p.StartTimestamp);
+                    IOWDeviation latestDeviation = _iowDeviationRepository.FirstOrDefault(p => p.IOWLimitId == limit.Id && p.StartTimestamp == latestStartTimestamp);
+                    limit.LastStatus = latestDeviation.EndTimestamp.HasValue ? IOWStatus.Deviation : IOWStatus.OpenDeviation;
+                    limit.LastDeviationStartTimestamp = latestDeviation.StartTimestamp;
+                    limit.LastDeviationEndTimestamp = latestDeviation.EndTimestamp;
+                }
+                else
+                {
+                    // There are no deviations for this limit
+                    limit.LastStatus = IOWStatus.Normal;
+                    limit.LastDeviationStartTimestamp = null;
+                    limit.LastDeviationEndTimestamp = null;
+                }
+
+                _iowLimitRespository.Update(limit);
+            }
         }
 
         private bool IsDeviation(Direction LimitDirection, double LimitValue, double Value)

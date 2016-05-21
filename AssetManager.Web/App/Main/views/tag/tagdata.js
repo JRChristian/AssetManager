@@ -16,7 +16,7 @@
                 data: []
             });
 
-            tagDataService.getTagDataRawList({ id: $stateParams.tagId })
+            /*tagDataService.getTagDataRawList({ id: $stateParams.tagId })
                 .success(function (data) {
                     vm.name = data.name;
                     vm.description = data.description;
@@ -24,7 +24,7 @@
                     vm.precision = data.precision;
                     vm.data = [];
                     vm.data = data.tagDataRaw;
-                });
+                });*/
 
             tagDataService.getTagDataCanvasJS({ id: $stateParams.tagId })
                 .success(function (data) {

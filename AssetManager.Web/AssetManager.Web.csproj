@@ -283,6 +283,7 @@
     <Content Include="App\Main\views\asset\list.js" />
     <Content Include="App\Main\views\asset\edit.js" />
     <Content Include="App\Main\views\asset\new.js" />
+    <Content Include="App\Main\views\iow\variabledeviations.js" />
     <Content Include="App\Main\views\iow\variabledeviationsummary.js" />
     <Content Include="App\Main\views\iow\variablestatus.js" />
     <Content Include="Content\bootstrap-cerulean.min.css" />
@@ -437,6 +438,7 @@
     <Content Include="Content\bootstrap-paper.min.css" />
     <Content Include="App\Main\views\iow\variablestatus.cshtml" />
     <Content Include="App\Main\views\iow\variabledeviationsummary.cshtml" />
+    <Content Include="App\Main\views\iow\variabledeviations.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />

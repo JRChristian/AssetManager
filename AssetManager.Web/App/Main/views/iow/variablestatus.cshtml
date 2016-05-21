@@ -4,7 +4,7 @@
             <h3>@L("IOWVariableStatus")</h3>
         </div>
         <div class="row">
-            <table class="table-condensed table-responsive">
+            @*<table class="table-condensed table-responsive">
                 <thead>
                     <tr>
                         <th class="col-sm-1"> </th>
@@ -33,7 +33,9 @@
                         <td><span ng-class="{'label label-danger':x.criticality==1&&x.lastStatus>0,'label label-warning':x.criticality==2&&x.lastStatus>0,'label label-info':x.lastStatus>0}">{{x.lastStatus | deviation}}</span></td>
                     </tr>
                 </tbody>
-            </table>
+            </table>*@
+            <div id="grid1" ui-grid="vm.gridOptions" class="grid"></div>
+            <div>@L("NumberOfVariablesTotal") {{vm.gridOptions.data.length}} @L("NumberOfVariablesVisible") {{vm.gridApi.grid.getVisibleRows().length}}</div>
         </div>
         <div class="row">
             <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
