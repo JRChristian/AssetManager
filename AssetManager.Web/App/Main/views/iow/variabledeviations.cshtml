@@ -4,56 +4,55 @@
             <h3>{{vm.variable.name}} <small>{{vm.variable.description}}</small></h3>
         </div>
         <div class="row">
+            <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+            <a ui-sref="iowvariablechart({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
+            <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>
+            <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-wrench"></i> @L("Edit")</a>
+        </div>
+        <div class="row">
             <uib-tabset active="active">
                 <uib-tab index="0" heading="General">
-                    <p><strong>@L("Name")</strong>: {{vm.variable.name}}</p>
+                    <p><strong>@L("VariableName")</strong>: {{vm.variable.name}}</p>
                     <p><strong>@L("TagName")</strong>: {{vm.variable.tagName}}</p>
                     <p><strong>@L("Description")</strong>: {{vm.variable.description}}</p>
                     <p><strong>@L("UOM")</strong>: {{vm.variable.uom}}</p>
                 </uib-tab>
                 <uib-tab index="$index + 1" ng-repeat="limit in vm.variable.limits">
-                    <uib-tab-heading>{{limit.criticality}}-{{limit.levelName}}-{{limit.direction | direction}} <span class="label label-default">{{limit.deviations.length}}</span></uib-tab-heading>
-                        <div class="col-sm-6">
-                            <p><strong>@L("Name")</strong>: {{vm.variable.limits[$index].levelName}}, {{vm.variable.limits[$index].direction | direction}}</p>
-                            <p><strong>@L("Description")</strong>: {{vm.variable.limits[$index].levelDescription}}</p>
-                            <p><strong>@L("Causes")</strong>: {{vm.variable.limits[$index].cause}}</p>
-                            <p><strong>@L("Consequences")</strong>: {{vm.variable.limits[$index].consequences}}</p>
-                            <p><strong>@L("Action")</strong>: {{vm.variable.limits[$index].action}}</p>
+                    <uib-tab-heading>{{limit.criticality}}-{{limit.levelName}}-{{limit.direction | direction}} <span class="{{vm.limitClass[vm.variable.limits[$index].criticality]}}">{{limit.deviations.length}}</span></uib-tab-heading>
+                    <div class="col-sm-6">
+                        <p><strong>@L("Name")</strong>: <span class="{{vm.limitClass[vm.variable.limits[$index].criticality]}}">{{vm.variable.limits[$index].levelName}}</span> {{vm.variable.limits[$index].direction | direction}}</p>
+                        <p><strong>@L("Description")</strong>: {{vm.variable.limits[$index].levelDescription}}</p>
+                        <p><strong>@L("Causes")</strong>: {{vm.variable.limits[$index].cause}}</p>
+                        <p><strong>@L("Consequences")</strong>: {{vm.variable.limits[$index].consequences}}</p>
+                        <p><strong>@L("Action")</strong>: {{vm.variable.limits[$index].action}}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p>{{vm.variable.limits[$index].deviations.length}} @L("IowTxtDeviationsSince") {{vm.variable.earliestTimestamp | momentLocale}}</p>
+                        <div class="table-responsive">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>@L("IowTblStartTimestamp")</th>
+                                        <th>@L("IowTblEndTimestamp")</th>
+                                        <th>@L("IowTblDurationHours")</th>
+                                        <th>@L("Limit")</th>
+                                        <th>@L("Actual")</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="x in vm.variable.limits[$index].deviations">
+                                        <td>{{x.startTimestamp | momentFromNow2}}</td>
+                                        <td>{{x.endTimestamp | momentFromNow2}}</td>
+                                        <td align="center">{{x.durationHours | number:1}}</td>
+                                        <td align="center">{{x.limitValue}}</td>
+                                        <td align="center">{{x.worstValue}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="col-sm-6">
-                            <p>{{vm.variable.limits[$index].deviations.length}} deviations since {{vm.variable.earliestTimestamp | momentLocale}}</p>
-                            <div class="table-responsive">
-                                <table class="table table-condensed">
-                                    <thead>
-                                        <tr>
-                                            <th>Start</th>
-                                            <th>End</th>
-                                            <th>Hours</th>
-                                            <th>Limit</th>
-                                            <th>Actual</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="x in vm.variable.limits[$index].deviations">
-                                            <td>{{x.startTimestamp | momentFromNow2}}</td>
-                                            <td>{{x.endTimestamp | momentFromNow2}}</td>
-                                            <td align="center">{{x.durationHours | number:1}}</td>
-                                            <td align="center">{{x.limitValue}}</td>
-                                            <td align="center">{{x.worstValue}}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-</uib-tab>
-
+                    </div>
+                </uib-tab>
             </uib-tabset>
-        </div>
-        <div class="row">
-            <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
-            <a ui-sref="iowvariablechart({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
-            <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>
-            <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-wrench"></i> @L("Edit")</a>
         </div>
     </div>
 </div>

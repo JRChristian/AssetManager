@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AssetManager.EntityFramework.DomainServices;
 
 namespace AssetManager
 {
@@ -22,6 +23,7 @@ namespace AssetManager
             Mapper.CreateMap<IOWVariable, VariableLimitDto>();
             Mapper.CreateMap<Tag, TagDto>();
             Mapper.CreateMap<TagDataRaw, TagDataRawDto>();
+            Mapper.CreateMap<DetectDeviationsOut, DetectDeviationsOutput>();
         }
     }
 }

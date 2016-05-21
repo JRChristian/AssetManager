@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityFramework\AssetManagerDbContext.cs" />
+    <Compile Include="EntityFramework\DomainServices\DetectDeviationsOut.cs" />
     <Compile Include="EntityFramework\DomainServices\IIowManager.cs" />
     <Compile Include="EntityFramework\DomainServices\IowManager.cs" />
     <Compile Include="EntityFramework\DomainServices\ITagManager.cs" />

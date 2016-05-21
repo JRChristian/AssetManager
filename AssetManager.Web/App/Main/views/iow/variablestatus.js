@@ -21,7 +21,7 @@
                 columnDefs: [
                     {
                         name: 'id', displayName: vm.localize('Action'), width: 110, minWidth: 110, enableSorting: false, enableFiltering: false, enableColumnMenus: false,
-                        cellTemplate: '<div class="ui-grid-cell-contents"><div class="btn-group btn-group-xs"><a class="btn btn-default" ui-sref="iowvariablechart({ Id: row.entity.variableId })"><i class="fa fa-line-chart"></i></a> <a class="btn btn-default" ui-sref="iowvariabledeviations({ Id: row.entity.id })"><i class="fa fa-exclamation-circle"></i></a> <a class="btn btn-default" ui-sref="iowvariableview({ Id: row.entity.variableId })"><i class="fa fa-binoculars"></i></a> <a class="btn btn-default" ui-sref="iowvariableedit({ Id: row.entity.variableId })"><i class="fa fa-wrench"></i></a></div></div>'
+                        cellTemplate: '<div class="ui-grid-cell-contents"><div class="btn-group btn-group-xs"><a class="btn btn-default" ui-sref="iowvariablechart({ Id: row.entity.variableId })"><i class="fa fa-line-chart"></i></a> <a class="btn btn-default" ui-sref="iowvariabledeviations({ Id: row.entity.variableId })"><i class="fa fa-exclamation-circle"></i></a> <a class="btn btn-default" ui-sref="iowvariableview({ Id: row.entity.variableId })"><i class="fa fa-binoculars"></i></a> <a class="btn btn-default" ui-sref="iowvariableedit({ Id: row.entity.variableId })"><i class="fa fa-wrench"></i></a></div></div>'
                     },
                     {
                         name: 'variableName', displayName: vm.localize('Variable'), width: '30%', minWidth: 50,

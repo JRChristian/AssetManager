@@ -3,6 +3,7 @@ using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using AssetManager.DomainServices;
 using AssetManager.Entities;
+using AssetManager.EntityFramework.DomainServices;
 using AssetManager.IOWs.Dtos;
 using AssetManager.Tags;
 using AssetManager.Tags.Dtos;
@@ -114,8 +115,10 @@ namespace AssetManager.IOWs
         }
 
 
-        public void DetectDeviations(DetectDeviationsInput input)
+        public DetectDeviationsOutput DetectDeviations(DetectDeviationsInput input)
         {
+            DetectDeviationsOut output = new DetectDeviationsOut();
+
             // Set defaults for the time range
             DateTime startTimestamp = input.StartTimestamp.HasValue ? input.StartTimestamp.Value : DateTime.Now.AddHours(-24);
             DateTime endTimestamp = input.EndTimestamp.HasValue ? input.EndTimestamp.Value : DateTime.Now.AddHours(1);
@@ -125,14 +128,15 @@ namespace AssetManager.IOWs
             {
                 List<Tag> tags = _tagManager.GetAllListTag();
                 foreach(Tag tag in tags)
-                    _iowManager.DetectDeviations(tag, startTimestamp, endTimestamp);
+                    output = _iowManager.DetectDeviations(tag, startTimestamp, endTimestamp);
             }
             else
             {
                 Tag tag = _tagManager.FirstOrDefaultTag(input.TagId, input.TagName);
                 if( tag != null )
-                    _iowManager.DetectDeviations(tag, startTimestamp, endTimestamp);
+                    output = _iowManager.DetectDeviations(tag, startTimestamp, endTimestamp);
             }
+            return output.MapTo<DetectDeviationsOutput>();
         }
 
         public void ResetLastDeviationStatus()

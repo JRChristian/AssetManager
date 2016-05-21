@@ -116,6 +116,7 @@
     <Compile Include="Assets\Dtos\AssetTypeDto.cs" />
     <Compile Include="Assets\Dtos\CreateAssetInput.cs" />
     <Compile Include="IOWs\Dtos\DetectDeviationsInput.cs" />
+    <Compile Include="IOWs\Dtos\DetectDeviationsOutput.cs" />
     <Compile Include="IOWs\Dtos\DeviationDto.cs" />
     <Compile Include="IOWs\Dtos\DeviationSummaryDto.cs" />
     <Compile Include="IOWs\Dtos\GetVariableLimitCurrentInput.cs" />

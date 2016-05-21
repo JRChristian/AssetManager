@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Linq.Expressions;
 using AssetManager.Utilities;
 using System.Data.Entity.SqlServer;
+using AssetManager.EntityFramework.DomainServices;
 
 namespace AssetManager.DomainServices
 {
@@ -577,139 +578,150 @@ namespace AssetManager.DomainServices
         }
 
 
-        public void DetectDeviations(Tag tag, DateTime startTimestamp, DateTime? endTimestampx)
+        public DetectDeviationsOut DetectDeviations(Tag tag, DateTime startTimestamp, DateTime endTimestamp)
         {
+            DetectDeviationsOut output = new DetectDeviationsOut
+            {
+                StartTimestamp = startTimestamp,
+                EndTimestamp = endTimestamp,
+                NumberVariables = 0,
+                NumberLimits = 0,
+                NumberDeviations = 0
+            };
             DateTime lastCheckDate = DateTime.Now;
 
-            // If an end time isn't specified, look as far as one hour ahead of now.
-            DateTime endTimestamp = endTimestampx.HasValue ? endTimestampx.Value : DateTime.Now.AddHours(1);
+            // Get all variables associated with this tag
+            List<IOWVariable> variables = _iowVariableRepository.GetAllList(t => t.TagId == tag.Id);
 
-            // Get all the data for the specified tag in the specified time range. Only consider good data.
-            List<TagDataRaw> tagdata = _tagManager.GetAllListData(p => p.TagId == tag.Id && p.Timestamp >= startTimestamp && p.Timestamp <= endTimestamp && p.Quality == TagDataQuality.Good);
-
-            // Continue only if we found some data.
-            if (tagdata != null)
+            if( variables != null && variables.Count > 0 )
             {
-                // Get all variables associated with this tag
-                List<IOWVariable> variables = _iowVariableRepository.GetAllList(t => t.TagId == tag.Id);
+                // Get all the data for the specified tag in the specified time range. Only consider good data.
+                List<TagDataRaw> tagdata = _tagManager.GetAllListData(p => p.TagId == tag.Id && p.Timestamp >= startTimestamp && p.Timestamp <= endTimestamp && p.Quality == TagDataQuality.Good);
 
-                foreach (IOWVariable v in variables)
+                // Continue only if we found some data.
+                if (tagdata != null)
                 {
-                    foreach (IOWLimit limit in v.IOWLimits)
+                    foreach (IOWVariable v in variables)
                     {
-                        IOWDeviation deviation = null;
-                        bool isFirstData = true;
+                        output.NumberVariables++;
 
-                        foreach (TagDataRaw data in tagdata)
+                        foreach (IOWLimit limit in v.IOWLimits)
                         {
-                            // There are several cases here.
-                            //  1. A deviation already exists. With new data:
-                            //     A. Still a deviation ==> update the existing deviation
-                            //     B. Deviation is over ==> update the existing deviation and close the record
-                            //  2. There isn't an existing deviation. WIth new data:
-                            //     A. A deviation has started ==> insert a new one
-                            //     B. No deviation ==> do nothing
+                            output.NumberLimits++;
+                            IOWDeviation deviation = null;
+                            bool isFirstData = true;
 
-                            // Do we have a deviation with this particular tag record?
-                            Direction newDirection = WhatDeviationType(limit.Direction, limit.Value, data.Value);
-                            bool isDeviation = IsDeviation(limit.Direction, limit.Value, data.Value);
-
-                            // For the first value in the data array, check so see if we already have a deviation record.
-                            // Find a deviation record (if one exists) matching the current limit AND 
-                            // where the time period of the deviation record overlaps the current tag value.
-                            // No need to do this after the first value in the tag data collection.
-                            if( isFirstData )
+                            foreach (TagDataRaw data in tagdata)
                             {
-                                deviation = _iowDeviationRepository.FirstOrDefault(x =>
-                                    x.IOWLimitId == limit.Id && x.StartTimestamp < data.Timestamp &&
-                                    (!x.EndTimestamp.HasValue || x.EndTimestamp.Value >= data.Timestamp));
-                                isFirstData = false;
-                            }
+                                // There are several cases here.
+                                //  1. A deviation already exists. With new data:
+                                //     A. Still a deviation ==> update the existing deviation
+                                //     B. Deviation is over ==> update the existing deviation and close the record
+                                //  2. There isn't an existing deviation. WIth new data:
+                                //     A. A deviation has started ==> insert a new one
+                                //     B. No deviation ==> do nothing
 
-                            if (deviation != null)
-                            {
-                                // Case 1 - A deviation already exists
-                                if (isDeviation)
+                                // Do we have a deviation with this particular tag record?
+                                Direction newDirection = WhatDeviationType(limit.Direction, limit.Value, data.Value);
+                                bool isDeviation = IsDeviation(limit.Direction, limit.Value, data.Value);
+
+                                // For the first value in the data array, check so see if we already have a deviation record.
+                                // Find a deviation record (if one exists) matching the current limit AND 
+                                // where the time period of the deviation record overlaps the current tag value.
+                                // No need to do this after the first value in the tag data collection.
+                                if( isFirstData )
                                 {
-                                    // Case 1A - The existing deviation continues ==> update the new record and leave it open
-                                    // No need to update timestamps, since the current time must fall within the deviation time range OR 
-                                    // there isn't an end time to the existing deviation.
-                                    if (deviation.Direction == Direction.Low)
-                                    {
-                                        deviation.LimitValue = Math.Min(deviation.LimitValue, limit.Value);
-                                        deviation.WorstValue = Math.Min(deviation.WorstValue, data.Value);
-                                    }
-                                    else if (deviation.Direction == Direction.High)
-                                    {
-                                        deviation.LimitValue = Math.Max(deviation.LimitValue, limit.Value);
-                                        deviation.WorstValue = Math.Max(deviation.WorstValue, data.Value);
-                                    }
-                                    _iowDeviationRepository.Update(deviation);
-
-                                    // No updates needed to the overall limit record
-                                }
-                                else
-                                {
-                                    // Case 1B - The existing deviation is over ==> update and close the old record
-                                    deviation.EndTimestamp = data.Timestamp.AddMinutes(-1);
-                                    _iowDeviationRepository.Update(deviation);
-                                    deviation = null;
-
-                                    // Update the overall limit record -- maybe (not if the overall record describes a future deviation)
-                                    if( !limit.LastDeviationStartTimestamp.HasValue || limit.LastDeviationStartTimestamp.Value < data.Timestamp )
-                                    {
-                                        limit.LastStatus = IOWStatus.Normal;
-                                        limit.LastDeviationEndTimestamp = data.Timestamp.AddMinutes(-1);
-                                    }
-                                }
-                            } // if( deviation != null )
-                            else // if( deviation == null )
-                            {
-                                // Case 2 - There isn't already a deviation
-                                if (isDeviation)
-                                {
-                                    // Case 2A - A new deviation has started ==> insert a new record
-                                    deviation = new IOWDeviation
-                                    {
-                                        TenantId = v.TenantId,
-                                        IOWLimitId = limit.Id,
-                                        StartTimestamp = data.Timestamp,
-                                        //EndTimestamp = tagdata.Timestamp, // No end time
-                                        Direction = newDirection,
-                                        LimitValue = limit.Value,
-                                        WorstValue = data.Value,
-                                    };
-
-                                    // Insert the new record. We may need to update it later.
-                                    long Id = _iowDeviationRepository.InsertAndGetId(deviation);
-                                    deviation.Id = Id;
-
-                                    // Update the overall limit record -- maybe (not if the overall record describes a future deviation)
-                                    if ( !limit.LastDeviationStartTimestamp.HasValue || limit.LastDeviationStartTimestamp.Value < data.Timestamp )
-                                    {
-                                        limit.LastStatus = IOWStatus.OpenDeviation;
-                                        limit.LastDeviationStartTimestamp = data.Timestamp;
-                                        limit.LastDeviationEndTimestamp = null;
-                                    }
-                                }
-                                else
-                                {
-                                    // Case 2B - there wasn't a deviation and still isn't one ==> do nothing
-
-                                    // No updates needed to the overall limit record
+                                    deviation = _iowDeviationRepository.FirstOrDefault(x =>
+                                        x.IOWLimitId == limit.Id && x.StartTimestamp < data.Timestamp &&
+                                        (!x.EndTimestamp.HasValue || x.EndTimestamp.Value >= data.Timestamp));
+                                    isFirstData = false;
                                 }
 
-                            } // if( deviation == null )
-                        } // foreach (TagDataRaw data in tagdata)
+                                if (deviation != null)
+                                {
+                                    // Case 1 - A deviation already exists
+                                    if (isDeviation)
+                                    {
+                                        // Case 1A - The existing deviation continues ==> update the new record and leave it open
+                                        // No need to update timestamps, since the current time must fall within the deviation time range OR 
+                                        // there isn't an end time to the existing deviation.
+                                        if (deviation.Direction == Direction.Low)
+                                        {
+                                            deviation.LimitValue = Math.Min(deviation.LimitValue, limit.Value);
+                                            deviation.WorstValue = Math.Min(deviation.WorstValue, data.Value);
+                                        }
+                                        else if (deviation.Direction == Direction.High)
+                                        {
+                                            deviation.LimitValue = Math.Max(deviation.LimitValue, limit.Value);
+                                            deviation.WorstValue = Math.Max(deviation.WorstValue, data.Value);
+                                        }
+                                        //_iowDeviationRepository.Update(deviation);
 
-                        // Okay, we processed all the data for this limit. Update the overall limit information.
-                        limit.LastCheckDate = lastCheckDate;
-                        _iowLimitRespository.Update(limit);
+                                        // No updates needed to the overall limit record
+                                    }
+                                    else
+                                    {
+                                        // Case 1B - The existing deviation is over ==> update and close the old record
+                                        deviation.EndTimestamp = data.Timestamp.AddMinutes(-1);
+                                        _iowDeviationRepository.Update(deviation);
+                                        deviation = null;
 
-                    }  // foreach( IOWLimit limit in v.IOWLimits )
-                } // foreach(IOWVariable v in variables )
-            } // if( tagdata != null )
-            return;
+                                        // Update the overall limit record -- maybe (not if the overall record describes a future deviation)
+                                        if( !limit.LastDeviationStartTimestamp.HasValue || limit.LastDeviationStartTimestamp.Value < data.Timestamp )
+                                        {
+                                            limit.LastStatus = IOWStatus.Normal;
+                                            limit.LastDeviationEndTimestamp = data.Timestamp.AddMinutes(-1);
+                                        }
+                                    }
+                                } // if( deviation != null )
+                                else // if( deviation == null )
+                                {
+                                    // Case 2 - There isn't already a deviation
+                                    if (isDeviation)
+                                    {
+                                        // Case 2A - A new deviation has started ==> insert a new record
+                                        deviation = new IOWDeviation
+                                        {
+                                            TenantId = v.TenantId,
+                                            IOWLimitId = limit.Id,
+                                            StartTimestamp = data.Timestamp,
+                                            //EndTimestamp = tagdata.Timestamp, // No end time
+                                            Direction = newDirection,
+                                            LimitValue = limit.Value,
+                                            WorstValue = data.Value,
+                                        };
+
+                                        // Insert the new record. We may need to update it later.
+                                        long Id = _iowDeviationRepository.InsertAndGetId(deviation);
+                                        deviation.Id = Id;
+                                        output.NumberDeviations++;
+
+                                        // Update the overall limit record -- maybe (not if the overall record describes a future deviation)
+                                        if ( !limit.LastDeviationStartTimestamp.HasValue || limit.LastDeviationStartTimestamp.Value < data.Timestamp )
+                                        {
+                                            limit.LastStatus = IOWStatus.OpenDeviation;
+                                            limit.LastDeviationStartTimestamp = data.Timestamp;
+                                            limit.LastDeviationEndTimestamp = null;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Case 2B - there wasn't a deviation and still isn't one ==> do nothing
+
+                                        // No updates needed to the overall limit record
+                                    }
+
+                                } // if( deviation == null )
+                            } // foreach (TagDataRaw data in tagdata)
+
+                            // Okay, we processed all the data for this limit. Update the overall limit information.
+                            limit.LastCheckDate = lastCheckDate;
+                            _iowLimitRespository.Update(limit);
+                        } // foreach( IOWLimit limit in v.IOWLimits )
+                    } // foreach(IOWVariable v in variables )
+                } // if( tagdata != null )
+            } // if( variables != null && variables.Count > 0 )
+            return output;
         }
 
         public void ResetLastDeviationStatus()

@@ -7,6 +7,7 @@
         function ($scope, $location, $stateParams, $filter, deviationService) {
             var vm = this;
             vm.localize = abp.localization.getSource('AssetManager');
+            vm.limitClass = ['label label-default', 'label label-danger', 'label label-warning', 'label label-default', '']; // Used for Bootstrap class labels
 
             vm.variable = {
                 id: $stateParams.Id > 0 ? $stateParams.Id : null,

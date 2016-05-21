@@ -76,6 +76,7 @@
     <text name="Causes" value="Causes" />
     <text name="Consequences" value="Consequences" />
     <text name="Limit" value="Limit" />
+    <text name="Actual" value="Actual" />
     <text name="Direction" value="Direction" />
     <text name="DirectionNone" value="None" />
     <text name="DirectionLow" value="Low" />
@@ -91,6 +92,10 @@
     <text name="IowMsgActive" value="active" />
     <text name="IowMsgLast24Hours" value="last 24 hours" />
     <text name="IowBtnDeviations" value="Deviations" />
+    <text name="IowTblStartTimestamp" value="Start" />
+    <text name="IowTblEndTimestamp" value="End" />
+    <text name="IowTblDurationHours" value="Hours" />
+    <text name="IowTxtDeviationsSince" value="deviations since" />
 
     <text name="Actions" value="Actions" />
     <text name="AllAssetTypes" value="All asset types" />

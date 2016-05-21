@@ -1,5 +1,6 @@
 ﻿using Abp.Domain.Services;
 using AssetManager.Entities;
+using AssetManager.EntityFramework.DomainServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace AssetManager.DomainServices
         // Deviations
         List<IOWDeviation> GetLimitDeviations(long limitId);
         List<VariableDeviation> GetDeviationSummary(bool includeAllVariables, int maxCriticality, double hoursBack);
-        void DetectDeviations(Tag tag, DateTime startTimestamp, DateTime? endTimestamp);
+        DetectDeviationsOut DetectDeviations(Tag tag, DateTime startTimestamp, DateTime endTimestamp);
         void ResetLastDeviationStatus();
     }
 }
