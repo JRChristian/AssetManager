@@ -283,6 +283,7 @@
     <Content Include="App\Main\views\asset\list.js" />
     <Content Include="App\Main\views\asset\edit.js" />
     <Content Include="App\Main\views\asset\new.js" />
+    <Content Include="App\Main\views\home\Bootstrap-square-buttons.css" />
     <Content Include="App\Main\views\iow\variabledeviations.js" />
     <Content Include="App\Main\views\iow\variabledeviationsummary.js" />
     <Content Include="App\Main\views\iow\variablestatus.js" />

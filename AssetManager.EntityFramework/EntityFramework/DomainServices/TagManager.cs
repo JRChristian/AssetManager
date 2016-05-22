@@ -369,9 +369,10 @@ namespace AssetManager.DomainServices
 
                 if (allData != null && allData.Count > 0)
                 {
-                    // Keep track of the oldest and newest dates, so we can update the working table 
-                    startTimestamp = allData[0].Timestamp;
-                    endTimestamp = allData[allData.Count - 1].Timestamp;
+                    // Keep track of the oldest and newest dates, so we can update the working table
+                    // This is the NEW time range, after updating
+                    startTimestamp = allData[0].Timestamp.AddDays(daysToAdd);
+                    endTimestamp = allData[allData.Count - 1].Timestamp.AddDays(daysToAdd);
 
                     // Update each data record that is older than the cutoff date by adding a specified number of days
                     foreach (TagDataRaw data in allData)
