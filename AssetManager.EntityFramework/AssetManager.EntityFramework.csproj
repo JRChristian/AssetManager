@@ -113,7 +113,9 @@
   <ItemGroup>
     <Compile Include="EntityFramework\AssetManagerDbContext.cs" />
     <Compile Include="EntityFramework\DomainServices\DetectDeviationsOut.cs" />
+    <Compile Include="EntityFramework\DomainServices\IImageManager.cs" />
     <Compile Include="EntityFramework\DomainServices\IIowManager.cs" />
+    <Compile Include="EntityFramework\DomainServices\ImageManager.cs" />
     <Compile Include="EntityFramework\DomainServices\IowManager.cs" />
     <Compile Include="EntityFramework\DomainServices\ITagManager.cs" />
     <Compile Include="EntityFramework\DomainServices\TagDataName.cs" />
@@ -123,6 +125,7 @@
     <Compile Include="EntityFramework\Repositories\AssetManagerRepositoryBase.cs" />
     <Compile Include="EntityFramework\Repositories\AssetRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IIOWDeviationRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\ImageRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IOWDeviationRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IOWLevelRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IOWLimitRepository.cs" />
@@ -202,6 +205,14 @@
     <Compile Include="Migrations\201605190342454_AddedTagDataWorkingTable3.Designer.cs">
       <DependentUpon>201605190342454_AddedTagDataWorkingTable3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605231903280_AddedImageTable.cs" />
+    <Compile Include="Migrations\201605231903280_AddedImageTable.Designer.cs">
+      <DependentUpon>201605231903280_AddedImageTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605231950435_AddedAssetImageTable.cs" />
+    <Compile Include="Migrations\201605231950435_AddedAssetImageTable.Designer.cs">
+      <DependentUpon>201605231950435_AddedAssetImageTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -273,6 +284,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605190342454_AddedTagDataWorkingTable3.resx">
       <DependentUpon>201605190342454_AddedTagDataWorkingTable3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605231903280_AddedImageTable.resx">
+      <DependentUpon>201605231903280_AddedImageTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605231950435_AddedAssetImageTable.resx">
+      <DependentUpon>201605231950435_AddedAssetImageTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

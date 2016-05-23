@@ -22,6 +22,8 @@ namespace AssetManager.Entities
         public int TenantId { get; set; }
         public virtual Tenant Tenants { get; set; }
 
+        public virtual ICollection<AssetImage> Images { get; set; }
+
         public Asset()
         {
             CreationTime = DateTime.Now;

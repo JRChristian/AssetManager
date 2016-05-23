@@ -103,7 +103,9 @@
     <Compile Include="AssetManagerConsts.cs" />
     <Compile Include="AssetManagerCoreModule.cs" />
     <Compile Include="Configurations\AssetConfiguration.cs" />
+    <Compile Include="Configurations\AssetImageConfiguration.cs" />
     <Compile Include="Configurations\AssetTypeConfiguration.cs" />
+    <Compile Include="Configurations\ImageConfiguration.cs" />
     <Compile Include="Configurations\IOWDeviationConfiguration.cs" />
     <Compile Include="Configurations\IOWLevelConfiguration.cs" />
     <Compile Include="Configurations\IOWLimitConfiguration.cs" />
@@ -115,10 +117,13 @@
     <Compile Include="Entities\Asset.cs" />
     <Compile Include="Authorization\PermissionChecker.cs" />
     <Compile Include="Editions\EditionManager.cs" />
+    <Compile Include="Entities\AssetImage.cs" />
     <Compile Include="Entities\AssetType.cs" />
+    <Compile Include="Entities\IImageRepository.cs" />
     <Compile Include="Entities\IIOWLevelRepository.cs" />
     <Compile Include="Entities\IIOWLimitRepository.cs" />
     <Compile Include="Entities\IIOWVariableRepository.cs" />
+    <Compile Include="Entities\Image.cs" />
     <Compile Include="Entities\IOWDeviation.cs" />
     <Compile Include="Entities\IOWLevel.cs" />
     <Compile Include="Entities\IAssetRepository.cs" />

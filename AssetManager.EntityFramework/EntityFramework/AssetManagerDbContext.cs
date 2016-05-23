@@ -45,7 +45,9 @@ namespace AssetManager.EntityFramework
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
 
             modelBuilder.Configurations.Add(new AssetConfiguration());
+            modelBuilder.Configurations.Add(new AssetImageConfiguration());
             modelBuilder.Configurations.Add(new AssetTypeConfiguration());
+            modelBuilder.Configurations.Add(new ImageConfiguration());
             modelBuilder.Configurations.Add(new IOWDeviationConfiguration());
             modelBuilder.Configurations.Add(new IOWLevelConfiguration());
             modelBuilder.Configurations.Add(new IOWLimitConfiguration());
