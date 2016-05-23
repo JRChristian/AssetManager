@@ -23,6 +23,14 @@ namespace AssetManager.Web
                     )
                     .AddItem(
                         new MenuItemDefinition(
+                            "IOWDashboard",
+                            new LocalizableString("IowMnuDashboard", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/iowdashboard",
+                            icon: "fa fa-bar-chart"
+                            )
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
                             "IOWMain",
                             new LocalizableString("IOWs", AssetManagerConsts.LocalizationSourceName),
                             url: "#/iowmain",
@@ -31,17 +39,17 @@ namespace AssetManager.Web
                     )
                     .AddItem(
                         new MenuItemDefinition(
-                            "IOWVariableDeviationSummary",
-                            new LocalizableString("IOWVariableDeviationSummary", AssetManagerConsts.LocalizationSourceName),
-                            url: "#/iowvariabledeviationsummary",
+                            "IOWLimitSummary",
+                            new LocalizableString("IowTtlLimitSummary", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/iowlimitsummary",
                             icon: "fa fa-dashboard"
                             )
                     )
                     .AddItem(
                         new MenuItemDefinition(
-                            "IOWVariableStatus",
-                            new LocalizableString("IOWVariableStatus", AssetManagerConsts.LocalizationSourceName),
-                            url: "#/iowvariablestatus",
+                            "IOWLimitStatus",
+                            new LocalizableString("IowTtlLimitStatus", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/iowlimitstatus",
                             icon: "fa fa-sitemap"
                             )
                     )
@@ -75,7 +83,7 @@ namespace AssetManager.Web
                         "AssetList",
                         new LocalizableString("Assets", AssetManagerConsts.LocalizationSourceName),
                         url: "#/assetlist",
-                        icon: "fa fa-sticky-note-o"
+                        icon: "fa fa-tags"
                     )
                 )
                 .AddItem(

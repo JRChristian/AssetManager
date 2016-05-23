@@ -284,9 +284,10 @@
     <Content Include="App\Main\views\asset\edit.js" />
     <Content Include="App\Main\views\asset\new.js" />
     <Content Include="App\Main\views\home\Bootstrap-square-buttons.css" />
+    <Content Include="App\Main\views\iow\dashboard.js" />
     <Content Include="App\Main\views\iow\variabledeviations.js" />
-    <Content Include="App\Main\views\iow\variabledeviationsummary.js" />
-    <Content Include="App\Main\views\iow\variablestatus.js" />
+    <Content Include="App\Main\views\iow\limitsummary.js" />
+    <Content Include="App\Main\views\iow\limitstatus.js" />
     <Content Include="Content\bootstrap-cerulean.min.css" />
     <Content Include="Content\bootstrap-simplex.min.css" />
     <Content Include="Content\showErrors.css" />
@@ -437,9 +438,10 @@
     <Content Include="App\Main\views\iow\variablechart.cshtml" />
     <Content Include="App\Main\views\iow\leveledit.cshtml" />
     <Content Include="Content\bootstrap-paper.min.css" />
-    <Content Include="App\Main\views\iow\variablestatus.cshtml" />
-    <Content Include="App\Main\views\iow\variabledeviationsummary.cshtml" />
+    <Content Include="App\Main\views\iow\limitstatus.cshtml" />
+    <Content Include="App\Main\views\iow\limitsummary.cshtml" />
     <Content Include="App\Main\views\iow\variabledeviations.cshtml" />
+    <Content Include="App\Main\views\iow\dashboard.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />

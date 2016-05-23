@@ -1,0 +1,41 @@
+﻿<div ng-controller="app.views.iow.dashboard as vm">
+    <div class="container">
+        <div class="row">
+            <h3>@L("IowTtlDashboard")</h3>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <h4>@L("Assets")</h4>
+                <a ui-sref="assetlist" class="btn btn-primary btn-sm"><i class="fa fa-tags"></i> @L("Assets")</a>
+                <p><i>...coming soon...</i></p>
+                <div class="table-responsive">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>@L("Name")</th>
+                                <th>@L("Description")</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="asset in vm.assets">
+                                <td>{{asset.name}}</td>
+                                <td>{{asset.description}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <h4>@L("IOWVariables")</h4>
+                <a ui-sref="iowvariablelist" class="btn btn-primary btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+                <a ui-sref="iowlimitstatus" class="btn btn-primary btn-sm"><i class="fa fa-sitemap"></i> @L("IowTtlLimitStatus")</a>
+                <p><i>...coming soon...</i></p>
+            </div>
+            <div class="col-sm-4">
+                <h4>Notices</h4>
+                <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-envelope-o"></i> Notices</a>
+                <p><i>...coming soon...</i></p>
+            </div>
+        </div>
+    </div>
+</div>

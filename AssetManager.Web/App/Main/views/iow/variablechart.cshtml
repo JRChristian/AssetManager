@@ -9,8 +9,8 @@
             </div>
         </div>
         <div class="row">
-            <a ui-sref="iowvariablestatus" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariableStatus")</a>
             <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+            <a ui-sref="iowlimitstatus" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IowTtlLimitStatus")</a>
             <a ui-sref="iowvariabledeviations({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-exclamation-circle"></i> @L("IowBtnDeviations")</a>
             <a ui-sref="iowvariableview({ Id: {{vm.variable.id}} })" class="btn btn-primary btn-sm"><i class="fa fa-binoculars"></i> @L("View")</a>
             <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>

@@ -34,12 +34,14 @@
     <text name="UserMenu" value="Users" />
     <text name="SwaggerMenu" value="WebAPI Swagger" />
 
+    <text name="IowMnuDashboard" value="Dashboard" />
+    <text name="IowTtlDashboard" value="IOW Dashboard" />
     <text name="IOWs" value="IOWs" />
     <text name="IOWLevels" value="Levels" />
     <text name="IOWVariables" value="Variables" />
-    <text name="IOWVariableStatus" value="Variable Status" />
-    <text name="IOWVariableDeviationSummary" value="Variable Summary" />
-    <text name="IOWVariableDeviationSummaryDetails" value="Summary for last {0} hours" />
+    <text name="IowTtlLimitStatus" value="Limit Status" />
+    <text name="IowTtlLimitSummary" value="Limit Summary" />
+    <text name="IowTxtLimitSummarySubtitle" value="Summary for last {0} hours" />
     <text name="LevelDetails" value="IOW Level" />
     <text name="LevelList" value="IOW Levels" />
     <text name="IowVariableList" value="IOW Variables" />

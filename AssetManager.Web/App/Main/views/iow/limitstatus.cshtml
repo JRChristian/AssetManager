@@ -1,0 +1,45 @@
+﻿<div ng-controller="app.views.limit.status as vm">
+    <div class="container">
+        <div class="row">
+            <h3>@L("IowTtlLimitStatus")</h3>
+        </div>
+        <div class="row">
+            @*<table class="table-condensed table-responsive">
+                <thead>
+                    <tr>
+                        <th class="col-sm-1"> </th>
+                        <th class="col-sm-4">@L("VariableName")</th>
+                        <th class="col-sm-2">@L("Limit")</th>
+                        <th class="col-sm-1" align="right">@L("Limit")</th>
+                        <th class="col-sm-1">@L("TagValue")</th>
+                        <th class="col-sm-1">@L("UOM")</th>
+                        <th class="col-sm-2">@L("Status")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="x in vm.variablelimits" ng-class="{true: 'danger'}[x.criticality>=3 && x.lastStatus>0]">
+                        <td>
+                            <div class="btn-group btn-group-xs">
+                                <a class="btn btn-default" ui-sref="iowvariablechart({ Id: x.variableId })"><i class="fa fa-line-chart"></i></a>
+                                <a class="btn btn-default" ui-sref="iowvariableview({ Id: x.variableId })"><i class="fa fa-binoculars"></i></a>
+                                <a class="btn btn-default" ui-sref="iowvariableedit({ Id: x.variableId })"><i class="fa fa-wrench"></i></a>
+                            </div>
+                        </td>
+                        <td uib-tooltip="{{x.variableDescription}}" tooltip-append-to-body=true>{{x.variableName}}</td>
+                        <td uib-tooltip="@L("Causes"): {{x.cause}} @L("Consequences"): {{x.consequences}} @L("Actions"): {{x.action}}" tooltip-append-to-body=true>{{x.criticality}} - {{x.levelName}} - {{x.direction | direction}}</td>
+                        <td align="right">{{x.limitValue}}</td>
+                        <td uib-tooltip="{{x.tagName}}" tooltip-append-to-body=true>{{x.lastValue}}</td>
+                        <td>{{x.uom}}</td>
+                        <td><span ng-class="{'label label-danger':x.criticality==1&&x.lastStatus>0,'label label-warning':x.criticality==2&&x.lastStatus>0,'label label-info':x.lastStatus>0}">{{x.lastStatus | deviation}}</span></td>
+                    </tr>
+                </tbody>
+            </table>*@
+            <div id="grid1" ui-grid="vm.gridOptions" class="grid"></div>
+            <div>@L("NumberOfVariablesTotal") {{vm.gridOptions.data.length}} @L("NumberOfVariablesVisible") {{vm.gridApi.grid.getVisibleRows().length}}</div>
+        </div>
+        <div class="row">
+            <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+        </div>
+    </div>
+</div>
+

@@ -1,7 +1,10 @@
-﻿/* Bootstrap square buttons. See http://bootsnipp.com/snippets/featured/bootstrap-square-buttons. */
+﻿/* Bootstrap square buttons. See http://bootsnipp.com/snippets/featured/bootstrap-square-buttons and http://www.prepbootstrap.com/bootstrap-template/square-buttons-effects */
 .btn-sq-lg {
   width: 150px !important;
   height: 150px !important;
+}
+.btn-sq-lg:hover {
+    border: 0 solid white;
 }
 
 .btn-sq {
@@ -9,15 +12,24 @@
   height: 100px !important;
   font-size: 10px;
 }
+.btn-sq:hover {
+    border: 0 solid white;
+}
 
 .btn-sq-sm {
   width: 50px !important;
   height: 50px !important;
   font-size: 10px;
 }
+.btn-sq-sm:hover {
+    border: 0 solid white;
+}
 
 .btn-sq-xs {
   width: 25px !important;
   height: 25px !important;
   padding:2px;
+}
+.btn-sq-xs:hover {
+    border: 0 solid white;
 }

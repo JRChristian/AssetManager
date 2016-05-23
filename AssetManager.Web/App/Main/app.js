@@ -56,6 +56,11 @@
                     templateUrl: '/App/Main/views/asset/new.cshtml',
                     menu: 'AssetNew' //Matches to name of 'NewAsset' menu in AssetManagerNavigationProvider
                 })
+                 .state('iowdashboard', {
+                     url: '/iowdashboard',
+                     templateUrl: '/App/Main/views/iow/dashboard.cshtml',
+                     menu: 'IOWDashboard' //Matches to name of 'IOW' menu in AssetManagerNavigationProvider
+                 })
                  .state('iowmain', {
                      url: '/iowmain',
                      templateUrl: '/App/Main/views/iow/main.cshtml',
@@ -91,15 +96,15 @@
                     templateUrl: '/App/Main/views/iow/variabledeviations.cshtml',
                     menu: 'IOWVariableDeviations' //Matches to name in AssetManagerNavigationProvider
                 })
-                .state('iowvariabledeviationsummary', {
-                    url: '/iowvariabledeviationsummary',
-                    templateUrl: '/App/Main/views/iow/variabledeviationsummary.cshtml',
-                    menu: 'IOWVariableDeviationSummary' //Matches to name in AssetManagerNavigationProvider
+                .state('iowlimitsummary', {
+                    url: '/iowlimitsummary',
+                    templateUrl: '/App/Main/views/iow/limitsummary.cshtml',
+                    menu: 'IOWLimitSummary' //Matches to name in AssetManagerNavigationProvider
                 })
-                .state('iowvariablestatus', {
-                    url: '/iowvariablestatus',
-                    templateUrl: '/App/Main/views/iow/variablestatus.cshtml',
-                    menu: 'IOWVariableStatus' //Matches to name in AssetManagerNavigationProvider
+                .state('iowlimitstatus', {
+                    url: '/iowlimitstatus',
+                    templateUrl: '/App/Main/views/iow/limitstatus.cshtml',
+                    menu: 'IOWLimitStatus' //Matches to name in AssetManagerNavigationProvider
                 })
                 .state('iowvariableview', {
                     url: '/iowvariableview?Id',

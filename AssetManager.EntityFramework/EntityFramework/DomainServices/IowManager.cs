@@ -609,7 +609,6 @@ namespace AssetManager.DomainServices
                         {
                             output.NumberLimits++;
                             IOWDeviation deviation = null;
-                            bool isFirstData = true;
 
                             foreach (TagDataRaw data in tagdata)
                             {
@@ -625,16 +624,19 @@ namespace AssetManager.DomainServices
                                 Direction newDirection = WhatDeviationType(limit.Direction, limit.Value, data.Value);
                                 bool isDeviation = IsDeviation(limit.Direction, limit.Value, data.Value);
 
-                                // For the first value in the data array, check so see if we already have a deviation record.
-                                // Find a deviation record (if one exists) matching the current limit AND 
-                                // where the time period of the deviation record overlaps the current tag value.
-                                // No need to do this after the first value in the tag data collection.
-                                if( isFirstData )
+                                // If we do not have a deviation record in memory, check so see if the database has one.
+                                // Find a deviation record (if one exists) where the time period of the deviation record 
+                                // overlaps the current tag value.
+                                // Need to do this for every tag data record, in case we are reprocessing history and
+                                // we encounter new deviations as we go along.
+                                if( deviation == null )
                                 {
-                                    deviation = _iowDeviationRepository.FirstOrDefault(x =>
-                                        x.IOWLimitId == limit.Id && x.StartTimestamp < data.Timestamp &&
+                                    deviation = limit.IOWDeviations.FirstOrDefault(x => x.StartTimestamp < data.Timestamp &&
                                         (!x.EndTimestamp.HasValue || x.EndTimestamp.Value >= data.Timestamp));
-                                    isFirstData = false;
+
+                                    //deviation = _iowDeviationRepository.FirstOrDefault(x =>
+                                    //    x.IOWLimitId == limit.Id && x.StartTimestamp < data.Timestamp &&
+                                    //    (!x.EndTimestamp.HasValue || x.EndTimestamp.Value >= data.Timestamp));
                                 }
 
                                 if (deviation != null)
@@ -663,7 +665,7 @@ namespace AssetManager.DomainServices
                                     {
                                         // Case 1B - The existing deviation is over ==> update and close the old record
                                         deviation.EndTimestamp = data.Timestamp.AddMinutes(-1);
-                                        _iowDeviationRepository.Update(deviation);
+                                        //_iowDeviationRepository.Update(deviation);
                                         deviation = null;
 
                                         // Update the overall limit record -- maybe (not if the overall record describes a future deviation)

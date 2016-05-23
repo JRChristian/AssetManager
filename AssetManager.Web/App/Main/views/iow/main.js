@@ -66,7 +66,7 @@
                 data: []
             });
 
-            tagDataService.getTagDataCanvasJS({ id: 6 })
+            tagDataService.getTagDataCanvasJS({ name: "42FC001" })
                 .success(function (data) {
                     vm.name = data.name;
                     vm.description = data.description;
