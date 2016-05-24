@@ -10,7 +10,7 @@
             vm.imageWidth = $window.innerWidth - 120;
 
             vm.image = {
-                id: $stateParams.id > 0 ? $stateParams.id : null
+                id: $stateParams.Id > 0 ? $stateParams.Id : null
             };
 
             abp.ui.setBusy(

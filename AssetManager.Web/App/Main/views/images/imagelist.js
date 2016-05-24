@@ -16,7 +16,7 @@
                 columnDefs: [
                     {
                         name: 'id', displayName: vm.localize('Action'), width: 60, minWidth: 60, enableSorting: false, enableFiltering: false, enableColumnMenus: false,
-                        cellTemplate: '<div class="ui-grid-cell-contents"><div class="btn-group btn-group-xs"><a class="btn btn-default" ui-sref="imageview({ id: row.entity.id })"><i class="fa fa-picture-o"></i></a></div></div>'
+                        cellTemplate: '<div class="ui-grid-cell-contents"><div class="btn-group btn-group-xs"><a class="btn btn-default" ui-sref="imageview({ Id: row.entity.id })"><i class="fa fa-picture-o"></i></a></div></div>'
                     },
                     { name: 'name', displayName: vm.localize('Name'), width: '30%', minWidth: 60 },
                     { name: 'description', displayName: vm.localize('Description'), width: '35%' },

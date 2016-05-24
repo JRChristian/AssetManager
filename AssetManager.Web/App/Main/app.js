@@ -67,7 +67,7 @@
                     menu: 'ImageListEdit' //Matches to name of menu in AssetManagerNavigationProvider
                 })
                 .state('imageview', {
-                    url: '/imageview?id&',
+                    url: '/imageview?Id',
                     templateUrl: '/App/Main/views/images/imageview.cshtml',
                     menu: 'ImageView'
                 })
