@@ -1,0 +1,14 @@
+﻿<div ng-controller="app.views.image.list as vm">
+    <div class="container">
+        <div class="row">
+            <h3>@L("ImgTtlImageList")</h3>
+        </div>
+        <div class="row">
+            <div id="grid1" ui-grid="vm.gridOptions" class="grid"></div>
+            <div>@L("ImgTxtNumberOfImagesTotal") {{vm.gridOptions.data.length}}<br />@L("ImgTxtNumberOfImagesVisible") {{vm.gridApi.grid.getVisibleRows().length}}</div>
+        </div>
+        <div class="row">
+            <a ui-sref="imagelistedit" class="btn btn-primary btn-sm"><i class="fa fa-sitemap"></i> @L("ImgTtlImageListEdit")</a>
+        </div>
+    </div>
+</div>

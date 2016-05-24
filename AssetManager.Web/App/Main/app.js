@@ -56,6 +56,21 @@
                     templateUrl: '/App/Main/views/asset/new.cshtml',
                     menu: 'AssetNew' //Matches to name of 'NewAsset' menu in AssetManagerNavigationProvider
                 })
+                .state('imagelist', {
+                    url: '/imagelist',
+                    templateUrl: '/App/Main/views/images/imagelist.cshtml',
+                    menu: 'ImageList' //Matches to name of menu in AssetManagerNavigationProvider
+                })
+                .state('imagelistedit', {
+                    url: '/imagelistedit',
+                    templateUrl: '/App/Main/views/images/imagelistedit.cshtml',
+                    menu: 'ImageListEdit' //Matches to name of menu in AssetManagerNavigationProvider
+                })
+                .state('imageview', {
+                    url: '/imageview?id&',
+                    templateUrl: '/App/Main/views/images/imageview.cshtml',
+                    menu: 'ImageView'
+                })
                  .state('iowdashboard', {
                      url: '/iowdashboard',
                      templateUrl: '/App/Main/views/iow/dashboard.cshtml',

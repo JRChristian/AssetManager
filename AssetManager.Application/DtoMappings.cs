@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AssetManager.EntityFramework.DomainServices;
+using AssetManager.Images.Dtos;
 
 namespace AssetManager
 {
@@ -17,6 +18,7 @@ namespace AssetManager
         public static void Map()
         {
             Mapper.CreateMap<Asset, AssetDto>();
+            Mapper.CreateMap<Image, ImageDto>();
             Mapper.CreateMap<IOWLevel, LevelDto>();
             Mapper.CreateMap<IOWVariable, VariableDto>();
             Mapper.CreateMap<IOWLimit, LimitDto>();

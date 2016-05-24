@@ -288,6 +288,9 @@
     <Content Include="App\Main\views\asset\edit.js" />
     <Content Include="App\Main\views\asset\new.js" />
     <Content Include="App\Main\views\home\Bootstrap-square-buttons.css" />
+    <Content Include="App\Main\views\images\imagelistedit.js" />
+    <Content Include="App\Main\views\images\imagelist.js" />
+    <Content Include="App\Main\views\images\imageview.js" />
     <Content Include="App\Main\views\iow\dashboard.js" />
     <Content Include="App\Main\views\iow\variabledeviations.js" />
     <Content Include="App\Main\views\iow\limitsummary.js" />
@@ -447,6 +450,9 @@
     <Content Include="App\Main\views\iow\limitsummary.cshtml" />
     <Content Include="App\Main\views\iow\variabledeviations.cshtml" />
     <Content Include="App\Main\views\iow\dashboard.cshtml" />
+    <Content Include="App\Main\views\images\imagelist.cshtml" />
+    <Content Include="App\Main\views\images\imagelistedit.cshtml" />
+    <Content Include="App\Main\views\images\imageview.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />

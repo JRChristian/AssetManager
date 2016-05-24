@@ -115,6 +115,15 @@
     <Compile Include="Assets\Dtos\AssetDto.cs" />
     <Compile Include="Assets\Dtos\AssetTypeDto.cs" />
     <Compile Include="Assets\Dtos\CreateAssetInput.cs" />
+    <Compile Include="Images\Dtos\GetImageInput.cs" />
+    <Compile Include="Images\Dtos\GetImageListInput.cs" />
+    <Compile Include="Images\Dtos\GetImageListOutput.cs" />
+    <Compile Include="Images\Dtos\GetImageOutput.cs" />
+    <Compile Include="Images\Dtos\ImageDto.cs" />
+    <Compile Include="Images\Dtos\UpdateImageListInput.cs" />
+    <Compile Include="Images\Dtos\UpdateImageListOutput.cs" />
+    <Compile Include="Images\IImageAppService.cs" />
+    <Compile Include="Images\ImageAppService.cs" />
     <Compile Include="IOWs\Dtos\DetectDeviationsInput.cs" />
     <Compile Include="IOWs\Dtos\DetectDeviationsOutput.cs" />
     <Compile Include="IOWs\Dtos\DeviationDto.cs" />

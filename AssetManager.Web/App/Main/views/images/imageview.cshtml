@@ -1,0 +1,14 @@
+﻿<div ng-controller="app.views.image.view as vm">
+    <div class="container">
+        <div class="row">
+            <h3>{{vm.image.name}}</h3>
+        </div>
+        <div class="row">
+            <button ng-click="vm.fullSize()" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-refresh"></i> @L("ImgBtnDisplayImageFullSize")</button>
+            <button ng-click="vm.windowSize()" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-refresh"></i> @L("ImgBtnDisplayImageToScreenSize")</button>
+        </div>
+        <div class="row">
+            <img ng-src="{{vm.image.url}}?width={{vm.imageWidth}}" alt="{{vm.image.description}}" />
+        </div>
+    </div>
+</div>

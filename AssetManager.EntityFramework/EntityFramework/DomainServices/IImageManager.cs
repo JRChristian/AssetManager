@@ -14,5 +14,6 @@ namespace AssetManager.Entities
         Image FirstOrDefaultImage(long id);
         List<Image> GetAllListImage();
         List<Image> GetAllListImage(Expression<Func<Image, bool>> predicate);
+        bool UpdateImage(long? id, string name, string description, string url);
     }
 }

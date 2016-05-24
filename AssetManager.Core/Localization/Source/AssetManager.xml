@@ -118,7 +118,20 @@
     <text name="NewAsset" value="Create asset" />
     <text name="Name" value="Name" />
     <text name="UpdateTheAsset" value="Save changes" />
-    
+
+    <text name="ImgTtlImageList" value="Images" />
+    <text name="ImgTtlImageListEdit" value="Edit Images" />
+    <text name="ImgTxtNumberOfImagesTotal" value="Total images:" />
+    <text name="ImgTxtNumberOfImagesVisible" value="Number of filtered images:" />
+    <text name="ImgMsgImagedUpdateFailed" value="Failed to update {0} image(s)" />
+    <text name="ImgMsgImagedUpdateSucceeded" value="Successfully updated {0} out of {1} image(s)" />
+    <text name="ImgBtnCancelImages" value="Cancel Changes" />
+    <text name="ImgBtnSaveImages" value="Save Changes" />
+    <text name="ImgBtnAddNewImage" value="Add Image" />
+    <text name="ImgBtnDisplayImageFullSize" value="Display Full Size" />
+    <text name="ImgBtnDisplayImageToScreenSize" value="Fit To Windows" />
+    <text name="URL" value="URL" />
+
     <text name="Email" value="Email address" />
     <text name="FirstName" value="First name" />
     <text name="LastLogin" value="Last login" />

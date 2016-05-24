@@ -213,6 +213,10 @@
     <Compile Include="Migrations\201605231950435_AddedAssetImageTable.Designer.cs">
       <DependentUpon>201605231950435_AddedAssetImageTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605240011157_MinorTableChange.cs" />
+    <Compile Include="Migrations\201605240011157_MinorTableChange.Designer.cs">
+      <DependentUpon>201605240011157_MinorTableChange.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -290,6 +294,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605231950435_AddedAssetImageTable.resx">
       <DependentUpon>201605231950435_AddedAssetImageTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605240011157_MinorTableChange.resx">
+      <DependentUpon>201605240011157_MinorTableChange.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
