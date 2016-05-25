@@ -3,8 +3,8 @@
 
     var controllerId = 'app.views.asset.list';
     app.controller(controllerId, [
-        '$scope', '$location', 'abp.services.app.asset', 'abp.services.app.assetType',
-        function ($scope, $location, assetService, assetTypeService) {
+        '$scope', '$location', 'abp.services.app.asset',
+        function ($scope, $location, assetService) {
             var vm = this;
 
             vm.localize = abp.localization.getSource('AssetManager');
@@ -17,7 +17,7 @@
 
             abp.ui.setBusy( //Set whole page busy until getAssetTypes completes
                 null,
-                assetTypeService.getAllAssetTypes().success(function (data) {
+                assetService.getAssetTypes().success(function (data) {
                     vm.assettypes = data.assetTypes;
                 }));
 

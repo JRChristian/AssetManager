@@ -2,13 +2,14 @@
     <div class="container">
         <div class="row">
             <h3>{{vm.image.name}}</h3>
+            <small>{{vm.image.description}}</small>
         </div>
         <div class="row">
             <button ng-click="vm.fullSize()" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-refresh"></i> @L("ImgBtnDisplayImageFullSize")</button>
             <button ng-click="vm.windowSize()" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-refresh"></i> @L("ImgBtnDisplayImageToScreenSize")</button>
         </div>
-        <div class="row">
-            <img ng-src="{{vm.image.url}}?width={{vm.imageWidth}}" alt="{{vm.image.description}}" />
+        <div class="row" id="imageArea" padding="0" border="0" margin="0" width="100%" height="100%">
+            <img ng-src="{{vm.image.url}}?width={{vm.imageWidth}}" alt="{{vm.image.name}}" />
         </div>
     </div>
 </div>

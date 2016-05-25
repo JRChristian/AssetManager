@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AssetManager.EntityFramework.DomainServices;
+using Abp.AutoMapper;
 
 namespace AssetManager.Assets
 {
@@ -21,32 +23,25 @@ namespace AssetManager.Assets
     {
         //These members set in constructor using constructor injection.
 
-        private readonly IAssetRepository _assetRepository;
-        private readonly IRepository<AssetType,long> _assetTypeRepository;
+        //private readonly IAssetRepository _assetRepository;
+        //private readonly IRepository<AssetType,long> _assetTypeRepository;
+        private readonly IAssetManager _assetManager;
 
         /// <summary>
         ///In constructor, we can get needed classes/interfaces.
         ///They are sent here by dependency injection system automatically.
         /// </summary>
-        public AssetAppService(IAssetRepository assetRepository, IRepository<AssetType,long> assetTypeRepository)
+        public AssetAppService(/*IAssetRepository assetRepository, IRepository<AssetType,long> assetTypeRepository, */ IAssetManager assetManager)
         {
-            _assetRepository = assetRepository;
-            _assetTypeRepository = assetTypeRepository;
+            //_assetRepository = assetRepository;
+            //_assetTypeRepository = assetTypeRepository;
+            _assetManager = assetManager;
         }
 
         public GetOneAssetOutput GetOneAsset(GetOneAssetInput input)
         {
-            Asset asset;
-
             //Get one asset, using either Id (if specified) or name.
-            if( input.Id.HasValue)
-            {
-                asset = _assetRepository.Get(input.Id.Value);
-            }
-            else
-            {
-                asset = _assetRepository.FirstOrDefault(x => x.Name == input.Name);
-            }
+            Asset asset = _assetManager.GetAsset(input.Id, input.Name);
 
             //Used AutoMapper to automatically convert Asset to AssetDto.
             return new GetOneAssetOutput
@@ -58,7 +53,11 @@ namespace AssetManager.Assets
         public GetAssetOutput GetAssets(GetAssetInput input)
         {
             //Called specific GetAllWithType method of Asset repository.
-            var assets = _assetRepository.GetAllWithType(input.AssetTypeId);
+            List<Asset> assets = null;
+            if (input.AssetTypeId.HasValue)
+                assets = _assetManager.GetAssetListForType(input.AssetTypeId.Value);
+            else
+                assets = _assetManager.GetAssetList();
 
             //Used AutoMapper to automatically convert List<Asset> to List<AssetDto>.
             return new GetAssetOutput
@@ -72,20 +71,10 @@ namespace AssetManager.Assets
             //We can use Logger, it is defined in ApplicationService base class.
             Logger.Info("Updating an asset for input: " + input);
 
-            //Retrieving a Asset entity with given id using standard Get method of repositories.
-            var Asset = _assetRepository.Get(input.Id);
+            // All assets belong to a tenant. If not specified, put them in the default tenant.
+            int tenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
 
-            //Updating changed properties of the retrieved Asset entity.
-            if (!string.IsNullOrEmpty(input.Name))
-                Asset.Name = input.Name;
-
-            if (!string.IsNullOrEmpty(input.Description))
-                Asset.Description = input.Description;
-
-            if (input.AssetTypeId.HasValue)
-            {
-                Asset.AssetType = _assetTypeRepository.Load(input.AssetTypeId.Value);
-            }
+            _assetManager.InsertOrUpdateAsset(input.Id, input.Name, input.Description, input.AssetTypeId, "", tenantId);
 
             //We even do not call Update method of the repository.
             //Because an application service method is a 'unit of work' scope as default.
@@ -98,25 +87,30 @@ namespace AssetManager.Assets
             Logger.Info("Creating an asset for input: " + input);
 
             // All assets belong to a tenant. If not specified, put them in the default tenant.
-            int tenantid = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
+            int tenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
 
             //Creating a new Asset entity with given input's properties
-            var Asset = new Asset { Name = input.Name, Description = input.Description, AssetTypeId = -1, TenantId = tenantid };
+            _assetManager.InsertOrUpdateAsset(null, input.Name, input.Description, input.AssetTypeId, input.AssetTypeName, tenantId);
+        }
 
-            // The DTO includes both AssetTypeId and AssetTypeName. If specified, use ID.
-            if (input.AssetTypeId.HasValue)
-            {
-                Asset.AssetTypeId = input.AssetTypeId.Value;
-            }
-            else if (!string.IsNullOrEmpty(input.AssetTypeName))
-            {
-                var assettype = _assetTypeRepository.FirstOrDefault(x => x.Name == input.AssetTypeName);
-                if (assettype != null) 
-                    Asset.AssetTypeId = assettype.Id;
-            }
 
-            //Saving entity with standard Insert method of repositories.
-            _assetRepository.Insert(Asset);
+        public GetAllAssetTypeOutput GetAssetTypes()
+        {
+            List<AssetType> assettypes = _assetManager.GetAssetTypeList();
+            return new GetAllAssetTypeOutput
+            {
+                AssetTypes = assettypes.MapTo<List<AssetTypeDto>>()
+            };
+        }
+
+        //This method uses async pattern that is supported by ASP.NET Boilerplate
+        public async Task<GetAllAssetTypeOutput> GetAssetTypesAsync()
+        {
+            var assettypes = await _assetManager.GetAssetTypeListAsync();
+            return new GetAllAssetTypeOutput
+            {
+                AssetTypes = assettypes.MapTo<List<AssetTypeDto>>()
+            };
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AssetManager.EntityFramework.DomainServices;
 
 namespace AssetManager.Assets
 {
@@ -22,16 +23,18 @@ namespace AssetManager.Assets
     {
         //These members set in constructor using constructor injection.
         private readonly IRepository<AssetType, long> _assetTypeRepository;
- 
-        public AssetTypeAppService(IRepository<AssetType, long> assetTypeRepository)
+        private readonly IAssetManager _assetManager;
+
+        public AssetTypeAppService(IRepository<AssetType, long> assetTypeRepository, IAssetManager assetManager)
         {
             _assetTypeRepository = assetTypeRepository;
+            _assetManager = assetManager;
         }
 
         //This method uses async pattern that is supported by ASP.NET Boilerplate
         public async Task<GetAllAssetTypeOutput> GetAllAssetTypes()
         {
-            var assettypes = await _assetTypeRepository.GetAllListAsync();
+            var assettypes = await _assetManager.GetAssetTypeListAsync();
             return new GetAllAssetTypeOutput
             {
                 AssetTypes = assettypes.MapTo<List<AssetTypeDto>>()

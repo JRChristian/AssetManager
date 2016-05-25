@@ -23,6 +23,7 @@ namespace AssetManager.Entities
         public virtual Tenant Tenants { get; set; }
 
         public virtual ICollection<AssetImage> Images { get; set; }
+        public virtual ICollection<AssetHierarchy> Hierarchy { get; set; }
 
         public Asset()
         {

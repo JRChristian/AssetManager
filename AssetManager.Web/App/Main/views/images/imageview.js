@@ -7,7 +7,9 @@
         function ($scope, $location, $stateParams, $window, imageService) {
             var vm = this;
             var localize = abp.localization.getSource('AssetManager');
-            vm.imageWidth = $window.innerWidth - 120;
+            vm.imageArea = document.getElementById('imageArea');
+            vm.imageWidth = vm.imageArea.clientWidth;
+            //vm.imageWidth = $window.innerWidth - 120;
 
             vm.image = {
                 id: $stateParams.Id > 0 ? $stateParams.Id : null
@@ -24,7 +26,8 @@
             };
 
             vm.windowSize = function() {
-                vm.imageWidth = $window.innerWidth - 120;
+                vm.imageWidth = vm.imageArea.clientWidth;
+                //vm.imageWidth = $window.innerWidth - 120;
             };
         }
     ]);
