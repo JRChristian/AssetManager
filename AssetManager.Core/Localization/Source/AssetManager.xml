@@ -118,6 +118,8 @@
     <text name="NewAsset" value="Create asset" />
     <text name="Name" value="Name" />
     <text name="UpdateTheAsset" value="Save changes" />
+    <text name="AssetTxtNumberOfAssets" value="Total assets:" />
+    <text name="AssetTxtNumberOfAssetsVisible" value="Number of filtered assets:" />
 
     <text name="ImgTtlImageList" value="Images" />
     <text name="ImgTtlImageListEdit" value="Edit Images" />

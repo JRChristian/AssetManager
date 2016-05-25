@@ -43,8 +43,13 @@
                 })
                 .state('assetlist', {
                     url: '/assetlist',
-                    templateUrl: '/App/Main/views/asset/list.cshtml',
+                    templateUrl: '/App/Main/views/asset/assetlist.cshtml',
                     menu: 'AssetList' //Matches to name of 'Assets' menu in AssetManagerNavigationProvider
+                })
+                .state('assetlistold', {
+                    url: '/assetlistold',
+                    templateUrl: '/App/Main/views/asset/list.cshtml',
+                    menu: 'AssetListOld' //Matches to name of 'Assets' menu in AssetManagerNavigationProvider
                 })
                 .state('assetedit', {
                     url: '/assetedit?assetId',
