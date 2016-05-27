@@ -50,7 +50,7 @@ namespace AssetManager.Web
                             "IOWLimitStatus",
                             new LocalizableString("IowTtlLimitStatus", AssetManagerConsts.LocalizationSourceName),
                             url: "#/iowlimitstatus",
-                            icon: "fa fa-sitemap"
+                            icon: "fa fa-exclamation-circle"
                             )
                     )
                     .AddItem(
@@ -58,7 +58,7 @@ namespace AssetManager.Web
                             "IOWVariables",
                             new LocalizableString("IOWVariables", AssetManagerConsts.LocalizationSourceName),
                             url: "#/iowvariablelist",
-                            icon: "fa fa-sitemap"
+                            icon: "fa fa-crosshairs"
                             )
                     )
                     .AddItem(
@@ -84,6 +84,22 @@ namespace AssetManager.Web
                         new LocalizableString("Assets", AssetManagerConsts.LocalizationSourceName),
                         url: "#/assetlist",
                         icon: "fa fa-tags"
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "AssetList",
+                            new LocalizableString("Assets", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/assetlist",
+                            icon: "fa fa-tags"
+                            )
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "AssetHierarchy",
+                            new LocalizableString("AssetMnuAssetHierarchy", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/assethierarchy",
+                            icon: "fa fa-sitemap"
+                            )
                     )
                 )
                 .AddItem(

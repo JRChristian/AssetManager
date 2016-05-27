@@ -26,6 +26,7 @@ namespace AssetManager.EntityFramework.DomainServices
         bool InsertOrUpdateAssetType(long? id, string name, int tenantId);
         bool DeleteAssetType(long? id, string name);
 
+        List<AssetHierarchy> GetAssetHierarchy();
         bool InsertOrUpdateAssetHierarchy(long childAssetId, string parentAssetName);
         bool InsertOrUpdateAssetHierarchy(string childAssetName, string parentAssetName);
         bool InsertOrUpdateAssetHierarchy(Asset childAsset, Asset parentAsset);

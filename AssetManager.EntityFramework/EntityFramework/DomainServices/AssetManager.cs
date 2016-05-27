@@ -76,6 +76,7 @@ namespace AssetManager.EntityFramework.DomainServices
             if ( asset != null )
             {
                 // Asset exists - update
+                asset.Name = name;
                 asset.Description = description;
                 asset.AssetTypeId = assetType != null ? assetType.Id : -1;
                 assetId = asset.Id;
@@ -169,6 +170,11 @@ namespace AssetManager.EntityFramework.DomainServices
                 }
             }
             return success;
+        }
+
+        public List<AssetHierarchy> GetAssetHierarchy()
+        {
+            return _assetHierarchyRepository.GetAllList();
         }
 
 

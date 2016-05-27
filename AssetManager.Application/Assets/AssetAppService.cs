@@ -170,11 +170,69 @@ namespace AssetManager.Assets
             return output;
         }
 
+        public GetAssetHierarchyOutput GetAssetHierarchy(GetAssetHierarchyInput input)
+        {
+            // Output array
+            List<AssetHierarchyDto> outHierarchy = new List<AssetHierarchyDto>();
+
+            // Get all nodes
+            List<AssetHierarchy> rawHierarchy = _assetManager.GetAssetHierarchy();
+
+            // Build the hierarchy, starting with all nodes that do not have a parent
+            var topLevel = from h in rawHierarchy
+                           where h.ParentAssetHierarchyId == null
+                           select h;
+            
+            foreach(var oneItem in topLevel)
+            {
+                AssetHierarchyDto hierarchy = new AssetHierarchyDto
+                {
+                    Name = oneItem.Asset.Name,
+                    Description = oneItem.Asset.Description,
+                    AssetTypeName = oneItem.Asset.AssetType.Name,
+                    ParentAssetName = "",
+                    Level = 0
+                };
+                outHierarchy.Add(hierarchy);
+                HierarchyBuilder(rawHierarchy, ref outHierarchy, 1, oneItem.Id, oneItem.Asset.Name);
+            }
+
+            return new GetAssetHierarchyOutput
+            {
+                AssetHierarchy = outHierarchy
+            };
+        }
+
+        private void HierarchyBuilder(List<AssetHierarchy> rawHierarchy, ref List<AssetHierarchyDto> outHierarchy, int level, long parentAssetHierarchyId, string parentAssetName)
+        {
+            var oneLevel = from assets in rawHierarchy
+                           where assets.ParentAssetHierarchyId == parentAssetHierarchyId
+                           select assets;
+
+            if( oneLevel != null && oneLevel.Count() > 0)
+            {
+                foreach (var oneItem in oneLevel)
+                {
+                    AssetHierarchyDto hierarchy = new AssetHierarchyDto
+                    {
+                        Name = oneItem.Asset.Name,
+                        Description = oneItem.Asset.Description,
+                        AssetTypeName = oneItem.Asset.AssetType.Name,
+                        ParentAssetName = parentAssetName,
+                        Level = level
+                    };
+                    outHierarchy.Add(hierarchy);
+                
+                    // And add any children
+                    HierarchyBuilder(rawHierarchy, ref outHierarchy, level + 1, oneItem.Id, oneItem.Asset.Name);
+                }
+            }
+        }
+
 
         public UpdateAssetHierarchyOutput UpdateAssetHierarchy(UpdateAssetHierarchyInput input)
         {
             UpdateAssetHierarchyOutput output = new UpdateAssetHierarchyOutput { Updates = 0 };
-            long assetId = 0;
             string parentAssetName = "";
             bool success = false;
             

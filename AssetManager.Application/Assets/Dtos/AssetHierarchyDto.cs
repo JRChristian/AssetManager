@@ -13,5 +13,6 @@ namespace AssetManager.Assets.Dtos
         public string Description { get; set; }
         public string AssetTypeName { get; set; }
         public string ParentAssetName { get; set; }
+        public int Level { get; set; }
     }
 }

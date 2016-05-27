@@ -12,6 +12,7 @@
         'ui.grid.edit',
         'ui.grid.rowEdit',
         'ui.grid.cellNav',
+        'ui.grid.treeView',
         'ui.bootstrap.showErrors',  // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
 
         'angular-flot', // Flot helper library -- see https://docs.omniref.com/js/npm/angular-flot/0.0.6 
@@ -55,6 +56,11 @@
                     url: '/assetedit?assetId',
                     templateUrl: '/App/Main/views/asset/edit.cshtml',
                     menu: 'AssetEdit' //Matches to name of 'Assets' menu in AssetManagerNavigationProvider
+                })
+                .state('assethierarchy', {
+                    url: '/assethierarchy',
+                    templateUrl: '/App/Main/views/asset/assethierarchy.cshtml',
+                    menu: 'AssetHierarchy' //Matches to menu name in AssetManagerNavigationProvider
                 })
                 .state('assetnew', {
                     url: '/assetnew',

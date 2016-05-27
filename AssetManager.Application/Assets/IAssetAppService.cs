@@ -30,6 +30,7 @@ namespace AssetManager.Assets
         UpdateAssetTypesOutput UpdateAssetTypes(UpdateAssetTypesInput input);
         DeleteAssetTypesOutput DeleteAssetTypes(DeleteAssetTypesInput input);
 
+        GetAssetHierarchyOutput GetAssetHierarchy(GetAssetHierarchyInput input);
         UpdateAssetHierarchyOutput UpdateAssetHierarchy(UpdateAssetHierarchyInput input);
     }
 }

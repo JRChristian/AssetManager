@@ -112,6 +112,8 @@
     <Compile Include="Assets\Dtos\AssetHierarchyDto.cs" />
     <Compile Include="Assets\Dtos\DeleteAssetTypesInput.cs" />
     <Compile Include="Assets\Dtos\DeleteAssetTypesOutput.cs" />
+    <Compile Include="Assets\Dtos\GetAssetHierarchyInput.cs" />
+    <Compile Include="Assets\Dtos\GetAssetHierarchyOutput.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetHierarchyInput.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetHierarchyOutput.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetsInput.cs" />
