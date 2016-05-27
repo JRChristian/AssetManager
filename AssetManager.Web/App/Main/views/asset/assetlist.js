@@ -16,12 +16,12 @@
                 enableGridMenu: true,
                 columnDefs: [
                     {
-                        name: 'id', displayName: vm.localize('Action'), width: 50, minWidth: 50, enableSorting: false, enableFiltering: false, enableColumnMenus: false,
+                        name: 'id', displayName: vm.localize('Action'), width: 85, minWidth: 50, enableSorting: false, enableFiltering: false, enableColumnMenus: false,
                         cellTemplate: '<div class="ui-grid-cell-contents"><div class="btn-group btn-group-xs"><a class="btn btn-primary" ui-sref="assetedit({ assetId: row.entity.id })"><i class="fa fa-wrench"></i></a></div></div>'
                     },
                     { name: 'name', displayName: vm.localize('Name'), width: '25%' },
-                    { name: 'description', displayName: vm.localize('Description'), width: '50%' },
-                    { name: 'assetTypeName', displayName: vm.localize('AssetType'), width: '25%' }]
+                    { name: 'description', displayName: vm.localize('Description'), width: '45%' },
+                    { name: 'assetTypeName', displayName: vm.localize('AssetType'), width: '15%' }]
             };
             function registerGridApi(gridApi) { vm.gridApi = gridApi; }
 

@@ -23,8 +23,13 @@ namespace AssetManager.Assets
         GetOneAssetOutput GetOneAsset(GetOneAssetInput input);
         void UpdateAsset(UpdateAssetInput input);
         void CreateAsset(CreateAssetInput input);
+        UpdateAssetsOutput UpdateAssets(UpdateAssetsInput input);
 
-        GetAllAssetTypeOutput GetAssetTypes();
-        Task<GetAllAssetTypeOutput> GetAssetTypesAsync();
+        GetAssetTypesOutput GetAssetTypes();
+        Task<GetAssetTypesOutput> GetAssetTypesAsync();
+        UpdateAssetTypesOutput UpdateAssetTypes(UpdateAssetTypesInput input);
+        DeleteAssetTypesOutput DeleteAssetTypes(DeleteAssetTypesInput input);
+
+        UpdateAssetHierarchyOutput UpdateAssetHierarchy(UpdateAssetHierarchyInput input);
     }
 }

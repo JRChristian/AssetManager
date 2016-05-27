@@ -32,10 +32,10 @@ namespace AssetManager.Assets
         }
 
         //This method uses async pattern that is supported by ASP.NET Boilerplate
-        public async Task<GetAllAssetTypeOutput> GetAllAssetTypes()
+        public async Task<GetAssetTypesOutput> GetAllAssetTypes()
         {
             var assettypes = await _assetManager.GetAssetTypeListAsync();
-            return new GetAllAssetTypeOutput
+            return new GetAssetTypesOutput
             {
                 AssetTypes = assettypes.MapTo<List<AssetTypeDto>>()
             };

@@ -110,7 +110,7 @@
     <text name="Assets" value="Assets" />
     <text name="AssetType" value="Asset type" />
     <text name="Created" value="Created" />
-    <text name="CreateTheAsset" value="Add an asset" />
+    <text name="AssetBtnCreateANewAsset" value="Add an asset" />
     <text name="Description" value="Description" />
     <text name="EnterNameHere" value="Enter asset name here" />
     <text name="EnterDescriptionHere" value="Enter description here" />
@@ -120,6 +120,14 @@
     <text name="UpdateTheAsset" value="Save changes" />
     <text name="AssetTxtNumberOfAssets" value="Total assets:" />
     <text name="AssetTxtNumberOfAssetsVisible" value="Number of filtered assets:" />
+    <text name="AssetBtnSaveAssetTypeChanges" value="Save changes" />
+    <text name="AssetBtnCancelAssetTypeChanges" value="Cancel changes" />
+    <text name="AssetBtnAddNewAssetType" value="Add row for new asset type" />
+    <text name="AssetMsgAssetTypeSuccessfulChanges" value="Successfully updated {0} out of {1} asset types" />
+    <text name="AssetMsgAssetTypeDeletedOk" value="Successfully deleted asset type {0}" />
+    <text name="AssetMsgAssetTypeNotDeleted" value="Not able to delete asset type {0}" />
+    <text name="AssetPlcNewAssetTypeNamePlaceholder" value="(new asset type)" />
+    <text name="AssetBtnGoToAssetTypes" value="View/edit asset types" />
 
     <text name="ImgTtlImageList" value="Images" />
     <text name="ImgTtlImageListEdit" value="Edit Images" />

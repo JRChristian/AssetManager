@@ -61,6 +61,11 @@
                     templateUrl: '/App/Main/views/asset/new.cshtml',
                     menu: 'AssetNew' //Matches to name of 'NewAsset' menu in AssetManagerNavigationProvider
                 })
+                .state('assettypeedit', {
+                    url: '/assettypeedit',
+                    templateUrl: '/App/Main/views/asset/assettypeedit.cshtml',
+                    menu: 'AssetTypeEdit' //Matches to name of 'Assets' menu in AssetManagerNavigationProvider
+                })
                 .state('imagelist', {
                     url: '/imagelist',
                     templateUrl: '/App/Main/views/images/imagelist.cshtml',

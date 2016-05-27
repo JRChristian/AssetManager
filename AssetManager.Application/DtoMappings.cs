@@ -18,6 +18,7 @@ namespace AssetManager
         public static void Map()
         {
             Mapper.CreateMap<Asset, AssetDto>();
+            Mapper.CreateMap<AssetHierarchy, AssetHierarchyDto>();
             Mapper.CreateMap<Image, ImageDto>();
             Mapper.CreateMap<IOWLevel, LevelDto>();
             Mapper.CreateMap<IOWVariable, VariableDto>();

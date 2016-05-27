@@ -109,6 +109,15 @@
   <ItemGroup>
     <Compile Include="AssetManagerApplicationModule.cs" />
     <Compile Include="AssetManagerAppServiceBase.cs" />
+    <Compile Include="Assets\Dtos\AssetHierarchyDto.cs" />
+    <Compile Include="Assets\Dtos\DeleteAssetTypesInput.cs" />
+    <Compile Include="Assets\Dtos\DeleteAssetTypesOutput.cs" />
+    <Compile Include="Assets\Dtos\UpdateAssetHierarchyInput.cs" />
+    <Compile Include="Assets\Dtos\UpdateAssetHierarchyOutput.cs" />
+    <Compile Include="Assets\Dtos\UpdateAssetsInput.cs" />
+    <Compile Include="Assets\Dtos\UpdateAssetsOutput.cs" />
+    <Compile Include="Assets\Dtos\UpdateAssetTypesInput.cs" />
+    <Compile Include="Assets\Dtos\UpdateAssetTypesOutput.cs" />
     <Compile Include="DtoMappings.cs" />
     <Compile Include="Assets\AssetAppService.cs" />
     <Compile Include="Assets\AssetTypeAppService.cs" />
@@ -162,7 +171,7 @@
     <Compile Include="Tags\Dtos\AddTagDataRawInput.cs" />
     <Compile Include="Tags\Dtos\CreateTagInput.cs" />
     <Compile Include="Tags\Dtos\DeleteTagInput.cs" />
-    <Compile Include="Assets\Dtos\GetAllAssetTypeOutput.cs" />
+    <Compile Include="Assets\Dtos\GetAssetTypesOutput.cs" />
     <Compile Include="IOWs\Dtos\GetAllLevelsOutput.cs" />
     <Compile Include="Assets\Dtos\GetOneAssetOutput.cs" />
     <Compile Include="Assets\Dtos\GetOneAssetInput.cs" />

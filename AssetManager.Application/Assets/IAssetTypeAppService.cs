@@ -19,6 +19,6 @@ namespace AssetManager.Assets
         /// Application services works with DTOs (Data Transfer Objects).
         /// Service methods gets and returns DTOs.
         /// </summary>
-        Task<GetAllAssetTypeOutput> GetAllAssetTypes();
+        Task<GetAssetTypesOutput> GetAllAssetTypes();
     }
 }

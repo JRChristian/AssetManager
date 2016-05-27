@@ -16,12 +16,18 @@ namespace AssetManager.EntityFramework.DomainServices
         Asset GetAsset(long? id, string name);
         List<Asset> GetAssetList();
         List<Asset> GetAssetListForType(long id);
-        bool InsertOrUpdateAsset(long? id, string name, string description, long? assetTypeId, string assetTypeName, int tenantId);
+        Asset InsertOrUpdateAsset(long? id, string name, string description, long? assetTypeId, string assetTypeName, int tenantId);
 
         AssetType GetAssetType(long id);
         AssetType GetAssetType(string name);
         AssetType GetAssetType(long? id, string name);
         List<AssetType> GetAssetTypeList();
         Task<List<AssetType>> GetAssetTypeListAsync();
+        bool InsertOrUpdateAssetType(long? id, string name, int tenantId);
+        bool DeleteAssetType(long? id, string name);
+
+        bool InsertOrUpdateAssetHierarchy(long childAssetId, string parentAssetName);
+        bool InsertOrUpdateAssetHierarchy(string childAssetName, string parentAssetName);
+        bool InsertOrUpdateAssetHierarchy(Asset childAsset, Asset parentAsset);
     }
 }

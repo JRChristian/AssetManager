@@ -1,0 +1,20 @@
+name,description,assetTypeName,parentAssetName
+42-SMR,Unit 42 Steam-Methane Reformer,Unit Ops,
+42-PSA,U-114 Pressure Swing Absorption (PSA),System,42-SMR
+42-S-H2,SMR Hydrogen system,System,42-SMR
+42-S-FEED,SMR Feed system,System,42-SMR
+42-S-REACT,SMR Reaction section,System,42-SMR
+42-S-QUENCH,SMR Quench section,System,42-SMR
+42-D-101,D-101 Flash drum,Vessel,42-S-FEED
+42-C-102,C-102 Recycle compressor,Compressor,42-S-FEED
+42-R-103,R-103 Desulfurizer,Reactor,42-S-FEED
+42-R-104,R-104 Prereformer,Reactor,42-S-FEED
+42-R-105,R-105 Reformer,Reactor,42-S-FEED
+42-E-106,E-106 Cooler,Exchanger,42-S-REACT
+42-E-107,E-107 Preheat exchanger,Exchanger,42-S-REACT
+42-R-108,R-108 High temperature shift reactor (HTSR),Reactor,42-S-REACT
+42-E-109,E-109 Cooler,Exchanger,42-S-REACT
+42-R-110,R-110 Low temperature shift reactor (LTSR),Reactor,42-S-REACT
+42-E-111,E-111 LTSR cooler,Exchanger,42-S-QUENCH
+42-E-112,E-112 LTSR quench,Exchanger,42-S-QUENCH
+42-D-113,D-113 Condensate drum,Vessel,42-S-QUENCH

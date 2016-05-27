@@ -1,15 +1,15 @@
 ﻿using Abp.Application.Services;
+using Abp.AutoMapper;
 using Abp.Domain.Repositories;
-using AssetManager.Entities;
 using AssetManager.Assets.Dtos;
+using AssetManager.Entities;
+using AssetManager.EntityFramework.DomainServices;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AssetManager.EntityFramework.DomainServices;
-using Abp.AutoMapper;
 
 namespace AssetManager.Assets
 {
@@ -93,24 +93,109 @@ namespace AssetManager.Assets
             _assetManager.InsertOrUpdateAsset(null, input.Name, input.Description, input.AssetTypeId, input.AssetTypeName, tenantId);
         }
 
+        public UpdateAssetsOutput UpdateAssets(UpdateAssetsInput input)
+        {
+            UpdateAssetsOutput output = new UpdateAssetsOutput { SuccessfulUpdates = 0, FailedUpdates = 0 };
 
-        public GetAllAssetTypeOutput GetAssetTypes()
+            // All assets belong to a tenant. If not specified, put them in the default tenant.
+            int tenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
+
+            if ( input.Assets != null )
+            {
+                foreach(AssetDto asset in input.Assets)
+                {
+                    _assetManager.InsertOrUpdateAsset(null, asset.Name, asset.Description, asset.AssetTypeId, asset.AssetTypeName, tenantId);
+                    output.SuccessfulUpdates++;
+                }
+            }
+            return output;
+        }
+
+
+        public GetAssetTypesOutput GetAssetTypes()
         {
             List<AssetType> assettypes = _assetManager.GetAssetTypeList();
-            return new GetAllAssetTypeOutput
+            return new GetAssetTypesOutput
             {
                 AssetTypes = assettypes.MapTo<List<AssetTypeDto>>()
             };
         }
 
         //This method uses async pattern that is supported by ASP.NET Boilerplate
-        public async Task<GetAllAssetTypeOutput> GetAssetTypesAsync()
+        public async Task<GetAssetTypesOutput> GetAssetTypesAsync()
         {
             var assettypes = await _assetManager.GetAssetTypeListAsync();
-            return new GetAllAssetTypeOutput
+            return new GetAssetTypesOutput
             {
                 AssetTypes = assettypes.MapTo<List<AssetTypeDto>>()
             };
+        }
+
+        public UpdateAssetTypesOutput UpdateAssetTypes(UpdateAssetTypesInput input)
+        {
+            // Attempt to add or change each asset type in the input. Report the number of successful operations.
+            UpdateAssetTypesOutput output = new UpdateAssetTypesOutput { SuccessfulUpdates = 0, FailedUpdates = 0 };
+
+            // All assets belong to a tenant. If not specified, put them in the default tenant.
+            int tenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
+
+            if (input.AssetTypes != null)
+            {
+                foreach (AssetTypeDto assetType in input.AssetTypes)
+                {
+                    if (_assetManager.InsertOrUpdateAssetType(assetType.Id, assetType.Name, tenantId))
+                        output.SuccessfulUpdates++;
+                    else
+                        output.FailedUpdates++;
+                }
+            }
+            return output;
+        }
+
+        public DeleteAssetTypesOutput DeleteAssetTypes(DeleteAssetTypesInput input)
+        {
+            // Attempt to delete each asset type in the input. Report the number of successfully deleted asset types.
+            DeleteAssetTypesOutput output = new DeleteAssetTypesOutput { SuccessfulDeletions = 0, FailedDeletions = 0 };
+
+            if( input.AssetTypes != null )
+            {
+                foreach( AssetTypeDto assetType in input.AssetTypes )
+                {
+                    if (_assetManager.DeleteAssetType(assetType.Id, assetType.Name))
+                        output.SuccessfulDeletions++;
+                    else
+                        output.FailedDeletions++;
+                }
+            }
+            return output;
+        }
+
+
+        public UpdateAssetHierarchyOutput UpdateAssetHierarchy(UpdateAssetHierarchyInput input)
+        {
+            UpdateAssetHierarchyOutput output = new UpdateAssetHierarchyOutput { Updates = 0 };
+            long assetId = 0;
+            string parentAssetName = "";
+            bool success = false;
+            
+            // All assets belong to a tenant. If not specified, put them in the default tenant.
+            int tenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
+
+            foreach (AssetHierarchyDto asset in input.Assets)
+            {
+                if (asset.ParentAssetName != "*")
+                    parentAssetName = asset.ParentAssetName;
+                else
+                    parentAssetName = "";
+                
+                Asset childAsset = _assetManager.InsertOrUpdateAsset(null, asset.Name, asset.Description, null, asset.AssetTypeName, tenantId);
+                Asset parentAsset = _assetManager.GetAsset(parentAssetName);
+                success = _assetManager.InsertOrUpdateAssetHierarchy(childAsset, parentAsset);
+
+                if( success )
+                    output.Updates++;
+            }
+            return output;
         }
     }
 }

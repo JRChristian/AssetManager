@@ -17,11 +17,13 @@ namespace AssetManager.EntityFramework.DomainServices
     public class AssetManager : DomainService, IAssetManager
     {
         private readonly AssetRepository _assetRepository;
+        private readonly AssetHierarchyRepository _assetHierarchyRepository;
         private readonly IRepository<AssetType, long> _assetTypeRepository;
 
-        public AssetManager(AssetRepository assetRepository, IRepository<AssetType, long> assetTypeRepository)
+        public AssetManager(AssetRepository assetRepository, AssetHierarchyRepository assetHierarchyRepository, IRepository<AssetType, long> assetTypeRepository)
         {
             _assetRepository = assetRepository;
+            _assetHierarchyRepository = assetHierarchyRepository;
             _assetTypeRepository = assetTypeRepository;
         }
 
@@ -61,9 +63,9 @@ namespace AssetManager.EntityFramework.DomainServices
                 .ToList();
         }
 
-        public bool InsertOrUpdateAsset(long? id, string name, string description, long? assetTypeId, string assetTypeName, int tenantId)
+        public Asset InsertOrUpdateAsset(long? id, string name, string description, long? assetTypeId, string assetTypeName, int tenantId)
         {
-            bool output = false;
+            long assetId = -1;
 
             // Get the asset. This will return null if it does not exist.
             Asset asset = GetAsset(id, name);
@@ -76,22 +78,22 @@ namespace AssetManager.EntityFramework.DomainServices
                 // Asset exists - update
                 asset.Description = description;
                 asset.AssetTypeId = assetType != null ? assetType.Id : -1;
-                output = true;
+                assetId = asset.Id;
             }
-            else
+            else if( !string.IsNullOrEmpty(name) )
             {
                 // Asset does not exist - create
                 asset = new Asset
                 {
                     Name = name,
-                    Description = description,
+                    Description = !string.IsNullOrEmpty(description) ? description : name,
                     AssetTypeId = assetType != null ? assetType.Id : -1,
                     TenantId = tenantId
                 };
-                _assetRepository.Insert(asset);
-                output = true;
+                assetId = _assetRepository.InsertOrUpdateAndGetId(asset);
+                asset.Id = assetId;
             }
-            return output;
+            return asset;
         }
 
         public AssetType GetAssetType(long id)
@@ -125,5 +127,153 @@ namespace AssetManager.EntityFramework.DomainServices
             return assettypes;
         }
 
+        public bool InsertOrUpdateAssetType(long? id, string name, int tenantId)
+        {
+            bool success = false;
+            AssetType assetType = null;
+
+            // Get the asset type
+            if (id.HasValue && id.Value > 0)
+                assetType = _assetTypeRepository.FirstOrDefault(id.Value);
+            else if (!string.IsNullOrEmpty(name))
+                assetType = _assetTypeRepository.FirstOrDefault(p => p.Name == name);
+
+            // No need to do anything if the asset type exists. Insert if it doesn't exist.
+            if (assetType == null)
+            {
+                assetType = new AssetType { Name = name };
+                _assetTypeRepository.Insert(assetType);
+                success = true;
+            }
+            return success;
+        }
+
+        public bool DeleteAssetType(long? id, string name)
+        {
+            bool success = false;
+            AssetType assetType = null;
+
+            // Get the asset type
+            if (id.HasValue && id.Value > 0)
+                assetType = _assetTypeRepository.FirstOrDefault(id.Value);
+            else if (!string.IsNullOrEmpty(name))
+                assetType = _assetTypeRepository.FirstOrDefault(p => p.Name == name);
+
+            if( assetType != null)
+            {
+                // Asset type exists. Check to see if it is used and delete only if unused.
+                if( 0 == _assetRepository.Count(p => p.AssetTypeId == assetType.Id) )
+                {
+                    _assetTypeRepository.Delete(assetType);
+                    success = true;
+                }
+            }
+            return success;
+        }
+
+
+        public bool InsertOrUpdateAssetHierarchy(long childAssetId, string parentAssetName)
+        {
+            Asset childAsset = GetAsset(childAssetId);
+            Asset parentAsset = GetAsset(parentAssetName);
+            return InsertOrUpdateAssetHierarchy(childAsset, parentAsset);
+        }
+
+        public bool InsertOrUpdateAssetHierarchy(string childAssetName, string parentAssetName)
+        {
+            bool success = false;
+
+            Asset childAsset = GetAsset(childAssetName);
+            if( childAsset != null )
+            {
+                Asset parentAsset = GetAsset(parentAssetName);
+                success = InsertOrUpdateAssetHierarchy(childAsset, parentAsset);
+            }
+            return success;
+        }
+
+        public bool InsertOrUpdateAssetHierarchy(Asset childAsset, Asset parentAsset)
+        {
+            /* The input includes a parent and child. The child exists; the parent might not.
+             * Any and all records in the hierarchy with the child asset (in the child position) will be updated
+             * to point to the new parent, if specified, or to no parent, if a parent isn't specified.
+             * If nothing is found with the child asset, a new record will be inserted.
+             * 
+             * Limitation: This routine looks for the first parent. It won't work properly if the parent appears twice.
+             */
+            bool success = false;
+            AssetHierarchy parentAssetHierarchy = null;
+
+            // If the parent is specified in the argument list, get the first time the parent appears in the hierarchy.
+            // If the parent asset is specified but does not appear in the hierarchy, add the parent to the hierarchy. 
+            if( parentAsset != null )
+            {
+                // Look for a record in the hierarchy for the parent.
+                // If there isn't one, create a new top level record in the hierarchy for the parent.
+                parentAssetHierarchy = _assetHierarchyRepository.FirstOrDefault(p => p.AssetId == parentAsset.Id);
+                if ( parentAssetHierarchy == null )
+                {
+                    parentAssetHierarchy = new AssetHierarchy
+                    {
+                        TenantId = childAsset.TenantId,
+                        AssetId = parentAsset.Id
+                        // ParentAssetHierarchyId -- not set, as this is a new top level
+                    };
+                    long id = _assetHierarchyRepository.InsertAndGetId(parentAssetHierarchy);
+                    parentAssetHierarchy.Id = id;
+                }
+            }
+
+            // Get all records in the AssetHierarchy table with the child asset
+            List<AssetHierarchy> assetHierarchies = _assetHierarchyRepository.GetAllList(p => p.AssetId == childAsset.Id);
+
+            if (assetHierarchies != null && assetHierarchies.Count > 0)
+            {
+                // The child already appears in the hierarchy.
+                // Loop through all records in the hierarchy and update them to the new parent (if it exists) or null (if not).
+                foreach( AssetHierarchy hierarchy in assetHierarchies )
+                {
+                    if (parentAssetHierarchy != null)
+                    {
+                        // A record exists in the hierarchy for the parent: we have a parent
+                        hierarchy.ParentAssetHierarchyId = parentAssetHierarchy.Id;
+                    }
+                    else
+                    {
+                        // A record does not exist in the hierarchy for the parent: we do not have a parent
+                        long? parentAssetHierarchyId = null;
+                        hierarchy.ParentAssetHierarchyId = parentAssetHierarchyId;
+                    }
+                }
+            }
+            else
+            {
+                // Nothing exists in the AssetHierarchy table, so insert a new record for the child.
+                if (parentAssetHierarchy != null)
+                {
+                    // A record exists in the hierarchy for the parent: we have a parent
+                    AssetHierarchy hierarchy = new AssetHierarchy
+                    {
+                        TenantId = childAsset.TenantId,
+                        AssetId = childAsset.Id,
+                        ParentAssetHierarchyId = parentAssetHierarchy.Id
+                    };
+                    long id = _assetHierarchyRepository.InsertAndGetId(hierarchy);
+                }
+                else
+                {
+                    // A record does not exist in the hierarchy for the parent: we do not have a parent
+                    AssetHierarchy hierarchy = new AssetHierarchy
+                    {
+                        TenantId = childAsset.TenantId,
+                        AssetId = childAsset.Id
+                        // ParentAssetHierarchyId -- not set, as this is a new top level
+                    };
+                    long id = _assetHierarchyRepository.InsertAndGetId(hierarchy);
+                }
+            }
+
+            return success;
+        }
     }
 }

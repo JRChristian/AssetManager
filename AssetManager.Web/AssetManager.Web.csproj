@@ -285,6 +285,7 @@
     <Content Include="App\Main\views\admin\useredit.js" />
     <Content Include="App\Main\views\admin\userlist.js" />
     <Content Include="App\Main\views\asset\assetlist.js" />
+    <Content Include="App\Main\views\asset\assettypeedit.js" />
     <Content Include="App\Main\views\asset\edit.js" />
     <Content Include="App\Main\views\asset\list.js" />
     <Content Include="App\Main\views\asset\new.js" />
@@ -455,6 +456,7 @@
     <Content Include="App\Main\views\images\imageview.cshtml" />
     <Content Include="App\Main\views\asset\list.cshtml" />
     <Content Include="App\Main\views\asset\assetlist.cshtml" />
+    <Content Include="App\Main\views\asset\assettypeedit.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
