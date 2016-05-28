@@ -16,7 +16,7 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="level in vm.levels">
-                        <td><a ui-sref="iowleveledit({ levelId: level.id})"><i class="fa fa-wrench"></i></a></i></td>
+                        <td><a ui-sref="iowleveledit({ levelId: level.id})"><i class="fa fa-pencil-square-o"></i></a></i></td>
                         <td>{{level.criticality}} - {{level.name}}</td>
                         <td>{{level.description}}</td>
                         <td>{{level.responseGoal}}</td>
@@ -26,8 +26,8 @@
             </table>
         </div>
         <div class="row">
-                <a ui-sref="iowleveledit({ Id: 0 })" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> @L("CreateLevel")</a>
-                <button ng-click="vm.createDefaults()" type="submit" class="btn btn-default btn-sm">@L("CreateDefaultLevels")</button>
+                <a ui-sref="iowleveledit({ Id: 0 })" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> @L("CreateLevel")</a>
+                <button ng-click="vm.createDefaults()" type="submit" class="btn btn-success btn-sm">@L("CreateDefaultLevels")</button>
         </div>
     </div>
 </div>

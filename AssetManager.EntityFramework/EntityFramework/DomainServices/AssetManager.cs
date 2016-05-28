@@ -2,6 +2,7 @@
 using Abp.Domain.Services;
 using Abp.EntityFramework;
 using Abp.Runtime.Session;
+using AssetManager.DomainServices;
 using AssetManager.EntityFramework.Repositories;
 using AssetManager.Entities;
 using System;
@@ -20,7 +21,11 @@ namespace AssetManager.EntityFramework.DomainServices
         private readonly AssetHierarchyRepository _assetHierarchyRepository;
         private readonly IRepository<AssetType, long> _assetTypeRepository;
 
-        public AssetManager(AssetRepository assetRepository, AssetHierarchyRepository assetHierarchyRepository, IRepository<AssetType, long> assetTypeRepository)
+        public AssetManager(
+            AssetRepository assetRepository, 
+            AssetHierarchyRepository assetHierarchyRepository, 
+            IRepository<AssetType, long> assetTypeRepository
+            )
         {
             _assetRepository = assetRepository;
             _assetHierarchyRepository = assetHierarchyRepository;

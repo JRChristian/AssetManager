@@ -105,6 +105,7 @@
     <Compile Include="Configurations\AssetConfiguration.cs" />
     <Compile Include="Configurations\AssetHierarchyConfiguration.cs" />
     <Compile Include="Configurations\AssetImageConfiguration.cs" />
+    <Compile Include="Configurations\AssetVariableConfiguration.cs" />
     <Compile Include="Configurations\AssetTypeConfiguration.cs" />
     <Compile Include="Configurations\ImageConfiguration.cs" />
     <Compile Include="Configurations\IOWDeviationConfiguration.cs" />
@@ -121,7 +122,9 @@
     <Compile Include="Entities\AssetHierarchy.cs" />
     <Compile Include="Entities\AssetImage.cs" />
     <Compile Include="Entities\AssetType.cs" />
+    <Compile Include="Entities\AssetVariable.cs" />
     <Compile Include="Entities\IAssetHierarchyRepository.cs" />
+    <Compile Include="Entities\IAssetVariableRepository.cs" />
     <Compile Include="Entities\IImageRepository.cs" />
     <Compile Include="Entities\IIOWLevelRepository.cs" />
     <Compile Include="Entities\IIOWLimitRepository.cs" />
@@ -163,7 +166,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Localization\Source\AssetManager-zh-CN.xml" />
     <EmbeddedResource Include="Localization\Source\AssetManager-tr.xml" />
-    <EmbeddedResource Include="Localization\Source\AssetManager.xml" />
+    <EmbeddedResource Include="Localization\Source\AssetManager.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

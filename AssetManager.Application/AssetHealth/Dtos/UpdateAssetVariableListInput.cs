@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AssetManager.Assets.Dtos
+namespace AssetManager.AssetHealth.Dtos
 {
-    public class GetAssetHierarchyOutput : IOutputDto
+    public class UpdateAssetVariableListInput : IInputDto
     {
-        public List<AssetHierarchyDto> AssetHierarchy { get; set; }
+        public List<AssetVariableDto> AssetVariables { get; set; }
     }
 }

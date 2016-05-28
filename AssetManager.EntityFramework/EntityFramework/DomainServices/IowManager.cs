@@ -1,5 +1,7 @@
-﻿using Abp.Domain.Services;
+﻿using Abp.Domain.Repositories;
+using Abp.Domain.Services;
 using Abp.Runtime.Session;
+using AssetManager.EntityFramework.DomainServices;
 using AssetManager.EntityFramework.Repositories;
 using AssetManager.Entities;
 using System;
@@ -10,7 +12,6 @@ using System.Threading.Tasks;
 using System.Linq.Expressions;
 using AssetManager.Utilities;
 using System.Data.Entity.SqlServer;
-using AssetManager.EntityFramework.DomainServices;
 
 namespace AssetManager.DomainServices
 {

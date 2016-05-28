@@ -23,7 +23,7 @@
                 columnDefs: [
                     {
                         name: 'id', displayName: vm.localize('Action'), width: 60, minWidth: 60, enableSorting: false, enableFiltering: false, enableColumnMenus: false,
-                        cellTemplate: '<div class="ui-grid-cell-contents"><a ui-sref="iowvariablechart({ Id: row.entity.variableId })"><i class="fa fa-line-chart"></i></a> <a ui-sref="iowvariableview({ Id: row.entity.variableId })"><i class="fa fa-binoculars"></i></a> <a ui-sref="iowvariableedit({ Id: row.entity.variableId })"><i class="fa fa-wrench"></i></a></div>'
+                        cellTemplate: '<div class="ui-grid-cell-contents"><a ui-sref="iowvariablechart({ Id: row.entity.variableId })"><i class="fa fa-line-chart"></i></a> <a ui-sref="iowvariableview({ Id: row.entity.variableId })"><i class="fa fa-binoculars"></i></a> <a ui-sref="iowvariableedit({ Id: row.entity.variableId })"><i class="fa fa-pencil-square-o"></i></a></div>'
                     },
                     { name: 'variableName', displayName: vm.localize('Variable'), width: '20%', minWidth: 50 },
                     { name: 'levelName', displayName: vm.localize('Level'), width: '*', cellTooltip: '{row.entity.levelDescription}' },

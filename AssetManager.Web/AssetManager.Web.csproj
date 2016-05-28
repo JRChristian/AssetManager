@@ -284,6 +284,8 @@
     <Content Include="App\Main\services\appSession.js" />
     <Content Include="App\Main\views\admin\useredit.js" />
     <Content Include="App\Main\views\admin\userlist.js" />
+    <Content Include="App\Main\views\assethealth\assetvariableassignment.js" />
+    <Content Include="App\Main\views\assethealth\assetvariablelist.js" />
     <Content Include="App\Main\views\asset\assethierarchy.js" />
     <Content Include="App\Main\views\asset\assetlist.js" />
     <Content Include="App\Main\views\asset\assettypeedit.js" />
@@ -460,6 +462,8 @@
     <Content Include="App\Main\views\asset\assetlist.cshtml" />
     <Content Include="App\Main\views\asset\assettypeedit.cshtml" />
     <Content Include="App\Main\views\asset\assethierarchy.cshtml" />
+    <Content Include="App\Main\views\assethealth\assetvariableassignment.cshtml" />
+    <Content Include="App\Main\views\assethealth\assetvariablelist.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />

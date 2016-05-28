@@ -1,5 +1,8 @@
 name,description,assetTypeName,parentAssetName
-42-SMR,Unit 42 Steam-Methane Reformer,Unit Ops,
+11-CDU,Crude Distillation Unit,Unit Ops,
+30-Reformer,Catalytic Reforming Unit,Unit Ops,
+35-FCCU,Fluid Catalytic Cracking Unit,Unit Ops,
+42-SMR,Steam-Methane Reformer,Unit Ops,
 42-PSA,U-114 Pressure Swing Absorption (PSA),System,42-SMR
 42-S-H2,SMR Hydrogen system,System,42-SMR
 42-S-FEED,SMR Feed system,System,42-SMR

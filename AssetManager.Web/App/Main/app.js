@@ -12,6 +12,7 @@
         'ui.grid.edit',
         'ui.grid.rowEdit',
         'ui.grid.cellNav',
+        'ui.grid.selection',
         'ui.grid.treeView',
         'ui.bootstrap.showErrors',  // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
 
@@ -71,6 +72,16 @@
                     url: '/assettypeedit',
                     templateUrl: '/App/Main/views/asset/assettypeedit.cshtml',
                     menu: 'AssetTypeEdit' //Matches to name of 'Assets' menu in AssetManagerNavigationProvider
+                })
+                .state('assetvariableassignment', {
+                    url: '/assetvariableassignment',
+                    templateUrl: '/App/Main/views/assethealth/assetvariableassignment.cshtml',
+                    menu: 'AssetVariableAssignment'
+                })
+                .state('assetvariablelist', {
+                    url: '/assetvariablelist',
+                    templateUrl: '/App/Main/views/assethealth/assetvariablelist.cshtml',
+                    menu: 'AssetVariableList'
                 })
                 .state('imagelist', {
                     url: '/imagelist',

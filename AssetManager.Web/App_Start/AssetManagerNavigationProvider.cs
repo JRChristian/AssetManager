@@ -101,6 +101,22 @@ namespace AssetManager.Web
                             icon: "fa fa-sitemap"
                             )
                     )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "AssetVariableList",
+                            new LocalizableString("AssetMnuAssetVariableList", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/assetvariablelist",
+                            icon: "fa fa-exchange"
+                            )
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "AssetVariableAssignment",
+                            new LocalizableString("AssetMnuAssetVariableAssignment", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/assetvariableassignment",
+                            icon: "fa fa-exchange"
+                            )
+                    )
                 )
                 .AddItem(
                     new MenuItemDefinition(

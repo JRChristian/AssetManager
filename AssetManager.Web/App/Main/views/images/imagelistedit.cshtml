@@ -8,8 +8,8 @@
             <div>@L("ImgTxtNumberOfImagesTotal") {{vm.gridOptions.data.length}}<br />@L("ImgTxtNumberOfImagesVisible") {{vm.gridApi.grid.getVisibleRows().length}}</div>
         </div>
         <div class="row">
-            <button ng-click="vm.addItem()" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> @L("ImgBtnAddNewImage")</button>
-            <a ui-sref="imagelist" class="btn btn-primary btn-sm"><i class="fa fa-undo"></i> @L("ImgBtnCancelImages")</a>
+            <a ui-sref="imagelist" class="btn btn-info btn-sm"><i class="fa fa-undo"></i> @L("ImgBtnCancelImages")</a>
+            <button ng-click="vm.addItem()" type="submit" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> @L("ImgBtnAddNewImage")</button>
             <button ng-click="vm.saveAll()" type="submit" class="btn btn-success btn-sm"><i class="fa fa-floppy-o"></i> @L("ImgBtnSaveImages")</button>
         </div>
     </div>

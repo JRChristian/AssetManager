@@ -22,7 +22,7 @@
                             <div class="btn-group btn-group-xs">
                                 <a class="btn btn-default" ui-sref="iowvariablechart({ Id: x.variableId })"><i class="fa fa-line-chart"></i></a>
                                 <a class="btn btn-default" ui-sref="iowvariableview({ Id: x.variableId })"><i class="fa fa-binoculars"></i></a>
-                                <a class="btn btn-default" ui-sref="iowvariableedit({ Id: x.variableId })"><i class="fa fa-wrench"></i></a>
+                                <a class="btn btn-default" ui-sref="iowvariableedit({ Id: x.variableId })"><i class="fa fa-pencil-square-o"></i></a>
                             </div>
                         </td>
                         <td uib-tooltip="{{x.variableDescription}}" tooltip-append-to-body=true>{{x.variableName}}</td>
@@ -38,7 +38,7 @@
             <div>@L("NumberOfVariablesTotal") {{vm.gridOptions.data.length}} @L("NumberOfVariablesVisible") {{vm.gridApi.grid.getVisibleRows().length}}</div>
         </div>
         <div class="row">
-            <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+            <a ui-sref="iowvariablelist" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
         </div>
     </div>
 </div>

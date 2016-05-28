@@ -1,0 +1,15 @@
+﻿<div ng-controller="app.views.assethealth.assetvariablelist as vm">
+    <div class="container">
+        <div class="row">
+            <h3>@L("AssetHealthTtlAssetVariableList")</h3>
+        </div>
+        <div class="row">
+            <div id="grid1" ui-grid="vm.gridOptions" class="grid"></div>
+        </div>
+        <div class="row">
+            <a ui-sref="assethierarchy" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("AssetBtnGoToAssetHierarchy")</a>
+            <a ui-sref="assettypeedit" class="btn btn-info btn-sm"><i class="fa fa-tag"></i> @L("AssetBtnGoToAssetTypes")</a>
+            <button id="assetVariableWizard" type="button" class="btn btn-success btn-sm" ng-click="vm.assetVariableWizard()">@L("AssetHealthBtnWizardToAssignAssetsToVariables")</button>
+        </div>
+    </div>
+</div>

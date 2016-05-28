@@ -12,7 +12,7 @@
                 <select ng-model="selectedAssetType" ng-options="x.id as x.name for x in vm.assettypes">
                     <option value="">@L("AllAssetTypes")</option>
                 </select>
-                <button ui-sref="assetnew" class="btn btn-primary">@L("CreateTheAsset")</button>
+                <button ui-sref="assetnew" class="btn btn-success"><i class="fa fa-plus"></i> @L("CreateTheAsset")</button>
             </div>
         </div>
     </div>
@@ -35,7 +35,7 @@
                     <td>{{asset.assetTypeName}}</td>
                     <td>{{asset.creationTime | momentFromNow}}</td>
                     <td>
-                        <a ui-sref="assetedit({ assetId: asset.id})"><i class="fa fa-pencil"></i></a>
+                        <a ui-sref="assetedit({ assetId: asset.id})"><i class="fa fa-pencil-square-o"></i></a>
                         <i class="fa fa-trash"></i>
                     </td>
                 </tr>

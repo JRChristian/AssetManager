@@ -27,7 +27,7 @@
             vm.refresh = function () {
                 abp.ui.setBusy( //Set whole page busy until getAssets completes
                     null,
-                    assetService.getAssetHierarchy({})
+                    assetService.getAssetHierarchyAsList({})
                         .success(function (data) {
                             for (var i = 0; i < data.assetHierarchy.length; i++)
                                 data.assetHierarchy[i].$$treeLevel = data.assetHierarchy[i].level;

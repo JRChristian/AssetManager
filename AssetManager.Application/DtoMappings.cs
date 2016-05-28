@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using AssetManager.EntityFramework.DomainServices;
 using AssetManager.Images.Dtos;
+using AssetManager.DomainServices;
+using AssetManager.AssetHealth.Dtos;
 
 namespace AssetManager
 {
@@ -27,6 +29,7 @@ namespace AssetManager
             Mapper.CreateMap<Tag, TagDto>();
             Mapper.CreateMap<TagDataRaw, TagDataRawDto>();
             Mapper.CreateMap<DetectDeviationsOut, DetectDeviationsOutput>();
+            Mapper.CreateMap<AssetVariableCombinations, AssetVariableDto>();
         }
     }
 }

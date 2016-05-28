@@ -110,7 +110,7 @@
     <text name="Assets" value="Assets" />
     <text name="AssetType" value="Asset type" />
     <text name="Created" value="Created" />
-    <text name="AssetBtnCreateANewAsset" value="Add an asset" />
+    <text name="AssetBtnCreateANewAsset" value="Create an asset" />
     <text name="Description" value="Description" />
     <text name="EnterNameHere" value="Enter asset name here" />
     <text name="EnterDescriptionHere" value="Enter description here" />
@@ -135,6 +135,13 @@
     <text name="AssetBtnExpandHierarchy" value="Expand all" />
     <text name="AssetBtnCollapseHierarchy" value="Collapse all" />
 
+    <text name="AssetMnuAssetVariableAssignment" value="Variable assignment" />
+    <text name="AssetMnuAssetVariableList" value="Variable assignment (alt)" />
+    
+    <text name="AssetHealthTtlAssetVariableAssignment" value="Asset-Variable Assignment" />
+    <text name="AssetHealthTtlAssetVariableList" value="Asset-Variable Assignment" />
+    <text name="AssetHealthBtnWizardToAssignAssetsToVariables" value="Make assignments..." />
+    
     <text name="ImgTtlImageList" value="Images" />
     <text name="ImgTtlImageListEdit" value="Edit Images" />
     <text name="ImgTxtNumberOfImagesTotal" value="Total images:" />

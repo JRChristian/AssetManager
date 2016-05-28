@@ -27,13 +27,13 @@
             <div id="grid1" ui-grid="vm.gridOptions" class="grid" ui-grid-edit ui-grid-row-edit ui-grid-cellNav></div>
         </div>
         <div class="row">
-            <button ng-click="vm.saveVariable()" ng-disabled="EditVariableForm.$invalid" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-floppy-o"></i> @L("UpdateTheVariable")</button>
-            <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
-            <a ui-sref="iowlimitstatus" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IowTtlLimitStatus")</a>
-            <a ui-sref="iowvariablechart({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
-            <a ui-sref="iowvariableview({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm"><i class="fa fa-binoculars"></i> @L("View")</a>
-            <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-default btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>
-            <button ng-show="vm.deleteEnabled" ng-click="vm.deleteVariable()" type="submit" class="btn btn-default btn-sm"><i class="fa fa-trash"></i> @L("DeleteTheVariable")</button>
+            <button ng-click="vm.saveVariable()" ng-disabled="EditVariableForm.$invalid" type="submit" class="btn btn-success btn-sm"><i class="fa fa-floppy-o"></i> @L("UpdateTheVariable")</button>
+            <a ui-sref="iowvariablelist" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+            <a ui-sref="iowlimitstatus" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("IowTtlLimitStatus")</a>
+            <a ui-sref="iowvariablechart({ Id: {{vm.variable.id}} })" class="btn btn-info btn-sm"><i class="fa fa-line-chart"></i> @L("Chart")</a>
+            <a ui-sref="iowvariableview({ Id: {{vm.variable.id}} })" class="btn btn-info btn-sm"><i class="fa fa-binoculars"></i> @L("View")</a>
+            <a ui-sref="iowvariableedit({ Id: {{vm.variable.id}} })" class="btn btn-success btn-sm" disabled="disabled"><i class="fa fa-image"></i> @L("Drawings")</a>
+            <button ng-show="vm.deleteEnabled" ng-click="vm.deleteVariable()" type="submit" class="btn btn-warning btn-sm"><i class="fa fa-trash"></i> @L("DeleteTheVariable")</button>
         </div>
     </div>
 </div>

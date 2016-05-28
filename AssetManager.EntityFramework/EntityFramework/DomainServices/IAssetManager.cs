@@ -1,4 +1,5 @@
 ﻿using Abp.Domain.Services;
+using AssetManager.DomainServices;
 using AssetManager.Entities;
 using System;
 using System.Collections.Generic;

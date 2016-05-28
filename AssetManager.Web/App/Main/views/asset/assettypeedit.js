@@ -3,10 +3,11 @@
 
     var controllerId = 'app.views.assettype.edit';
     app.controller(controllerId, [
-        '$scope', '$location', '$filter', 'abp.services.app.asset',
-        function ($scope, $location, $filter, assetService) {
+        '$scope', '$location', '$window', '$filter', 'abp.services.app.asset',
+        function ($scope, $location, $window, $filter, assetService) {
             var vm = this;
             vm.localize = abp.localization.getSource('AssetManager');
+            vm.goBack = function () { $window.history.back() };
 
             vm.gridOptions = {
                 data: [],

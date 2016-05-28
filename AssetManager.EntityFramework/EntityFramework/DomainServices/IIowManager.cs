@@ -36,6 +36,7 @@ namespace AssetManager.DomainServices
         bool DeleteVariable(string name);
         bool DeleteVariable(long? id, string name);
 
+        // Limits
         IOWLimit FirstOrDefaultLimit(long id);
         IOWLimit FirstOrDefaultLimit(long variableId, long levelId);
         IOWLimit FirstOrDefaultLimit(string variableName, string levelName);

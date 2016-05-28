@@ -112,8 +112,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityFramework\AssetManagerDbContext.cs" />
+    <Compile Include="EntityFramework\DomainServices\AssetHealthManager.cs" />
     <Compile Include="EntityFramework\DomainServices\AssetManager.cs" />
+    <Compile Include="EntityFramework\DomainServices\AssetVariableCombinations.cs" />
     <Compile Include="EntityFramework\DomainServices\DetectDeviationsOut.cs" />
+    <Compile Include="EntityFramework\DomainServices\IAssetHealthManager.cs" />
     <Compile Include="EntityFramework\DomainServices\IAssetManager.cs" />
     <Compile Include="EntityFramework\DomainServices\IImageManager.cs" />
     <Compile Include="EntityFramework\DomainServices\IIowManager.cs" />
@@ -127,6 +130,7 @@
     <Compile Include="EntityFramework\Repositories\AssetHierarchyRepository.cs" />
     <Compile Include="EntityFramework\Repositories\AssetManagerRepositoryBase.cs" />
     <Compile Include="EntityFramework\Repositories\AssetRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\AssetVariableRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IIOWDeviationRepository.cs" />
     <Compile Include="EntityFramework\Repositories\ImageRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IOWDeviationRepository.cs" />
@@ -224,6 +228,10 @@
     <Compile Include="Migrations\201605251728106_AddedAssetHierarchy.Designer.cs">
       <DependentUpon>201605251728106_AddedAssetHierarchy.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605272347272_AddedAssetVariable.cs" />
+    <Compile Include="Migrations\201605272347272_AddedAssetVariable.Designer.cs">
+      <DependentUpon>201605272347272_AddedAssetVariable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -307,6 +315,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605251728106_AddedAssetHierarchy.resx">
       <DependentUpon>201605251728106_AddedAssetHierarchy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605272347272_AddedAssetVariable.resx">
+      <DependentUpon>201605272347272_AddedAssetVariable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

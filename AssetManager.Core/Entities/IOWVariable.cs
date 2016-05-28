@@ -23,5 +23,6 @@ namespace AssetManager.Entities
         public string UOM { get; set; }
 
         public virtual ICollection<IOWLimit> IOWLimits { get; set; }
+        public virtual ICollection<AssetVariable> Assets { get; set; }
     }
 }

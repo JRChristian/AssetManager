@@ -107,19 +107,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetHealth\AssetHealthAppService.cs" />
+    <Compile Include="AssetHealth\IAssetHealthAppService.cs" />
     <Compile Include="AssetManagerApplicationModule.cs" />
     <Compile Include="AssetManagerAppServiceBase.cs" />
     <Compile Include="Assets\Dtos\AssetHierarchyDto.cs" />
+    <Compile Include="AssetHealth\Dtos\AssetVariableDto.cs" />
     <Compile Include="Assets\Dtos\DeleteAssetTypesInput.cs" />
     <Compile Include="Assets\Dtos\DeleteAssetTypesOutput.cs" />
-    <Compile Include="Assets\Dtos\GetAssetHierarchyInput.cs" />
-    <Compile Include="Assets\Dtos\GetAssetHierarchyOutput.cs" />
+    <Compile Include="Assets\Dtos\GetAssetHierarchyAsListInput.cs" />
+    <Compile Include="Assets\Dtos\GetAssetHierarchyAsListOutput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetVariableListInput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetVariableListOutput.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetHierarchyInput.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetHierarchyOutput.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetsInput.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetsOutput.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetTypesInput.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetTypesOutput.cs" />
+    <Compile Include="AssetHealth\Dtos\UpdateAssetVariableListInput.cs" />
+    <Compile Include="AssetHealth\Dtos\UpdateAssetVariableListOutput.cs" />
     <Compile Include="DtoMappings.cs" />
     <Compile Include="Assets\AssetAppService.cs" />
     <Compile Include="Assets\AssetTypeAppService.cs" />

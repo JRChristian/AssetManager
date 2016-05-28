@@ -24,6 +24,7 @@ namespace AssetManager.Entities
 
         public virtual ICollection<AssetImage> Images { get; set; }
         public virtual ICollection<AssetHierarchy> Hierarchy { get; set; }
+        public virtual ICollection<AssetVariable> Variables { get; set; }
 
         public Asset()
         {

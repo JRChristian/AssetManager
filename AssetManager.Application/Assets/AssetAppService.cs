@@ -2,6 +2,7 @@
 using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using AssetManager.Assets.Dtos;
+using AssetManager.DomainServices;
 using AssetManager.Entities;
 using AssetManager.EntityFramework.DomainServices;
 using AutoMapper;
@@ -170,43 +171,26 @@ namespace AssetManager.Assets
             return output;
         }
 
-        public GetAssetHierarchyOutput GetAssetHierarchy(GetAssetHierarchyInput input)
+        public GetAssetHierarchyAsListOutput GetAssetHierarchyAsList(GetAssetHierarchyAsListInput input)
         {
             // Output array
-            List<AssetHierarchyDto> outHierarchy = new List<AssetHierarchyDto>();
+            List<AssetHierarchyDto> flatHierarchy = new List<AssetHierarchyDto>();
 
             // Get all nodes
             List<AssetHierarchy> rawHierarchy = _assetManager.GetAssetHierarchy();
+            HierarchyBuilder(rawHierarchy, ref flatHierarchy, 0, null, "");
 
-            // Build the hierarchy, starting with all nodes that do not have a parent
-            var topLevel = from h in rawHierarchy
-                           where h.ParentAssetHierarchyId == null
-                           select h;
-            
-            foreach(var oneItem in topLevel)
+            return new GetAssetHierarchyAsListOutput
             {
-                AssetHierarchyDto hierarchy = new AssetHierarchyDto
-                {
-                    Name = oneItem.Asset.Name,
-                    Description = oneItem.Asset.Description,
-                    AssetTypeName = oneItem.Asset.AssetType.Name,
-                    ParentAssetName = "",
-                    Level = 0
-                };
-                outHierarchy.Add(hierarchy);
-                HierarchyBuilder(rawHierarchy, ref outHierarchy, 1, oneItem.Id, oneItem.Asset.Name);
-            }
-
-            return new GetAssetHierarchyOutput
-            {
-                AssetHierarchy = outHierarchy
+                AssetHierarchy = flatHierarchy
             };
         }
 
-        private void HierarchyBuilder(List<AssetHierarchy> rawHierarchy, ref List<AssetHierarchyDto> outHierarchy, int level, long parentAssetHierarchyId, string parentAssetName)
+        private void HierarchyBuilder(List<AssetHierarchy> rawHierarchy, ref List<AssetHierarchyDto> flatHierarchy, int level, long? parentAssetHierarchyId, string parentAssetName)
         {
             var oneLevel = from assets in rawHierarchy
                            where assets.ParentAssetHierarchyId == parentAssetHierarchyId
+                           orderby assets.Asset.Name ascending
                            select assets;
 
             if( oneLevel != null && oneLevel.Count() > 0)
@@ -221,10 +205,10 @@ namespace AssetManager.Assets
                         ParentAssetName = parentAssetName,
                         Level = level
                     };
-                    outHierarchy.Add(hierarchy);
+                    flatHierarchy.Add(hierarchy);
                 
                     // And add any children
-                    HierarchyBuilder(rawHierarchy, ref outHierarchy, level + 1, oneItem.Id, oneItem.Asset.Name);
+                    HierarchyBuilder(rawHierarchy, ref flatHierarchy, level + 1, oneItem.Id, oneItem.Asset.Name);
                 }
             }
         }
