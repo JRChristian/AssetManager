@@ -1,15 +1,33 @@
 ﻿<div ng-controller="app.views.assethealth.assetvariablelist as vm">
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title">I'm a modal!</h3>
+        </div>
+        <div class="modal-body">
+            <ul>
+                <li ng-repeat="variable in variables">
+                    <a href="#" ng-click="$event.preventDefault(); selected.variable = variable">{{ variable.name }}</a>
+                </li>
+            </ul>
+            Selected: <b>{{ selected.variable.name }}</b>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
     <div class="container">
         <div class="row">
             <h3>@L("AssetHealthTtlAssetVariableList")</h3>
         </div>
         <div class="row">
             <div id="grid1" ui-grid="vm.gridOptions" class="grid"></div>
+            Selected variable = {{vm.selectedVariable.name}}
         </div>
         <div class="row">
             <a ui-sref="assethierarchy" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("AssetBtnGoToAssetHierarchy")</a>
             <a ui-sref="assettypeedit" class="btn btn-info btn-sm"><i class="fa fa-tag"></i> @L("AssetBtnGoToAssetTypes")</a>
-            <button id="assetVariableWizard" type="button" class="btn btn-success btn-sm" ng-click="vm.assetVariableWizard()">@L("AssetHealthBtnWizardToAssignAssetsToVariables")</button>
+            <button id="assetVariableWizard" type="button" class="btn btn-success btn-sm" ng-click="vm.open()">@L("AssetHealthBtnWizardToAssignAssetsToVariables")</button>
         </div>
     </div>
 </div>
