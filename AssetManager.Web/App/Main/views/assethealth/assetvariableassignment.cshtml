@@ -1,25 +1,51 @@
-﻿<div ng-controller="app.views.assetvariable.assignment as vm">
+﻿<div ng-controller="app.views.assethealth.assignment as vm">
+    <script type="text/ng-template" id="assetHealthVariableAssignment.html">
+        <div class="modal-header">
+            <h3 class="modal-title">@L("IOWVariables")</h3>
+        </div>
+        <div class="modal-body">
+            <div id="grid2" ui-grid="vm.gridOptions" ui-grid-selection class="grid"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-sm" ng-click="selectAllVariables()">Select all</button>
+            <button type="button" class="btn btn-primary btn-sm" ng-click="clearAllVariables()">Clear all</button>
+            <button type="button" class="btn btn-primary btn-sm" ng-click="ok()">OK</button>
+            <button type="button" class="btn btn-warning btn-sm" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
     <div class="container">
         <div class="row">
             <h3>@L("AssetHealthTtlAssetVariableAssignment")</h3>
         </div>
         <div class="row">
             <div class="col-lg-6">
-                <h4>@L("IOWVariables")</h4>
-                <div id="grid1" ui-grid="vm.gridOptions" ui-grid-selection class="grid"></div>
-                <div>
-                    <button type="button" class="btn btn-primary btn-sm" ng-click="vm.selectAllVariables()">Select all</button>
-                    <button type="button" class="btn btn-primary btn-sm" ng-click="vm.clearAllVariables()">Clear all</button>
-                </div>
-            </div>
-            <div class="col-lg-6">
                 <h4>@L("Assets")</h4>
-                <div id="grid2" ui-grid="vm.gridOptions2" ui-grid-selection ui-grid-tree-view class="grid"></div>
+                <div id="grid1" ui-grid="vm.gridOptions" ui-grid-selection ui-grid-tree-view class="grid"></div>
                 <div>
                     <button id="selectAllAssets" type="button" class="btn btn-primary btn-sm" ng-click="vm.selectAllAssets()">Select all</button>
                     <button id="clearAllAssets" type="button" class="btn btn-primary btn-sm" ng-click="vm.clearAllAssets()">Clear all</button>
                     <button id="expandAllAssets" type="button" class="btn btn-primary btn-sm" ng-click="vm.expandAllAssets()">@L("AssetBtnExpandHierarchy")</button>
                     <button id="collapseAllAssets" type="button" class="btn btn-primary btn-sm" ng-click="vm.collapseAllAssets()">@L("AssetBtnCollapseHierarchy")</button>
+                    <button id="assetVariableWizard" type="button" class="btn btn-success btn-sm" ng-click="vm.open()" ng-disabled="vm.noAssetIsSelected">@L("AssetHealthBtnWizardToAssignAssetsToVariables")</button>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="table-responsive">
+                    <h4>{{ (vm.noAssetIsSelected ? 'Please select an asset' : 'Variables for the selected asset') }}</h4>
+                    <div ng-show="!vm.noAssetIsSelected" class="ng-hide">
+                        <table class="table-condensed table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>@L("Variable")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="variable in vm.assetVariables">
+                                    <td>{{variable.name}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
