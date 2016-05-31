@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AssetManager.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,6 @@ namespace AssetManager.DomainServices
         public string AssetName { get; set; }
         public long? VariableId { get; set; }
         public string VariableName { get; set; }
+        public IsVariableAssignedToAsset IsAssigned { get; set; }
     }
 }

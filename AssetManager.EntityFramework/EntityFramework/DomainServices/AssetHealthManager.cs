@@ -73,7 +73,10 @@ namespace AssetManager.EntityFramework.DomainServices
                 {
                     av = _assetVariableRepository.FirstOrDefault(p => p.AssetId == asset.Id && p.IOWVariableId == variable.Id);
                     if (av == null)
+                    {
+                        av = new AssetVariable { AssetId = asset.Id, IOWVariableId = variable.Id, TenantId = asset.TenantId };
                         av = _assetVariableRepository.InsertOrUpdate(av);
+                    }
 
                     output.Add(av);
                 }

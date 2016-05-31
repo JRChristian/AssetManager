@@ -46,6 +46,7 @@
     <text name="LevelList" value="IOW Levels" />
     <text name="IowVariableList" value="IOW Variables" />
     <text name="IowVariable" value="IOW Variable" />
+    <text name="Variable" value="Variable" />
     <text name="Status" value="Status" />
     <text name="Criticality" value="Criticality" />
     <text name="ResponseGoal" value="Response goal" />
@@ -141,6 +142,15 @@
     <text name="AssetHealthTtlAssetVariableAssignment" value="Asset-Variable Assignment" />
     <text name="AssetHealthTtlAssetVariableList" value="Asset-Variable Assignment" />
     <text name="AssetHealthBtnWizardToAssignAssetsToVariables" value="Make assignments..." />
+    <text name="AssetHealthTxtSelectAsset" value="Please select an asset" />
+    <text name="AssetHealthTxtVariablesForAsset" value="Variables for asset " />
+    <text name="AssetHealthTxtNumberVariablesSelected" value="Number of variables selected:" />
+    <text name="AssetHealthBtnSelectAllVariables" value="Select all" />
+    <text name="AssetHealthBtnClearAllVariables" value="Clear all" />
+    <text name="AssetHealthBtnSaveAssetVariableChanges" value="Save changes" />
+    <text name="AssetHealthBtnCancelAssetVariableChanges" value="Cancel" />
+    <text name="AssetHealthTblVariableCount" value="Variables" />
+    <text name="AssetHealthTblVariableIsUsed" value="In use?" />
     
     <text name="ImgTtlImageList" value="Images" />
     <text name="ImgTtlImageListEdit" value="Edit Images" />

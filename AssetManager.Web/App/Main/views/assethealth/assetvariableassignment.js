@@ -3,11 +3,15 @@
 
     var controllerId = 'app.views.assethealth.assignment';
     app.controller(controllerId, [
-        '$scope', '$log', '$location', '$uibModal', 'abp.services.app.asset', 'abp.services.app.iowVariable', 'abp.services.app.assetHealth',
-        function ($scope, $log, $location, $uibModal, assetService, variableService, assetHealthService) {
+        '$scope', '$log', '$location', '$uibModal', 'uiGridConstants', 'abp.services.app.iowVariable', 'abp.services.app.assetHealth',
+        function ($scope, $log, $location, $uibModal, uiGridConstants, variableService, assetHealthService) {
             var vm = this;
             vm.localize = abp.localization.getSource('AssetManager');
-            vm.selectedAsset = '';
+            vm.assetHierarchy = [];
+            vm.variables = [];
+            vm.selectedAssetName = '';
+            vm.selectedAssetIndex = -1;
+            vm.selectedVariables = [];
             vm.noAssetIsSelected = true;
 
             vm.gridOptions = {
@@ -28,51 +32,56 @@
                 columnDefs: [
                     { name: 'name', displayName: vm.localize('Name'), width: '20%' },
                     { name: 'description', displayName: vm.localize('Description'), width: '40%' },
-                    { name: 'assetTypeName', displayName: vm.localize('AssetType'), width: '20%' }]
+                    { name: 'assetTypeName', displayName: vm.localize('AssetType'), width: '20%' },
+                    {
+                        name: 'variableCount', displayName: vm.localize('AssetHealthTblVariableCount'), width: '10%',
+                        cellTemplate: '<div class="ui-grid-cell-contents">{{row.entity.variables.length}}</div>'
+                    }
+                ]
             };
             function registerGridApi(gridApi) {
                 vm.gridApi = gridApi;
                 vm.selectedRows = vm.gridApi.selection.getSelectedRows();
                 gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-                    if (vm.gridApi.selection.getSelectedRows().length == 0)
+                    vm.changedRow = row.entity.name;
+                    if (vm.gridApi.selection.getSelectedRows().length == 0) {
                         vm.noAssetIsSelected = true;
-                    else
+                        vm.selectedAssetName = '';
+                        vm.selectedAssetIndex = -1;
+                        vm.selectedVariables = [];
+                    }
+                    else {
                         vm.noAssetIsSelected = false;
-                    vm.selectedAsset = row.entity.name;
+                        vm.selectedAssetName = row.entity.name;
+                        vm.selectedAssetIndex = row.entity.originalIndex;
+                        vm.selectedVariables = row.entity.variables;
+                    }
                 });
             }
 
-            vm.getSelectedRows = function () {
-                var currentSelection = vm.gridApi.selection.getSelectedRows();
-            };
-
-            vm.getData = function () {
+            vm.getVariables = function () {
                 vm.variables = [];
-                variableService.getAllVariables({})
-                    .success(function (data) {
-                        vm.variables = data.variables;
-                    });
+                abp.ui.setBusy( //Set whole page busy until service completes
+                    null,
+                    variableService.getAllVariables({})
+                        .success(function (data) {
+                            vm.variables = data.variables;
+                        }));
+            };
+
+            vm.getAssetHierarchy = function () {
                 vm.assetHierarchy = [];
-                assetService.getAssetHierarchyAsList({})
-                    .success(function (data) {
-                        for (var i = 0; i < data.assetHierarchy.length; i++)
-                            data.assetHierarchy[i].$$treeLevel = data.assetHierarchy[i].level;
-                        vm.assetHierarchy = data.assetHierarchy;
-                        vm.gridOptions.data = data.assetHierarchy;
-                    });
-                vm.assetVariables = [];
-                assetHealthService.getAssetVariableList({})
-                    .success(function (data) {
-                        vm.assetVariables = data.assetVariables;
-                    });
-            };
-
-            vm.selectAllAssets = function () {
-                vm.gridApi.selection.selectAllRows();
-            };
-
-            vm.clearAllAssets = function () {
-                vm.gridApi.selection.clearSelectedRows();
+                abp.ui.setBusy( //Set whole page busy until service completes
+                    null,
+                    assetHealthService.getAssetHierarchyWithVariablesAsList({})
+                        .success(function (data) {
+                            for (var i = 0; i < data.assetHierarchy.length; i++) {
+                                data.assetHierarchy[i].$$treeLevel = data.assetHierarchy[i].level;
+                                data.assetHierarchy[i].originalIndex = i;
+                            }
+                            vm.assetHierarchy = data.assetHierarchy;
+                            vm.gridOptions.data = data.assetHierarchy;
+                        }));
             };
 
             vm.expandAllAssets = function () {
@@ -84,20 +93,53 @@
             };
 
             vm.open = function () {
-                $log.log('Selection ' + vm.selectedAsset);
-                var x = vm.gridApi.selection.getSelectedRows();
+                // Update the list of all variables with information about which variables have already been selected for this asset
+                // Key assumption: lists are already sorted
+                // IsAssigned values: 0=not assigned already; 1=assigned already; 2=not assigned & add; 3=assigned & delete
+                vm.allVariablesWithSelection = vm.variables;
+                j = 0; // Index into vm.variablesForAsset array
+                for (var i = 0; i < vm.allVariablesWithSelection.length; i++) {
+                    vm.allVariablesWithSelection[i].originalIndex = i;
+                    if (j < vm.selectedVariables.length && vm.allVariablesWithSelection[i].name == vm.selectedVariables[j].name) {
+                        vm.allVariablesWithSelection[i].isAssigned = 1;
+                        j++;
+                    }
+                    else if (j < vm.selectedVariables.length && vm.allVariablesWithSelection[i].name < vm.selectedVariables[j].name) {
+                        vm.allVariablesWithSelection[i].isAssigned = 0;
+                    }
+                    else {
+                        vm.allVariablesWithSelection[i].isAssigned = 0;
+                    }
+                }
                 var modalInstance = $uibModal.open({
                     templateUrl: 'assetHealthVariableAssignment.html',
                     controller: 'app.views.assetvariablelist.modal as vm',
-                    resolve: { variables: function () { return vm.variables; } }
+                    resolve: { variables: function () { return vm.allVariablesWithSelection; } }
                 });
 
-                modalInstance.result.then(function (selectedVariable) {
-                    vm.selectedVariable = selectedVariable;
+                modalInstance.result.then(function (selectedVariables) {
+                    //vm.allVariablesWithSelection = selectedVariables;
+                    var updates = [];
+                    var deletes = [];
+                    for (var i = 0; i < selectedVariables.length; i++)
+                    {
+                        if (selectedVariables[i].isAssigned == 2)
+                            updates.push({ AssetName: vm.selectedAssetName, VariableName: selectedVariables[i].name });
+                        else if (selectedVariables[i].isAssigned == 3)
+                            deletes.push({ AssetName: vm.selectedAssetName, VariableName: selectedVariables[i].name });
+                    }
+                    $log.log('Updating asset ' + vm.selectedAssetName + ' to add ' + updates.length + ' variables and to delete ' + deletes.length + ' variables');
+                    if( updates.length > 0 )
+                        abp.ui.setBusy( null, assetHealthService.updateAssetVariableList({ AssetVariables: updates }) );
+                    if (deletes.length > 0)
+                        abp.ui.setBusy(null, assetHealthService.deleteAssetVariableList({ AssetVariables: deletes }));
+                    vm.getAssetHierarchy();
+                    vm.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS)
                 });
             }
 
-            vm.getData();
+            vm.getVariables();
+            vm.getAssetHierarchy();
         }
     ]);
 
@@ -107,6 +149,12 @@
             var vm = this;
             vm.localize = abp.localization.getSource('AssetManager');
             vm.variables = variables;
+
+            // IsAssigned values: 0=not assigned already; 1=assigned already; 2=not assigned & add; 3=assigned & delete
+            // When selecting a variable, this array defines the new states. 0 => 2; 1 => 1; 2 => 2; 3 => 1
+            vm.isAssignedNewStateOnSelect = [2, 1, 2, 1];
+            // When de-selecting a variable, this array defines the new states. 0 => 0; 1 => 3; 2 => 0; 3 => 3
+            vm.isAssignedNewStateOnDeselect = [0, 3, 0, 3];
 
             vm.gridOptions = {
                 data: variables,
@@ -119,29 +167,47 @@
                 enableFiltering: true,
                 showGridFooter: true,
                 columnDefs: [
-                    { name: 'name', width: '50%' },
-                    { name: 'description', width: '*'}]
-                    /*{
-                        name: 'description', width: '*',
-                        cellTemplate: '<div class="ui-grid-cell-contents" uib-tooltip="{{row.entity.description}}, {{row.entity.tagName}}, {{row.entity.uom}}" tooltip-append-to-body=true>{{row.entity.description}}</div>'
-                    }]*/
+                    { name: 'name', displayName: vm.localize('Variable'), width: '30%' },
+                    { name: 'description', displayName: vm.localize('Description'), width: '40%' },
+                    { name: 'tagName', displayName: vm.localize('TagName'), width: '20%' },
+                    { name: 'isAssigned', displayName: vm.localize('AssetHealthTblVariableIsUsed'), width: '*' }]
             };
-            function registerGridApi(gridApi) { vm.gridApi = gridApi; }
+            function registerGridApi(gridApi) {
+                vm.gridApi = gridApi;
+
+                // Select variables marked as already selected in the input list
+                vm.gridApi.grid.modifyRows(vm.gridOptions.data);
+                for (var i = 0; i < vm.variables.length; i++) {
+                    if (vm.variables[i].isAssigned == 1)
+                        vm.gridApi.selection.selectRow(vm.gridOptions.data[i]);
+                }
+
+                // Handle row selections. First get the row variable, then its index in the original list, then update its selection status in the original list
+                vm.gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                    i = row.entity.originalIndex;
+                    if( row.isSelected )
+                        vm.variables[i].isAssigned = vm.isAssignedNewStateOnSelect[vm.variables[i].isAssigned];
+                    else
+                        vm.variables[i].isAssigned = vm.isAssignedNewStateOnDeselect[vm.variables[i].isAssigned];
+                });
+            };
 
             $scope.selectAllVariables = function () {
                 vm.gridApi.selection.selectAllRows();
+                for (var i = 0; i < vm.variables.length; i++) {
+                    vm.variables[i].isAssigned = vm.isAssignedNewStateOnSelect[vm.variables[i].isAssigned];
+                }
             };
 
             $scope.clearAllVariables = function () {
                 vm.gridApi.selection.clearSelectedRows();
-            };
-
-            $scope.selected = {
-                variable: vm.variables[0]
+                for (var i = 0; i < vm.variables.length; i++) {
+                    vm.variables[i].isAssigned = vm.isAssignedNewStateOnDeselect[vm.variables[i].isAssigned];
+                }
             };
 
             $scope.ok = function () {
-                $uibModalInstance.close(vm.selectedVariable);
+                $uibModalInstance.close(vm.variables);
             };
 
             $scope.cancel = function () {

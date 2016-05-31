@@ -12,6 +12,8 @@ namespace AssetManager.AssetHealth
     public interface IAssetHealthAppService : IApplicationService
     {
         GetAssetVariableListOutput GetAssetVariableList(GetAssetVariableListInput input);
+        GetAssetHierarchyWithVariablesAsListOutput GetAssetHierarchyWithVariablesAsList(GetAssetHierarchyWithVariablesAsListInput input);
         UpdateAssetVariableListOutput UpdateAssetVariableList(UpdateAssetVariableListInput input);
+        DeleteAssetVariableListOutput DeleteAssetVariableList(DeleteAssetVariableListInput input);
     }
 }

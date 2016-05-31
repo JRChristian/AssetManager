@@ -108,6 +108,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssetHealth\AssetHealthAppService.cs" />
+    <Compile Include="AssetHealth\Dtos\AssetVariableArrayDto.cs" />
+    <Compile Include="AssetHealth\Dtos\DeleteAssetVariableListInput.cs" />
+    <Compile Include="AssetHealth\Dtos\DeleteAssetVariableListOutput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetHierarchyWithVariablesAsListInput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetHierarchyWithVariablesAsListOutput.cs" />
     <Compile Include="AssetHealth\IAssetHealthAppService.cs" />
     <Compile Include="AssetManagerApplicationModule.cs" />
     <Compile Include="AssetManagerAppServiceBase.cs" />
