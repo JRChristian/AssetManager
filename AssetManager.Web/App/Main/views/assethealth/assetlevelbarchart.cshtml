@@ -1,0 +1,18 @@
+﻿<div ng-controller="app.views.assethealth.barchart as vm">
+    <div class="container">
+        <div class="row">
+            <h3>Asset Integrity</h3>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="chartContainer" style="width:100%; height:400px;"></div>
+            </div>
+        </div>
+        <div class="row">
+            <a ui-sref="assethierarchy" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("AssetBtnGoToAssetHierarchy")</a>
+            <a ui-sref="assetlist" class="btn btn-info btn-sm"><i class="fa fa-tags"></i> @L("AssetBtnGoToAssetList")</a>
+            <a ui-sref="iowvariablelist" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+            <a ui-sref="iowlimitstatus" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("IowTtlLimitStatus")</a>
+        </div>
+    </div>
+</div>

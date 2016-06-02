@@ -52,6 +52,11 @@ namespace AssetManager.EntityFramework.DomainServices
             return asset;
         }
 
+        public IQueryable<Asset> GetAssets()
+        {
+            return _assetRepository.GetAll().OrderBy(p => p.Name);
+        }
+
         public List<Asset> GetAssetList()
         {
             return _assetRepository.GetAll().OrderBy(p => p.Name).ToList();

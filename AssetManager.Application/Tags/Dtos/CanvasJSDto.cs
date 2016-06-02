@@ -56,7 +56,8 @@ namespace AssetManager.Tags.Dtos
 
     public class CanvasJSDataPoints
     {
-        public double x { get; set; }
+        public double? x { get; set; }
         public double? y { get; set; }
+        public string label { get; set; }
     }
 }

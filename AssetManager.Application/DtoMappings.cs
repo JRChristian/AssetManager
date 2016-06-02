@@ -30,6 +30,8 @@ namespace AssetManager
             Mapper.CreateMap<TagDataRaw, TagDataRawDto>();
             Mapper.CreateMap<DetectDeviationsOut, DetectDeviationsOutput>();
             Mapper.CreateMap<AssetVariableCombinations, AssetVariableDto>();
+            Mapper.CreateMap<AssetDeviationSummary, AssetLevelTimeDto>();
+            Mapper.CreateMap<DeviationDetails, DeviationDetailDto>();
         }
     }
 }

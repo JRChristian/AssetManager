@@ -29,6 +29,7 @@ namespace AssetManager.DomainServices
         IOWVariable FirstOrDefaultVariable(string name);
         IOWVariable FirstOrDefaultVariable(long? id, string name);
         IOWVariable FirstOrDefaultVariable(Expression<Func<IOWVariable, bool>> predicate);
+        IQueryable<IOWVariable> GetAllVariablesQueryable();
         List<IOWVariable> GetAllVariables();
         List<IOWVariable> GetAllVariables(Expression<Func<IOWVariable, bool>> predicate);
         IOWVariable InsertOrUpdateVariable(IOWVariable input);
@@ -42,6 +43,7 @@ namespace AssetManager.DomainServices
         IOWLimit FirstOrDefaultLimit(string variableName, string levelName);
         IOWLimit FirstOrDefaultLimit(long variableId, long? levelId, string levelName);
         IOWLimit FirstOrDefaultLimit(long? variableId, string VariableName, long? levelId, string levelName);
+        List<IOWLimit> GetAllLimits();
         List<IOWLimit> GetAllLimits(long variableId);
         List<IOWLimit> GetAllLimits(string variableName);
         List<IOWLimit> GetAllLimits(string variableName, string levelName);
@@ -50,7 +52,9 @@ namespace AssetManager.DomainServices
         bool DeleteLimit(long id);
 
         // Deviations
-        List<IOWDeviation> GetLimitDeviations(long limitId);
+        List<IOWDeviation> GetDeviations();
+        List<IOWDeviation> GetDeviations(long limitId);
+        List<IOWDeviation> GetDeviations(long limitId, DateTime startTimestamp);
         List<VariableDeviation> GetDeviationSummary(bool includeAllVariables, int maxCriticality, double hoursBack);
         DetectDeviationsOut DetectDeviations(Tag tag, DateTime startTimestamp, DateTime endTimestamp);
         void ResetLastDeviationStatus();

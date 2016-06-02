@@ -128,7 +128,8 @@
     <text name="AssetMsgAssetTypeDeletedOk" value="Successfully deleted asset type {0}" />
     <text name="AssetMsgAssetTypeNotDeleted" value="Not able to delete asset type {0}" />
     <text name="AssetPlcNewAssetTypeNamePlaceholder" value="(new asset type)" />
-    <text name="AssetMnuAssetHierarchy" value="Asset Hierarchy" />
+    <text name="AssetMnuAssetHierarchy" value="Asset hierarchy" />
+    <text name="AssetMnuAssetLevelBarChart" value="Integrity bar chart" />
     <text name="AssetTtlAssetHierarchy" value="Asset Hierarchy" />
     <text name="AssetBtnGoToAssetTypes" value="Show asset types" />
     <text name="AssetBtnGoToAssetHierarchy" value="Asset hierarchy view" />

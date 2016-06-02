@@ -103,6 +103,14 @@ namespace AssetManager.Web
                     )
                     .AddItem(
                         new MenuItemDefinition(
+                            "AssetLevelBarChart",
+                            new LocalizableString("AssetMnuAssetLevelBarChart", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/assetlevelbarchart",
+                            icon: "fa fa-area-chart"
+                            )
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
                             "AssetVariableList",
                             new LocalizableString("AssetMnuAssetVariableList", AssetManagerConsts.LocalizationSourceName),
                             url: "#/assetvariablelist",

@@ -63,6 +63,11 @@
                     templateUrl: '/App/Main/views/asset/assethierarchy.cshtml',
                     menu: 'AssetHierarchy' //Matches to menu name in AssetManagerNavigationProvider
                 })
+                .state('assetlevelbarchart', {
+                    url: '/assetlevelbarchart',
+                    templateUrl: '/App/Main/views/assethealth/assetlevelbarchart.cshtml',
+                    menu: 'AssetLevelBarChart' //Matches to menu name in AssetManagerNavigationProvider
+                })
                 .state('assetnew', {
                     url: '/assetnew',
                     templateUrl: '/App/Main/views/asset/new.cshtml',

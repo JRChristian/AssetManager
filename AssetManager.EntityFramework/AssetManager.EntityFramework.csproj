@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityFramework\AssetManagerDbContext.cs" />
+    <Compile Include="EntityFramework\DomainServices\AssetDeviationSummary.cs" />
     <Compile Include="EntityFramework\DomainServices\AssetHealthManager.cs" />
     <Compile Include="EntityFramework\DomainServices\AssetManager.cs" />
     <Compile Include="EntityFramework\DomainServices\AssetVariableCombinations.cs" />
@@ -232,6 +233,10 @@
     <Compile Include="Migrations\201605272347272_AddedAssetVariable.Designer.cs">
       <DependentUpon>201605272347272_AddedAssetVariable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606020028369_UpdatedIOWStatsByDay.cs" />
+    <Compile Include="Migrations\201606020028369_UpdatedIOWStatsByDay.Designer.cs">
+      <DependentUpon>201606020028369_UpdatedIOWStatsByDay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -318,6 +323,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605272347272_AddedAssetVariable.resx">
       <DependentUpon>201605272347272_AddedAssetVariable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606020028369_UpdatedIOWStatsByDay.resx">
+      <DependentUpon>201606020028369_UpdatedIOWStatsByDay.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

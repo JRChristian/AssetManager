@@ -15,5 +15,7 @@ namespace AssetManager.AssetHealth
         GetAssetHierarchyWithVariablesAsListOutput GetAssetHierarchyWithVariablesAsList(GetAssetHierarchyWithVariablesAsListInput input);
         UpdateAssetVariableListOutput UpdateAssetVariableList(UpdateAssetVariableListInput input);
         DeleteAssetVariableListOutput DeleteAssetVariableList(DeleteAssetVariableListInput input);
+        GetAssetLevelTimeSummaryOutput GetAssetLevelTimeSummary(GetAssetLevelTimeSummaryInput input);
+        GetAssetLevelChartOutput GetAssetLevelChartCanvasJS(GetAssetLevelChartInput input);
     }
 }

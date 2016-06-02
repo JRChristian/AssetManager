@@ -180,6 +180,11 @@ namespace AssetManager.DomainServices
             return _iowVariableRepository.FirstOrDefault(predicate);
         }
 
+        public IQueryable<IOWVariable> GetAllVariablesQueryable()
+        {
+            return _iowVariableRepository.GetAll().OrderBy(p => p.Name);
+        }
+
         public List<IOWVariable> GetAllVariables()
         {
             return _iowVariableRepository.GetAll().OrderBy(p => p.Name).ToList();
@@ -304,6 +309,11 @@ namespace AssetManager.DomainServices
                 return _iowLimitRespository.FirstOrDefault(p => p.Variable.Name == VariableName && p.Level.Name == levelName);
         }
 
+        public List<IOWLimit> GetAllLimits()
+        {
+            return GetAllLimits(null, null, null, null);
+        }
+
         public List<IOWLimit> GetAllLimits(long variableId)
         {
             return GetAllLimits(variableId, null, null, null);
@@ -388,12 +398,20 @@ namespace AssetManager.DomainServices
 
 
         // Deviations
+        public List<IOWDeviation> GetDeviations()
+        {
+            return _iowDeviationRepository.GetAllList().OrderBy(p => p.IOWLimitId).ThenBy(p => p.StartTimestamp).ToList();
+        }
 
-        public List<IOWDeviation> GetLimitDeviations(long limitId)
+        public List<IOWDeviation> GetDeviations(long limitId)
         {
             return _iowDeviationRepository.GetAllList(p => p.IOWLimitId == limitId).OrderBy(p => p.StartTimestamp).ToList();
         }
-        
+
+        public List<IOWDeviation> GetDeviations(long limitId, DateTime startTimestamp)
+        {
+            return _iowDeviationRepository.GetAllList(p => p.IOWLimitId == limitId && (p.EndTimestamp > startTimestamp || !p.EndTimestamp.HasValue )).OrderBy(p => p.StartTimestamp).ToList();
+        }
 
         public List<VariableDeviation> GetDeviationSummary(bool includeAllVariables, int maxCriticality, double hoursBack)
         {
@@ -632,7 +650,7 @@ namespace AssetManager.DomainServices
                                 // we encounter new deviations as we go along.
                                 if( deviation == null )
                                 {
-                                    deviation = limit.IOWDeviations.FirstOrDefault(x => x.StartTimestamp < data.Timestamp &&
+                                    deviation = limit.IOWDeviations.FirstOrDefault(x => x.StartTimestamp <= data.Timestamp &&
                                         (!x.EndTimestamp.HasValue || x.EndTimestamp.Value >= data.Timestamp));
 
                                     //deviation = _iowDeviationRepository.FirstOrDefault(x =>
@@ -665,7 +683,7 @@ namespace AssetManager.DomainServices
                                     else
                                     {
                                         // Case 1B - The existing deviation is over ==> update and close the old record
-                                        deviation.EndTimestamp = data.Timestamp.AddMinutes(-1);
+                                        deviation.EndTimestamp = data.Timestamp;
                                         //_iowDeviationRepository.Update(deviation);
                                         deviation = null;
 
@@ -673,7 +691,7 @@ namespace AssetManager.DomainServices
                                         if( !limit.LastDeviationStartTimestamp.HasValue || limit.LastDeviationStartTimestamp.Value < data.Timestamp )
                                         {
                                             limit.LastStatus = IOWStatus.Normal;
-                                            limit.LastDeviationEndTimestamp = data.Timestamp.AddMinutes(-1);
+                                            limit.LastDeviationEndTimestamp = data.Timestamp;
                                         }
                                     }
                                 } // if( deviation != null )

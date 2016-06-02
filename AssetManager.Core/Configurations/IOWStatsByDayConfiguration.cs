@@ -15,9 +15,8 @@ namespace AssetManager.Configurations
             Property(x => x.TenantId).IsRequired();
             Property(x => x.IOWLimitId).IsRequired();
             Property(x => x.Day).IsRequired();
-            Property(x => x.Status).IsRequired();
-            Property(x => x.DeviationCount).IsRequired();
-            Property(x => x.DeviationDuration).IsRequired();
+            Property(x => x.NumberDeviations).IsRequired();
+            Property(x => x.DurationHours).IsRequired();
         }
     }
 }
