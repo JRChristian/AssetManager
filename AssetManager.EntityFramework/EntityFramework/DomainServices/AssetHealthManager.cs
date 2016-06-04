@@ -107,7 +107,6 @@ namespace AssetManager.EntityFramework.DomainServices
         [UnitOfWork]
         public AssetDeviationSummaryOutput GetAssetLevelTimeSummary(DateTime? startTime, int? hoursInPeriodInput)
         {
-
             // Process the arguments and build a datetime array.
             // The starting time must be within the last 1000 days. If omitted, go back 30 days.
             DateTime startTimestamp;

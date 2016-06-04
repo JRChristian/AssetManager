@@ -12,26 +12,29 @@ using System.Threading.Tasks;
 using System.Linq.Expressions;
 using AssetManager.Utilities;
 using System.Data.Entity.SqlServer;
+using Abp.Domain.Uow;
 
 namespace AssetManager.DomainServices
 {
     public class IowManager : DomainService, IIowManager
     {
+        // Validation information
+        private static int minCriticality = 1;
+        private static int maxCriticality = 5;
+
         private readonly IOWLevelRepository _iowLevelRepository;
         private readonly IOWVariableRepository _iowVariableRepository;
         private readonly IOWLimitRepository _iowLimitRespository;
         private readonly IOWDeviationRepository _iowDeviationRepository;
+        private readonly IOWStatsByDayRepository _iowStatsByDayRepository;
         private readonly TagManager _tagManager;
-
-        // Validation information
-        private static int minCriticality = 1;
-        private static int maxCriticality = 5;
 
         public IowManager(
             IOWLevelRepository iowLevelRepository,
             IOWVariableRepository iowVariableRepository,
             IOWLimitRepository iowLimitRepository,
             IOWDeviationRepository iowDeviationRepository,
+            IOWStatsByDayRepository iowStatsByDayRepository,
             TagManager tagManager
             )
         {
@@ -39,6 +42,7 @@ namespace AssetManager.DomainServices
             _iowVariableRepository = iowVariableRepository;
             _iowLimitRespository = iowLimitRepository;
             _iowDeviationRepository = iowDeviationRepository;
+            _iowStatsByDayRepository = iowStatsByDayRepository;
             _tagManager = tagManager;
         }
 
@@ -791,6 +795,180 @@ namespace AssetManager.DomainServices
                 output = Direction.High;
 
             return output;
+        }
+
+
+        public int UpdateStatistics(DateTime? startTimestamp, DateTime? endTimestamp)
+        {
+            int numberRecordsUpdated = 0;
+
+            // The start and end times must be at midnight. Limit the time period to the last 60 days.
+            // Default calculations to today.
+            DateTime startDay = startTimestamp.HasValue ? startTimestamp.Value.Date : DateTime.Now.Date;
+            if (startDay < DateTime.Now.AddDays(-60))
+                startDay = DateTime.Now.AddDays(-60).Date;
+
+            DateTime endDay = endTimestamp.HasValue ? endTimestamp.Value : DateTime.Now;
+            if (endDay != endDay.Date)
+                endDay = endDay.AddDays(1).Date;
+            if (endDay < startDay || endDay > DateTime.Now.AddDays(1).Date)
+                endDay = DateTime.Now.AddDays(1).Date;
+
+            // Calculate statistics for each limit
+            List<IOWLimit> allLimits = GetAllLimits();
+            if(allLimits != null && allLimits.Count > 0 )
+            {
+                foreach(IOWLimit limit in allLimits)
+                {
+                    numberRecordsUpdated += CalculateStats(limit, startDay, endDay);
+                }
+            }
+
+            // Make sure that the statistics records exist
+            //int numberRecordsInserted = FillInMissingStatRecords(startDay);
+
+            return numberRecordsUpdated;
+        }
+
+        private int FillInMissingStatRecords(DateTime startDay)
+        {
+            int numberRecordsInserted = 0;
+
+            // Build a datetime array for what SHOULD be in the statistics table for each variable
+            List<DateTime> datetimes = new List<DateTime>();
+            for (DateTime dt = startDay; dt < DateTime.Now; dt = dt.AddDays(1))
+                datetimes.Add(dt);
+
+            // This query takes the Cartesian product of the limit table and our datetime array.
+            // The Cartesian product gives every limit-day combination (in the time period of interest) that should exist.
+            // It then does an outer join with the statistics table. We should have the same number of records as the Cartesian product.
+            // It then removes any instances where the statistic table does not match the Cartesian product.
+            // The result shows all records that are missing from the statistics table.
+            var query = from k in 
+                            (from a in (
+                                from l in _iowLimitRespository.GetAllList()
+                                from d in datetimes
+                                select new { Id = l.Id, Day = d, TenantId = l.TenantId })
+                            from s in _iowStatsByDayRepository.GetAllList(p => p.Day >= startDay)
+                                .Where(s => s.IOWLimitId == a.Id && s.Day == a.Day)
+                                .DefaultIfEmpty()
+                            select new { Id = a.Id, Day = a.Day, TenantId = a.TenantId, IsMissing = (s == null) })
+                            .Where(k => k.IsMissing == true)
+                        orderby k.Id, k.Day
+                        select new { Id = k.Id, Day = k.Day, k.TenantId };
+
+            var missing = query.ToList();
+
+            // Walk the list of stat records and insert new records for anything missing
+            foreach ( var one in missing )
+            {
+                _iowStatsByDayRepository.Insert(new IOWStatsByDay
+                {
+                    TenantId = one.TenantId,
+                    IOWLimitId = one.Id,
+                    Day = one.Day,
+                    NumberDeviations = 0,
+                    DurationHours = 0
+                });
+                numberRecordsInserted++;
+            }
+            return numberRecordsInserted;
+        }
+
+        private int CalculateStats(IOWLimit limit, DateTime startTimestamp, DateTime endTimestamp)
+        {
+            int numberRecordsUpdated = 0;
+
+            // This routine calculates IOW deviation statistics for one limit for a specified time range.
+            // The start and end time must be at midnight, to match the records expected in IOWStatsByDay.
+            // Validation must be done by the caller.
+
+            List<IOWDeviation> deviations = GetDeviations(limit.Id, startTimestamp);
+            if( deviations != null && deviations.Count > 0 )
+            {
+                // insertNewRecord is a flag for whether we are inserting a new record. We may need to perform multiple operations
+                // on a new record before inserting it.
+                bool insertNewRecord = false;
+                IOWStatsByDay stat = null;
+
+                // Set the last end day to before the start of the processing period
+                DateTime lastEndDay = startTimestamp.AddDays(-1).Date;
+                DateTime startDay, endDay, startDeviation, endDeviation;
+
+                foreach(IOWDeviation dev in deviations)
+                {
+                    // startDay       = midnight on the day when the deviation starts; clamped to be no earlier than startTimestamp in the arguments
+                    // endDay         = midnight on the day after startDay
+                    // startDeviation = start of the deviation for this day's statistics; clamped to be no earlier than startDay
+                    // endDeviation   = end of the deviation for this day's statistics; allowed to be beyond the end of this day; defaults to now
+                    // lastEndDay     = midnight at the end of the last day we processed; used to indicate if the next deviation falls in the same day as the last deviation
+                    if (dev.StartTimestamp < startTimestamp)
+                    {
+                        startDay = startTimestamp.Date;
+                        startDeviation = startDay;
+                    }
+                    else
+                    {
+                        startDay = dev.StartTimestamp.Date;
+                        startDeviation = dev.StartTimestamp;
+                    }
+                    if (dev.EndTimestamp.HasValue)
+                        endDeviation = dev.EndTimestamp.Value;
+                    else
+                        endDeviation = DateTime.Now;
+
+                    // Process this deviation until we run out of days.
+                    while ( startDeviation < endDeviation )
+                    {
+                        endDay = startDay.AddDays(1);
+                        double durationHours = ((endDeviation <= endDay ? endDeviation : endDay) - startDeviation).TotalHours;
+
+                        // If we already have a stat record but have passed the end of the time period for that record
+                        // (new deviation starts after the end of that record), save (insert) and close the old record.
+                        if( stat != null && insertNewRecord && startDeviation >= lastEndDay )
+                        {
+                            _iowStatsByDayRepository.Insert(stat);
+                            numberRecordsUpdated++;
+                            insertNewRecord = false;
+                            stat = null;
+                        }
+
+                        // Look for an already existing stat record to update
+                        if (stat == null )
+                            stat = _iowStatsByDayRepository.FirstOrDefault(p => p.IOWLimitId == limit.Id && p.Day == startDay);
+
+                        if (stat == null)
+                        {
+                            stat = new IOWStatsByDay { IOWLimitId = limit.Id, Day = startDay, NumberDeviations = 0, DurationHours = 0, TenantId = limit.TenantId };
+                            insertNewRecord = true;
+                        }
+                        else
+                            insertNewRecord = false;
+
+                        // Update the stat record with new information
+                        stat.NumberDeviations++;
+                        stat.DurationHours += durationHours;
+
+                        // Move to the next day. Look to see if this deviation slides into the following day
+                        startDay = startDay.AddDays(1);
+                        endDay = startDay.AddDays(1);
+                        startDeviation = startDay;
+                    }
+
+                    // End of the loop. Save (insert) and close that last record, if any
+                    if (stat != null && insertNewRecord)
+                    {
+                        _iowStatsByDayRepository.Insert(stat);
+                        numberRecordsUpdated++;
+                        insertNewRecord = false;
+                        stat = null;
+                    }
+
+                    // ABP will automatically update open records, so no need to call the Update() method on IOWStatByDay.
+                } // foreach(IOWDeviation dev in deviations)
+            } // if( deviations != null && deviations.Count > 0 )
+
+            return numberRecordsUpdated;
         }
     }
 }

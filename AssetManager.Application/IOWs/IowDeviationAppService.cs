@@ -143,5 +143,16 @@ namespace AssetManager.IOWs
         {
             _iowManager.ResetLastDeviationStatus();
         }
+
+        public UpdateStatisticsOutput UpdateStatistics(UpdateStatisticsInput input)
+        {
+            UpdateStatisticsOutput output = new UpdateStatisticsOutput
+            {
+                NumberRecordsUpdated = _iowManager.UpdateStatistics(input.startTimestamp, input.endTimestamp)
+            };
+
+            return output;
+        }
+
     }
 }

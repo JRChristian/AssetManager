@@ -58,5 +58,6 @@ namespace AssetManager.DomainServices
         List<VariableDeviation> GetDeviationSummary(bool includeAllVariables, int maxCriticality, double hoursBack);
         DetectDeviationsOut DetectDeviations(Tag tag, DateTime startTimestamp, DateTime endTimestamp);
         void ResetLastDeviationStatus();
+        int UpdateStatistics(DateTime? startTimestamp, DateTime? endTimestamp);
     }
 }

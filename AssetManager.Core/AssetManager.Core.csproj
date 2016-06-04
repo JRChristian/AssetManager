@@ -128,6 +128,7 @@
     <Compile Include="Entities\IImageRepository.cs" />
     <Compile Include="Entities\IIOWLevelRepository.cs" />
     <Compile Include="Entities\IIOWLimitRepository.cs" />
+    <Compile Include="Entities\IIOWStatsByDayRepository.cs" />
     <Compile Include="Entities\IIOWVariableRepository.cs" />
     <Compile Include="Entities\Image.cs" />
     <Compile Include="Entities\IOWDeviation.cs" />
