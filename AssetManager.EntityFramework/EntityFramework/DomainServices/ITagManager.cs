@@ -24,6 +24,8 @@ namespace AssetManager.DomainServices
         Tag InsertOrUpdateTag(Tag input);
         long InsertOrUpdateAndGetIdTag(Tag tag);
 
+        DateTime GetMinimumTagDataTimestamp();
+        DateTime GetMaximumTagDataTimestamp();
         List<TagDataRaw> GetAllListData(long tagId);
         List<TagDataRaw> GetAllListData(string tagName);
         List<TagDataRaw> GetAllListData(Expression<Func<TagDataRaw, bool>> predicate);

@@ -144,13 +144,38 @@ namespace AssetManager.IOWs
             _iowManager.ResetLastDeviationStatus();
         }
 
-        public UpdateStatisticsOutput UpdateStatistics(UpdateStatisticsInput input)
+        public CalculateStatisticsForAllLimitsOutput CalculateStatisticsForAllLimits(CalculateStatisticsForAllLimitsInput input)
         {
-            UpdateStatisticsOutput output = new UpdateStatisticsOutput
+            CalculateStatisticsForAllLimitsOutput output = new CalculateStatisticsForAllLimitsOutput
             {
-                NumberRecordsUpdated = _iowManager.UpdateStatistics(input.startTimestamp, input.endTimestamp)
+                NumberRecordsUpdated = _iowManager.CalculateStatisticsForAllLimits(input.startTimestamp, input.endTimestamp)
             };
 
+            return output;
+        }
+
+        public CalculateStatisticsForOneLimitOutput CalculateStatisticsForOneLimit(CalculateStatisticsForOneLimitInput input)
+        {
+            CalculateStatisticsForOneLimitOutput output = new CalculateStatisticsForOneLimitOutput
+            {
+                NumberRecordsUpdated = 0
+            };
+
+           if (input.LimitId.HasValue && input.LimitId.Value > 0)
+            {
+                IOWLimit limit = _iowManager.FirstOrDefaultLimit(input.LimitId.Value);
+                if (limit != null)
+                    output.NumberRecordsUpdated = _iowManager.CalculateStatisticsForOneLimit(limit, input.startTimestamp, input.endTimestamp);
+            }
+            else if (!string.IsNullOrEmpty(input.VariableName) && !string.IsNullOrEmpty(input.LevelName))
+            {
+                List<IOWLimit> limits = _iowManager.GetAllLimits(input.VariableName, input.LevelName);
+                if( limits != null )
+                {
+                    foreach(IOWLimit limit in limits )
+                        output.NumberRecordsUpdated = _iowManager.CalculateStatisticsForOneLimit(limit, input.startTimestamp, input.endTimestamp);
+                }
+            }
             return output;
         }
 

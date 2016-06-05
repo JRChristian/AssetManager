@@ -220,11 +220,5 @@ namespace AssetManager.Tags
             output.Successes = (int)_tagManager.InsertOrUpdateAllDataByName(input.TagDataName);
             return output;
         }
-
-        public UpdateTagDataForDemoOutput UpdateTagDataForDemo(UpdateTagDataForDemoInput input)
-        {
-            int numberUpdates = _tagManager.UpdateTagDataForDemo(input.DaysToAdd);
-            return new UpdateTagDataForDemoOutput { NumberUpdates = numberUpdates };
-        }
     }
 }

@@ -138,6 +138,12 @@
     <Compile Include="Assets\Dtos\UpdateAssetTypesOutput.cs" />
     <Compile Include="AssetHealth\Dtos\UpdateAssetVariableListInput.cs" />
     <Compile Include="AssetHealth\Dtos\UpdateAssetVariableListOutput.cs" />
+    <Compile Include="Demo\DemoAppService.cs" />
+    <Compile Include="Demo\Dtos\GetDemoStatusInput.cs" />
+    <Compile Include="Demo\Dtos\GetDemoStatusOutput.cs" />
+    <Compile Include="Demo\Dtos\UpdateTagDataForDemoInput.cs" />
+    <Compile Include="Demo\Dtos\UpdateTagDataForDemoOutput.cs" />
+    <Compile Include="Demo\IDemoAppService.cs" />
     <Compile Include="DtoMappings.cs" />
     <Compile Include="Assets\AssetAppService.cs" />
     <Compile Include="Assets\AssetTypeAppService.cs" />
@@ -153,6 +159,8 @@
     <Compile Include="Images\Dtos\UpdateImageListOutput.cs" />
     <Compile Include="Images\IImageAppService.cs" />
     <Compile Include="Images\ImageAppService.cs" />
+    <Compile Include="IOWs\Dtos\CalculateStatisticsForOneLimitInput.cs" />
+    <Compile Include="IOWs\Dtos\CalculateStatisticsForOneLimitOutput.cs" />
     <Compile Include="IOWs\Dtos\DetectDeviationsInput.cs" />
     <Compile Include="IOWs\Dtos\DetectDeviationsOutput.cs" />
     <Compile Include="IOWs\Dtos\DeviationDto.cs" />
@@ -164,8 +172,8 @@
     <Compile Include="IOWs\Dtos\GetVariableLimitStatusInput.cs" />
     <Compile Include="IOWs\Dtos\GetVariableLimitStatusOutput.cs" />
     <Compile Include="IOWs\Dtos\LimitDeviationDto.cs" />
-    <Compile Include="IOWs\Dtos\UpdateStatisticsInput.cs" />
-    <Compile Include="IOWs\Dtos\UpdateStatisticsOutput.cs" />
+    <Compile Include="IOWs\Dtos\CalculateStatisticsForAllLimitsInput.cs" />
+    <Compile Include="IOWs\Dtos\CalculateStatisticsForAllLimitsOutput.cs" />
     <Compile Include="IOWs\Dtos\VariableLimitStatusDto.cs" />
     <Compile Include="IOWs\IIowDeviationAppService.cs" />
     <Compile Include="IOWs\Dtos\UpdateLimitInput.cs" />
@@ -218,8 +226,6 @@
     <Compile Include="Tags\Dtos\TagDataRawDto.cs" />
     <Compile Include="Tags\Dtos\TagDto.cs" />
     <Compile Include="Assets\Dtos\UpdateAssetInput.cs" />
-    <Compile Include="Tags\Dtos\UpdateTagDataForDemoInput.cs" />
-    <Compile Include="Tags\Dtos\UpdateTagDataForDemoOutput.cs" />
     <Compile Include="Tags\Dtos\UpdateTagInput.cs" />
     <Compile Include="Assets\IAssetAppService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

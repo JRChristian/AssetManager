@@ -164,6 +164,16 @@ namespace AssetManager.DomainServices
             return _tagRepository.InsertOrUpdateAndGetId(tag);
         }
 
+        public DateTime GetMinimumTagDataTimestamp()
+        {
+            return _tagDataRawRepository.GetAll().Min(p => p.Timestamp);
+        }
+
+        public DateTime GetMaximumTagDataTimestamp()
+        {
+            return _tagDataRawRepository.GetAll().Max(p => p.Timestamp);
+        }
+
         public List<TagDataRaw> GetAllListData(long tagId)
         {
             return _tagDataRawRepository.GetAll().Where(p => p.TagId == tagId).OrderBy(p => p.Timestamp).ToList();
