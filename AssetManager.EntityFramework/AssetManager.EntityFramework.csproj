@@ -124,6 +124,7 @@
     <Compile Include="EntityFramework\DomainServices\ImageManager.cs" />
     <Compile Include="EntityFramework\DomainServices\IowManager.cs" />
     <Compile Include="EntityFramework\DomainServices\ITagManager.cs" />
+    <Compile Include="EntityFramework\DomainServices\AssetLimitStatsByDay.cs" />
     <Compile Include="EntityFramework\DomainServices\TagDataName.cs" />
     <Compile Include="EntityFramework\DomainServices\TagManager.cs" />
     <Compile Include="EntityFramework\DomainServices\VariableDeviation.cs" />

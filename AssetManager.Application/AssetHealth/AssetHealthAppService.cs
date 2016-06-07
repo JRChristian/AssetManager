@@ -171,6 +171,20 @@ namespace AssetManager.AssetHealth
             };
         }
 
+        public GetAssetLimitStatsByDayOutput GetAssetLimitStatsByDay(GetAssetLimitStatsByDayInput input)
+        {
+            GetAssetLimitStatsByDayOutput output = new GetAssetLimitStatsByDayOutput { };
+            output.StartTimestamp = _iowManager.NormalizeStartDay(input.StartTimestamp);
+            output.EndTimestamp = _iowManager.NormalizeEndDay(output.StartTimestamp, input.EndTimestamp);
+
+            List<AssetLimitStatsByDay> assetLimits = _assetHealthManager.GetAssetLimitStatsByDay(input.AssetId, input.AssetName, input.StartTimestamp, input.EndTimestamp);
+
+            if (assetLimits != null)
+                output.AssetLimits = assetLimits.MapTo<List<AssetLimitStatsByDayDto>>();
+
+            return output;
+        }
+
         public GetAssetLevelChartOutput GetAssetLevelChartCanvasJS(GetAssetLevelChartInput input)
         {
             var localize = _localizationManager.GetSource("AssetManager");
@@ -189,7 +203,7 @@ namespace AssetManager.AssetHealth
             // Start the chart
             GetAssetLevelChartOutput output = new GetAssetLevelChartOutput
             {
-                CanvasJS = new CanvasJSHorizontalBarDto
+                CanvasJS = new CanvasJSHorizontalBar
                 {
                     exportEnabled = true,
                     title = new CanvasJSBarTitle { },

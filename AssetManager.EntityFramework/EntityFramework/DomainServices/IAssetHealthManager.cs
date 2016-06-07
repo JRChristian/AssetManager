@@ -17,5 +17,6 @@ namespace AssetManager.EntityFramework.DomainServices
         List<AssetVariable> UpdateAssetVariableList(List<AssetVariableCombinations> input);
         bool DeleteAssetVariable(long? assetId, string assetName, long? variableId, string variableName);
         AssetDeviationSummaryOutput GetAssetLevelTimeSummary(DateTime? startTimestamp, int? hoursInPeriod);
+        List<AssetLimitStatsByDay> GetAssetLimitStatsByDay(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp);
     }
 }

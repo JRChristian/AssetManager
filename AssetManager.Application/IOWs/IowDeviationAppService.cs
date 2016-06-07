@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services;
 using Abp.AutoMapper;
 using Abp.Domain.Repositories;
+using Abp.Localization;
 using AssetManager.DomainServices;
 using AssetManager.Entities;
 using AssetManager.EntityFramework.DomainServices;
@@ -21,13 +22,16 @@ namespace AssetManager.IOWs
     {
         private readonly IIowManager _iowManager;
         private readonly ITagManager _tagManager;
+        private readonly ILocalizationManager _localizationManager;
 
         public IowDeviationAppService(
             IIowManager iowManager,
-            ITagManager tagManager)
+            ITagManager tagManager,
+            ILocalizationManager localizationManager)
         {
             _iowManager = iowManager;
             _tagManager = tagManager;
+            _localizationManager = localizationManager;
         }
 
         public GetVariableDeviationsOutput GetVariableDeviations(GetVariableDeviationsInput input)
@@ -142,6 +146,108 @@ namespace AssetManager.IOWs
         public void ResetLastDeviationStatus()
         {
             _iowManager.ResetLastDeviationStatus();
+        }
+
+        public GetLimitStatsByDayOutput GetLimitStatsByDay(GetLimitStatsByDayInput input)
+        {
+            List<LimitStatsByDay> stats = null;
+
+            if (input.LimitId.HasValue)
+            {
+                IOWLimit limit = _iowManager.FirstOrDefaultLimit(input.LimitId.Value);
+                stats = _iowManager.GetLimitStatsByDay(limit, input.startTimestamp, input.endTimestamp);
+            }
+            else
+            {
+                stats = _iowManager.GetLimitStatsByDay(input.VariableId, input.VariableName, input.startTimestamp, input.endTimestamp);
+            }
+            return new GetLimitStatsByDayOutput
+            {
+                Stats = stats.MapTo<List<LimitStatsByDayDto>>()
+            };
+        }
+
+        public GetLimitStatsChartByDayOutput GetLimitStatsChartByDay(GetLimitStatsChartByDayInput input)
+        {
+            var localize = _localizationManager.GetSource("AssetManager");
+
+            string[] colors =
+            {
+                    "rgba(0,75,141,0.7)",   // 0 - blue
+                    "rgba(255,0,0,0.7)",    // 1 - red
+                    "rgba(255,102,0,0.7)",  // 2 - orange
+                    "darkgreen",            // 3 - green
+                    "rgba(51,51,51,0.7)",   // 4 - gray
+                    "rgba(100,100,100,0.7)" // 5 - lighter gray
+                };
+
+            GetLimitStatsChartByDayOutput output = new GetLimitStatsChartByDayOutput
+            {
+                VariableName = input.VariableName,
+                CanvasJS = new CanvasJSVerticalBar
+                {
+                    exportEnabled = true,
+                    title = new CanvasJSVerticalBarTitle { },
+                    axisX = new CanvasJSVerticalBarAxisX { },
+                    axisY = new CanvasJSVerticalBarAxisY { },
+                    data = new List<CanvasJSVerticalBarData>()
+                }
+            };
+
+            // Look for the variable
+            IOWVariable variable = _iowManager.FirstOrDefaultVariable(input.VariableId, input.VariableName);
+
+            if (variable != null)
+            {
+                output.VariableName = variable.Name;
+                output.Description = variable.Description;
+                output.TagId = variable.TagId;
+                output.TagName = variable.Tag.Name;
+                output.UOM = !string.IsNullOrEmpty(variable.UOM) ? variable.UOM : variable.Tag.UOM;
+
+                output.StartTimestamp = _iowManager.NormalizeStartDay(input.StartTimestamp);
+                output.EndTimestamp = _iowManager.NormalizeEndDay(output.StartTimestamp, input.EndTimestamp);
+
+                output.CanvasJS.axisY.title = "Deviation hours";
+                output.CanvasJS.axisY.minimum = 0;
+                output.CanvasJS.axisY.maximum = 24; // Stacked bars could add up to more than 24 hours, but truncate anyway
+                //output.CanvasJS.axisX.interval = 1;
+                
+                List<LimitStatsByDay> limitStats = _iowManager.GetLimitStatsByDay(variable, output.StartTimestamp, output.EndTimestamp);
+
+                if(limitStats != null )
+                {
+                    // Each limit will be its own series
+                    foreach(LimitStatsByDay limit in limitStats)
+                    {
+                        CanvasJSVerticalBarData data = new CanvasJSVerticalBarData
+                        {
+                            name = limit.Criticality.ToString() + " - " + limit.LevelName,
+                            type = "stackedColumn",
+                            legendText = limit.Criticality.ToString() + " - " + limit.LevelName,
+                            showInLegend = true,
+                            color = colors[limit.Criticality],
+                            dataPoints = new List<CanvasJSVerticalBarDataPoints>()
+                        };
+
+                        // Now add the daily records
+                        if( limit.Days != null )
+                        {
+                            foreach(LimitStatDays day in limit.Days )
+                            {
+                                CanvasJSVerticalBarDataPoints point = new CanvasJSVerticalBarDataPoints
+                                {
+                                    y = day.DurationHours,
+                                    label = day.Day.ToString("m")
+                                };
+                                data.dataPoints.Add(point);
+                            }
+                        }
+                        output.CanvasJS.data.Add(data);
+                    }
+                }
+            }
+            return output;
         }
 
         public CalculateStatisticsForAllLimitsOutput CalculateStatisticsForAllLimits(CalculateStatisticsForAllLimitsInput input)

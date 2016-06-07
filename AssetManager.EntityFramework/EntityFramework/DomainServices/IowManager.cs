@@ -772,6 +772,248 @@ namespace AssetManager.DomainServices
             return output;
         }
 
+        public List<LimitStatsByDay> GetLimitStatsByDay(IOWLimit limit, DateTime? startTimestamp, DateTime? endTimestamp)
+        {
+            List<LimitStatsByDay> stats = new List<LimitStatsByDay>();
+
+            DateTime startDay = NormalizeStartDay(startTimestamp);
+            DateTime endDay = NormalizeEndDay(startDay, endTimestamp);
+
+            if (limit != null)
+                stats = GetLimitStatsOneLimit(limit, startDay, endDay);
+
+            return stats;
+        }
+
+        public List<LimitStatsByDay> GetLimitStatsByDay(IOWVariable variable, DateTime? startTimestamp, DateTime? endTimestamp)
+        {
+
+            List<LimitStatsByDay> stats = new List<LimitStatsByDay>();
+            if( variable != null && variable.IOWLimits != null )
+            {
+                // Get all limits for the specified variable
+                List<long> limitIds = new List<long>();
+                foreach (IOWLimit limit in variable.IOWLimits)
+                    limitIds.Add(limit.Id);
+
+                stats = GetLimitStatsByDay(limitIds, startTimestamp, endTimestamp);
+            }
+            return stats;
+        }
+
+        public List<LimitStatsByDay> GetLimitStatsByDay(long? variableId, string variableName, DateTime? startTimestamp, DateTime? endTimestamp)
+        {
+            IOWVariable variable = FirstOrDefaultVariable(variableId, variableName);
+            return GetLimitStatsByDay(variable, startTimestamp, endTimestamp);
+        }
+
+        public List<LimitStatsByDay> GetLimitStatsByDay(List<long> limitIds, DateTime? startTimestamp, DateTime? endTimestamp)
+        {
+            List<LimitStatsByDay> stats = new List<LimitStatsByDay>();
+
+            DateTime startDay = NormalizeStartDay(startTimestamp);
+            DateTime endDay = NormalizeEndDay(startDay, endTimestamp);
+
+            // Build a date array for what SHOULD be in the statistics table for each variable
+            List<DateTime> datetimes = new List<DateTime>();
+            for (DateTime dt = startDay; dt < endDay; dt = dt.AddDays(1))
+                datetimes.Add(dt);
+
+            // Get the unique set of limits
+            var query0 = from lim in _iowLimitRespository.GetAllList()
+                         join l in limitIds on lim.Id equals l
+                         orderby l
+                         select new { LimitId = lim.Id, LevelName = lim.Level.Name, Criticality = lim.Level.Criticality, Direction = lim.Direction };
+            var allLimits = query0.ToList();
+
+            // This query returns the Cartesian product of all limits and dates
+            var query1 = from lim in allLimits
+                         from dt in datetimes
+                         orderby lim.LimitId, dt
+                         select new { LimitId = lim.LimitId, LevelName = lim.LevelName, Criticality = lim.Criticality, Direction = lim.Direction, Day = dt };
+            var allLimitsAndDates = query1.ToList();
+
+            // This query joins the Cartesian product to the stats table, and fills in zeros whenever the stats table lacks a record
+            var query2 = from a in allLimitsAndDates
+                         join s in _iowStatsByDayRepository.GetAllList(p => p.Day >= startDay && p.Day <= endDay)
+                         on new { LimitId = a.LimitId, Day = a.Day } equals new { LimitId = s.IOWLimitId, Day = s.Day } into joinedStats
+                         from t in joinedStats.DefaultIfEmpty(new IOWStatsByDay { NumberDeviations = 0, DurationHours = 0 })
+                         orderby a.LimitId, a.Day
+                         select new { LimitId = a.LimitId, LevelName = a.LevelName, Criticality = a.Criticality, Direction = a.Direction, Day = a.Day, NumberDeviations = t.NumberDeviations, DurationHours = t.DurationHours };
+            var dataset = query2.ToList();
+
+            var query3 = from z in dataset
+                         group z by new { z.LimitId, z.LevelName, z.Criticality, z.Direction, z.Day } into g
+                         select new { LimitId = g.Key.LimitId, LevelName = g.Key.LevelName, Criticality = g.Key.Criticality, Direction = g.Key.Direction, Day = g.Key.Day, NumberDeviations = g.Sum(x => x.NumberDeviations), DurationHours = g.Sum(x => x.DurationHours) };
+            var results = query3.ToList();
+
+            if (results != null)
+            {
+                LimitStatsByDay stat = null;
+                LimitStatsByDay lastStat = null;
+                foreach (var d in results)
+                {
+                    if (lastStat == null || lastStat.LimitId != d.LimitId)
+                    {
+                        if (lastStat != null)
+                            stats.Add(stat);
+
+                        stat = new LimitStatsByDay
+                        {
+                            LimitId = d.LimitId,
+                            LevelName = d.LevelName,
+                            Criticality = d.Criticality,
+                            Direction = d.Direction,
+                            Days = new List<LimitStatDays>()
+                        };
+                    }
+                    stat.Days.Add(new LimitStatDays { Day = d.Day, NumberDeviations = d.NumberDeviations, DurationHours = d.DurationHours });
+                    lastStat = stat;
+                }
+                stats.Add(stat);
+            }
+            return stats;
+        }
+
+        public List<LimitStatsByDay> GetLimitStatsByDayGroupByLevel(List<long> limitIds, DateTime? startTimestamp, DateTime? endTimestamp)
+        {
+            List<LimitStatsByDay> stats = new List<LimitStatsByDay>();
+
+            DateTime startDay = NormalizeStartDay(startTimestamp);
+            DateTime endDay = NormalizeEndDay(startDay, endTimestamp);
+
+            // Build a date array for what SHOULD be in the statistics table for each variable
+            List<DateTime> datetimes = new List<DateTime>();
+            for (DateTime dt = startDay; dt < endDay; dt = dt.AddDays(1))
+                datetimes.Add(dt);
+
+            // Get the unique set of limits
+            var query0 = from lim in _iowLimitRespository.GetAllList()
+                         join l in limitIds on lim.Id equals l
+                         orderby l
+                         select new { LimitId = lim.Id, LevelName = lim.Level.Name, Criticality = lim.Level.Criticality, Direction = lim.Direction };
+            var allLimits = query0.ToList();
+
+            // This query returns the Cartesian product of all limits and dates
+            var query1 = from lim in allLimits
+                         from dt in datetimes
+                         orderby lim.LimitId, dt
+                         select new { LimitId = lim.LimitId, LevelName = lim.LevelName, Criticality = lim.Criticality, Direction = lim.Direction, Day = dt };
+            var allLimitsAndDates = query1.ToList();
+
+            // This query joins the Cartesian product to the stats table, and fills in zeros whenever the stats table lacks a record
+            var query2 = from a in allLimitsAndDates
+                         join s in _iowStatsByDayRepository.GetAllList(p => p.Day >= startDay && p.Day <= endDay)
+                         on new { LimitId = a.LimitId, Day = a.Day } equals new { LimitId = s.IOWLimitId, Day = s.Day } into joinedStats
+                         from t in joinedStats.DefaultIfEmpty(new IOWStatsByDay { NumberDeviations = 0, DurationHours = 0 })
+                         orderby a.LimitId, a.Day
+                         select new { LimitId = a.LimitId, LevelName = a.LevelName, Criticality = a.Criticality, Direction = a.Direction, Day = a.Day, NumberDeviations = t.NumberDeviations, DurationHours = t.DurationHours };
+            var dataset = query2.ToList();
+
+            var query3 = from z in dataset
+                         group z by new { /*z.LimitId,*/ z.LevelName, z.Criticality, /*z.Direction,*/ z.Day } into g
+                         select new { LimitId = 0 /*g.Key.LimitId*/, LevelName = g.Key.LevelName, Criticality = g.Key.Criticality, Direction = Direction.None /*g.Key.Direction*/, Day = g.Key.Day, NumberDeviations = g.Sum(x => x.NumberDeviations), DurationHours = g.Sum(x => x.DurationHours) };
+            var results = query3.ToList();
+
+            if (results != null)
+            {
+                LimitStatsByDay stat = null;
+                LimitStatsByDay lastStat = null;
+                foreach (var d in results)
+                {
+                    if (lastStat == null || lastStat.LimitId != d.LimitId)
+                    {
+                        if (lastStat != null)
+                            stats.Add(stat);
+
+                        stat = new LimitStatsByDay
+                        {
+                            LimitId = d.LimitId,
+                            LevelName = d.LevelName,
+                            Criticality = d.Criticality,
+                            Direction = d.Direction,
+                            Days = new List<LimitStatDays>()
+                        };
+                    }
+                    stat.Days.Add(new LimitStatDays { Day = d.Day, NumberDeviations = d.NumberDeviations, DurationHours = d.DurationHours });
+                    lastStat = stat;
+                }
+                stats.Add(stat);
+            }
+            return stats;
+        }
+
+        public List<LimitStatsByDay> GetLimitStatsByDay(List<IOWVariable> variables, DateTime? startTimestamp, DateTime? endTimestamp)
+        {
+            List<long> limitIds = new List<long>();
+
+            if( variables != null && variables.Count > 0 )
+            {
+                foreach(IOWVariable variable in variables)
+                {
+                    if( variable.IOWLimits != null && variable.IOWLimits.Count > 0 )
+                    {
+                        foreach (IOWLimit limit in variable.IOWLimits)
+                            limitIds.Add(limit.Id);
+                    }
+                }
+            }
+            return GetLimitStatsByDay(limitIds, startTimestamp, endTimestamp);
+        }
+
+        private List<LimitStatsByDay> GetLimitStatsOneLimit(IOWLimit limit, DateTime startDay, DateTime endDay)
+        {
+            List<LimitStatsByDay> stats = new List<LimitStatsByDay>();
+
+            // Build a date array for what SHOULD be in the statistics table for each variable
+            List<DateTime> datetimes = new List<DateTime>();
+            for (DateTime dt = startDay; dt < endDay; dt = dt.AddDays(1))
+                datetimes.Add(dt);
+
+            // This query returns the Cartesian product of all limits and dates
+            var query1 = from lim in _iowLimitRespository.GetAllList(p => p.Id == limit.Id)
+                        from dt in datetimes
+                        orderby lim.Id, dt
+                        select new { LimitId = lim.Id, LevelName = lim.Level.Name, Criticality = lim.Level.Criticality, Direction = lim.Direction, Day = dt };
+            var allLimitsAndDates = query1.ToList();
+
+            // This query joins the Cartesian product to the stats table, and fills in zeros whenever the stats table lacks a record
+            var query2 = from a in allLimitsAndDates
+                         join s in _iowStatsByDayRepository.GetAllList(p => p.Day >= startDay && p.Day <= endDay)
+                         on new { LimitId = a.LimitId, Day = a.Day } equals new { LimitId = s.IOWLimitId, Day = s.Day } into joinedStats
+                         from t in joinedStats.DefaultIfEmpty( new IOWStatsByDay { NumberDeviations=0, DurationHours=0 })
+                         orderby a.LimitId, a.Day
+                         select new { LimitId=a.LimitId, LevelName=a.LevelName, Criticality=a.Criticality, Direction=a.Direction, Day=a.Day, NumberDeviations=t.NumberDeviations,  DurationHours=t.DurationHours};
+            var results = query2.ToList();
+
+            if( results != null )
+            {
+                LimitStatsByDay stat = null;
+                LimitStatsByDay lastStat = null;
+                foreach(var d in results)
+                {
+                    if( lastStat == null || lastStat.LimitId != d.LimitId )
+                    {
+                        if (lastStat != null)
+                            stats.Add(stat);
+
+                        stat = new LimitStatsByDay
+                        {
+                            LimitId = d.LimitId,
+                            LevelName = d.LevelName,
+                            Criticality = d.Criticality,
+                            Direction = d.Direction,
+                            Days = new List<LimitStatDays>()
+                        };
+                    }
+                    stat.Days.Add(new LimitStatDays { Day = d.Day, NumberDeviations = d.NumberDeviations, DurationHours = d.DurationHours });
+                    lastStat = stat;
+                }
+                stats.Add(stat);
+            }
+            return stats;
+        }
+
 
         /*
          * CalculateStatisticsForAllLimits()
@@ -786,8 +1028,8 @@ namespace AssetManager.DomainServices
 
             // The start and end times must be at midnight. Limit the time period to the last 60 days.
             // Default calculations to today.
-            DateTime startDay = CalculateStatisticsNormalizeStartDay(startTimestamp);
-            DateTime endDay = CalculateStatisticsNormalizeEndDay(startDay, endTimestamp);
+            DateTime startDay = NormalizeStartDay(startTimestamp);
+            DateTime endDay = NormalizeEndDay(startDay, endTimestamp);
 
             // Calculate statistics for each limit
             List<IOWLimit> allLimits = GetAllLimits();
@@ -826,8 +1068,8 @@ namespace AssetManager.DomainServices
             // Validation must be done by the caller.
             // The start and end times must be at midnight. Limit the time period to the last 60 days.
             // Default calculations to today.
-            DateTime startDay = CalculateStatisticsNormalizeStartDay(startTimestamp);
-            DateTime endDay = CalculateStatisticsNormalizeEndDay(startDay, endTimestamp);
+            DateTime startDay = NormalizeStartDay(startTimestamp);
+            DateTime endDay = NormalizeEndDay(startDay, endTimestamp);
 
             // Get any stats that already exist for the time period of interest, and zero out the data.
             // Do this before getting the deviations because it is possible that there are not any deviations, in which case
@@ -871,34 +1113,55 @@ namespace AssetManager.DomainServices
                         endDeviation = DateTime.Now;
 
                     // Process this deviation until we run out of days.
+                    bool insertNewRecord = false;
                     while ( startDeviation < endDeviation )
                     {
                         endDay = startDay.AddDays(1);
                         double durationHours = ((endDeviation <= endDay ? endDeviation : endDay) - startDeviation).TotalHours;
 
-                        // Look for an already existing stat record to update
-                        if (stat == null || stat.Day != startDay)
-                            stat = allStats.FirstOrDefault(p => p.Day == startDay);
-
-                        bool insertNewRecord = false;
-                        if (stat == null)
+                        // If we already have a stat record (from earlier in the loop) and it was for a different time period and it was created here,
+                        // then insert it and start over. Otherwise, keep the last stat record as we might want to reuse it.
+                        if (stat != null && stat.Day != startDay && insertNewRecord)
                         {
-                            stat = new IOWStatsByDay { IOWLimitId = limit.Id, Day = startDay, NumberDeviations = 0, DurationHours = 0, TenantId = limit.TenantId };
-                            insertNewRecord = true;
+                            _iowStatsByDayRepository.Insert(stat);
+                            allStats.Add(stat);
+                            stat = null;
+                            insertNewRecord = false;
                         }
+
+                        // Look for an already existing stat record to update.
+                        // If we do not already have a stat record OR the dates don't match, look for an existing one in the database
+                        // If we can't find a stat record in the database, then create a new record. We'll insert it later.
+                        if (stat == null || stat.Day != startDay)
+                        {
+                            stat = allStats.FirstOrDefault(p => p.Day == startDay);
+                            if (stat == null)
+                            {
+                                stat = new IOWStatsByDay { IOWLimitId = limit.Id, Day = startDay, NumberDeviations = 0, DurationHours = 0, TenantId = limit.TenantId };
+                                insertNewRecord = true;
+                            }
+                            else
+                                insertNewRecord = false;
+                        }
+                        else
+                            insertNewRecord = false;
+
 
                         // Update the stat record with new information
                         stat.NumberDeviations++;
                         stat.DurationHours += durationHours;
                         numberRecordsUpdated++;
 
-                        if (insertNewRecord)
-                            _iowStatsByDayRepository.Insert(stat);
-
                         // Move to the next day. Look to see if this deviation slides into the following day
                         startDay = startDay.AddDays(1);
                         endDay = startDay.AddDays(1);
                         startDeviation = startDay;
+                    }
+                    // Handle the last record, if any
+                    if (insertNewRecord)
+                    {
+                        _iowStatsByDayRepository.Insert(stat);
+                        allStats.Add(stat);
                     }
                     // ABP will automatically update open records, so no need to call the Update() method on IOWStatByDay.
                 } // foreach(IOWDeviation dev in deviations)
@@ -910,7 +1173,7 @@ namespace AssetManager.DomainServices
         /* Translate an optional, arbitrary start time to a normalized start day that is timestamped at midnight.
          * Basically we round back and limit the time period to 60 days.
          */
-        private DateTime CalculateStatisticsNormalizeStartDay(DateTime? startTimestamp)
+        public DateTime NormalizeStartDay(DateTime? startTimestamp)
         {
             DateTime startDay = startTimestamp.HasValue ? startTimestamp.Value.Date : DateTime.Now.Date;
             if (startDay < DateTime.Now.AddDays(-60))
@@ -919,12 +1182,12 @@ namespace AssetManager.DomainServices
             return startDay;
         }
 
-        private DateTime CalculateStatisticsNormalizeEndDay(DateTime startDay, DateTime? endTimestamp)
+        public DateTime NormalizeEndDay(DateTime startDay, DateTime? endTimestamp)
         {
             DateTime endDay = endTimestamp.HasValue ? endTimestamp.Value : DateTime.Now;
             if (endDay != endDay.Date)
                 endDay = endDay.AddDays(1).Date;
-            if (endDay < startDay || endDay > DateTime.Now.AddDays(1).Date)
+            if (endDay <= startDay || endDay > DateTime.Now.AddDays(1).Date)
                 endDay = DateTime.Now.AddDays(1).Date;
             return endDay;
         }

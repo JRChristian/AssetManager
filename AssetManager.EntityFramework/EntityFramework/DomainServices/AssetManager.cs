@@ -208,6 +208,51 @@ namespace AssetManager.EntityFramework.DomainServices
             return success;
         }
 
+        public List<Asset> GetAssetChildren(long? id, string name, bool includeParent)
+        {
+            Asset asset = null;
+            List<Asset> children = new List<Asset>();
+
+            if (id.HasValue)
+                asset = GetAsset(id.Value);
+            else if (!string.IsNullOrEmpty(name))
+                asset = GetAsset(name);
+
+            if( asset != null )
+            {
+                // In some cases the caller will want the parent added to the list of children
+                if (includeParent)
+                    children.Add(asset);
+
+                // We have a parent asset. Find it in the hierarchy.
+                AssetHierarchy parentNode = _assetHierarchyRepository.FirstOrDefault(p => p.AssetId == asset.Id);
+                if( parentNode != null )
+                {
+                    List<AssetHierarchy> childNodes = _assetHierarchyRepository.GetAllList(p => p.ParentAssetHierarchyId == parentNode.Id).ToList();
+                    if( childNodes != null && childNodes.Count > 0 )
+                    {
+                        foreach (AssetHierarchy child in childNodes)
+                            children.Add(child.Asset);
+                    }
+                }
+                else
+                {
+                    // It is not in the hierarchy, and therefore does not have children
+                }
+            }
+            else
+            {
+                // No parent asset is given. Select all assets in the hierarchy that do not have a parent.
+                List<AssetHierarchy> assetsWithoutParent = _assetHierarchyRepository.GetAllList(p => !p.ParentAssetHierarchyId.HasValue);
+                if( assetsWithoutParent != null && assetsWithoutParent.Count > 0 )
+                {
+                    foreach (AssetHierarchy child in assetsWithoutParent)
+                        children.Add(child.Asset);
+                }
+            }
+            return children;
+        }
+
         public bool InsertOrUpdateAssetHierarchy(Asset childAsset, Asset parentAsset)
         {
             /* The input includes a parent and child. The child exists; the parent might not.

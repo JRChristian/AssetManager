@@ -6,7 +6,6 @@
         '$scope', '$location', '$stateParams', 'abp.services.app.iowVariable',
         function ($scope, $location, $stateParams, variableService) {
             var vm = this;
-
             vm.localize = abp.localization.getSource('AssetManager');
 
             vm.variable = {

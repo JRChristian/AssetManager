@@ -58,7 +58,18 @@ namespace AssetManager.DomainServices
         List<VariableDeviation> GetDeviationSummary(bool includeAllVariables, int maxCriticality, double hoursBack);
         DetectDeviationsOut DetectDeviations(Tag tag, DateTime startTimestamp, DateTime endTimestamp);
         void ResetLastDeviationStatus();
+
+        // Statistics
+        List<LimitStatsByDay> GetLimitStatsByDay(IOWLimit limit, DateTime? startTimestamp, DateTime? endTimestamp);
+        List<LimitStatsByDay> GetLimitStatsByDay(IOWVariable variable, DateTime? startTimestamp, DateTime? endTimestamp);
+        List<LimitStatsByDay> GetLimitStatsByDay(long? variableId, string variableName, DateTime? startTimestamp, DateTime? endTimestamp);
+        List<LimitStatsByDay> GetLimitStatsByDay(List<long> limitIds, DateTime? startTimestamp, DateTime? endTimestamp);
+        List<LimitStatsByDay> GetLimitStatsByDay(List<IOWVariable> variables, DateTime? startTimestamp, DateTime? endTimestamp);
+        List<LimitStatsByDay> GetLimitStatsByDayGroupByLevel(List<long> limitIds, DateTime? startTimestamp, DateTime? endTimestamp);
         int CalculateStatisticsForAllLimits(DateTime? startTimestamp, DateTime? endTimestamp);
         int CalculateStatisticsForOneLimit(IOWLimit limit, DateTime? startTimestamp, DateTime? endTimestamp);
+
+        DateTime NormalizeStartDay(DateTime? startTimestamp);
+        DateTime NormalizeEndDay(DateTime startDay, DateTime? endTimestamp);
     }
 }

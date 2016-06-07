@@ -12,10 +12,15 @@
         <div class="row">
             <uib-tabset active="active">
                 <uib-tab index="0" heading="General">
-                    <p><strong>@L("VariableName")</strong>: {{vm.variable.name}}</p>
-                    <p><strong>@L("TagName")</strong>: {{vm.variable.tagName}}</p>
-                    <p><strong>@L("Description")</strong>: {{vm.variable.description}}</p>
-                    <p><strong>@L("UOM")</strong>: {{vm.variable.uom}}</p>
+                    <div class="col-sm-6">
+                        <p><strong>@L("VariableName")</strong>: {{vm.variable.name}}</p>
+                        <p><strong>@L("TagName")</strong>: {{vm.variable.tagName}}</p>
+                        <p><strong>@L("Description")</strong>: {{vm.variable.description}}</p>
+                        <p><strong>@L("UOM")</strong>: {{vm.variable.uom}}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="chartContainer" style="width:100%; height:300px;"></div>
+                    </div>
                 </uib-tab>
                 <uib-tab index="$index + 1" ng-repeat="limit in vm.variable.limits">
                     <uib-tab-heading>{{limit.criticality}}-{{limit.levelName}}-{{limit.direction | direction}} <span class="{{vm.limitClass[vm.variable.limits[$index].criticality]}}">{{limit.deviations.length}}</span></uib-tab-heading>

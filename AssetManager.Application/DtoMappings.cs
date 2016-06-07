@@ -32,6 +32,9 @@ namespace AssetManager
             Mapper.CreateMap<AssetVariableCombinations, AssetVariableDto>();
             Mapper.CreateMap<AssetDeviationSummary, AssetLevelTimeDto>();
             Mapper.CreateMap<DeviationDetails, DeviationDetailDto>();
+            Mapper.CreateMap<AssetLimitStatsByDay, AssetLimitStatsByDayDto>();
+            Mapper.CreateMap<LimitStatsByDay, LimitStatsByDayDto>();
+            Mapper.CreateMap<LimitStatDays, LimitStatDaysDto>();
         }
     }
 }

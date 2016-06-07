@@ -18,11 +18,30 @@
                 limits: []
             };
 
+            vm.canvasChart = null;
+
             abp.ui.setBusy(
                 null,
                 deviationService.getVariableDeviations({ Id: vm.variable.id })
                     .success(function (data) {
                         vm.variable = data;
+                    })
+                );
+
+            // Set the start day to 30 days ago
+            vm.startDay = new Date();
+            vm.startDay.setDate(vm.startDay.getDate() - 30);
+            vm.endDay = new Date();
+
+            abp.ui.setBusy(
+                null,
+                deviationService.getLimitStatsChartByDay({ VariableId: vm.variable.id, StartTimestamp: vm.startDay })
+                    .success(function (data) {
+                        vm.startDay = data.startTimestamp;
+                        vm.endDay = data.endTimestamp;
+                        vm.canvasChart = new CanvasJS.Chart("chartContainer", { data: [] });
+                        vm.canvasChart.options = data.canvasJS;
+                        vm.canvasChart.render();
                     })
                 );
         }

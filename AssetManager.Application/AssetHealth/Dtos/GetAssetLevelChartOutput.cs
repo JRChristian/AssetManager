@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using AssetManager.Tags.Dtos;
+using AssetManager.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,6 @@ namespace AssetManager.AssetHealth.Dtos
         public DateTime EndTimestamp { get; set; }
         public int NumberPeriods { get; set; }
         public int HoursInPeriod { get; set; }
-        public CanvasJSHorizontalBarDto CanvasJS { get; set; }
+        public CanvasJSHorizontalBar CanvasJS { get; set; }
     }
 }

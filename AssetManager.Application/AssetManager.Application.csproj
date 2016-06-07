@@ -109,8 +109,11 @@
   <ItemGroup>
     <Compile Include="AssetHealth\AssetHealthAppService.cs" />
     <Compile Include="AssetHealth\Dtos\AssetLevelTimeDto.cs" />
+    <Compile Include="AssetHealth\Dtos\AssetLimitStatsByDayDto.cs" />
     <Compile Include="AssetHealth\Dtos\AssetVariableArrayDto.cs" />
-    <Compile Include="AssetHealth\Dtos\CanvasJSHorizontalBarDto.cs" />
+    <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayInput.cs" />
+    <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayOutput.cs" />
+    <Compile Include="Utilities\CanvasJSHorizontalBar.cs" />
     <Compile Include="AssetHealth\Dtos\DeleteAssetVariableListInput.cs" />
     <Compile Include="AssetHealth\Dtos\DeleteAssetVariableListOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetHierarchyWithVariablesAsListInput.cs" />
@@ -119,6 +122,8 @@
     <Compile Include="AssetHealth\Dtos\GetAssetLevelChartOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLevelTimeSummaryInput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLevelTimeSummaryOutput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLimitStatsByDayInput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLimitStatsByDayOutput.cs" />
     <Compile Include="AssetHealth\IAssetHealthAppService.cs" />
     <Compile Include="AssetManagerApplicationModule.cs" />
     <Compile Include="AssetManagerAppServiceBase.cs" />
@@ -165,6 +170,8 @@
     <Compile Include="IOWs\Dtos\DetectDeviationsOutput.cs" />
     <Compile Include="IOWs\Dtos\DeviationDto.cs" />
     <Compile Include="IOWs\Dtos\DeviationSummaryDto.cs" />
+    <Compile Include="IOWs\Dtos\GetLimitStatsByDayInput.cs" />
+    <Compile Include="IOWs\Dtos\GetLimitStatsByDayOutput.cs" />
     <Compile Include="IOWs\Dtos\GetVariableLimitCurrentInput.cs" />
     <Compile Include="IOWs\Dtos\GetVariableLimitCurrentOutput.cs" />
     <Compile Include="IOWs\Dtos\GetVariableDeviationsInput.cs" />
@@ -174,6 +181,7 @@
     <Compile Include="IOWs\Dtos\LimitDeviationDto.cs" />
     <Compile Include="IOWs\Dtos\CalculateStatisticsForAllLimitsInput.cs" />
     <Compile Include="IOWs\Dtos\CalculateStatisticsForAllLimitsOutput.cs" />
+    <Compile Include="IOWs\Dtos\LimitStatsByDayDto.cs" />
     <Compile Include="IOWs\Dtos\VariableLimitStatusDto.cs" />
     <Compile Include="IOWs\IIowDeviationAppService.cs" />
     <Compile Include="IOWs\Dtos\UpdateLimitInput.cs" />
@@ -219,7 +227,7 @@
     <Compile Include="Tags\Dtos\GetTagInput.cs" />
     <Compile Include="Tags\Dtos\GetTagOutput.cs" />
     <Compile Include="IOWs\Dtos\LevelDto.cs" />
-    <Compile Include="Tags\Dtos\CanvasJSDto.cs" />
+    <Compile Include="Utilities\CanvasJSDto.cs" />
     <Compile Include="Tags\Dtos\PostTagDataBulkOutput.cs" />
     <Compile Include="Tags\Dtos\TagDataBulkDto.cs" />
     <Compile Include="Tags\Dtos\TagDataChartDto.cs" />
@@ -252,6 +260,7 @@
     <Compile Include="Sessions\SessionAppService.cs" />
     <Compile Include="Users\Dto\ProhibitPermissionInput.cs" />
     <Compile Include="Users\UserAppService.cs" />
+    <Compile Include="Utilities\CanvasJSVerticalBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

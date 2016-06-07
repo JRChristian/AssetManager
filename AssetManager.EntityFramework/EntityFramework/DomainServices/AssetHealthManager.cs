@@ -233,5 +233,40 @@ namespace AssetManager.EntityFramework.DomainServices
             } // if( allLimits != null && allLimits.Count > 0 )
             return output;
         }
+
+        public List<AssetLimitStatsByDay> GetAssetLimitStatsByDay(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp)
+        {
+            List<AssetLimitStatsByDay> assetLimits = new List<AssetLimitStatsByDay>();
+
+            // Get all top level children of the specified asset. Add the parent asset (specified in the arguments) to the list as well.
+            List<Asset> assets = _assetManager.GetAssetChildren(assetId, assetName, true);
+
+            if( assets != null )
+            {
+                foreach( Asset asset in assets )
+                {
+                    AssetLimitStatsByDay assetLimit = new AssetLimitStatsByDay { AssetId = asset.Id, AssetName = asset.Name, Limits = new List<LimitStatsByDay>() };
+
+                    // Get the list of unique limits for this asset
+                    List<long> limitIds = (from av in _assetVariableRepository.GetAllList()
+                                join l in _iowManager.GetAllLimits() on av.IOWVariableId equals l.IOWVariableId
+                                where av.AssetId == asset.Id
+                                select l.Id).Distinct().ToList();
+
+                    // Get the stats for these limits and add them to the output. Group statistics by level name and criticality. (This does something different only if this asset has multiple variables.)
+                    if ( limitIds != null )
+                    {
+                        List<LimitStatsByDay> stats = _iowManager.GetLimitStatsByDayGroupByLevel(limitIds, startTimestamp, endTimestamp);
+                        if( stats != null)
+                        {
+                            foreach( LimitStatsByDay s in stats)
+                                assetLimit.Limits.Add(s);
+                        }
+                    }
+                    assetLimits.Add(assetLimit);
+                }
+            }
+            return assetLimits;
+        }
     }
 }
