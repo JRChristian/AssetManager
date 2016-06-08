@@ -32,5 +32,6 @@ namespace AssetManager.Assets
 
         GetAssetHierarchyAsListOutput GetAssetHierarchyAsList(GetAssetHierarchyAsListInput input);
         UpdateAssetHierarchyOutput UpdateAssetHierarchy(UpdateAssetHierarchyInput input);
+        GetAssetRelativesOutput GetAssetRelatives(GetAssetRelativesInput input);
     }
 }

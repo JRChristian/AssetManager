@@ -30,8 +30,8 @@ namespace AssetManager.Utilities
     public class CanvasJSVerticalBarAxisY
     {
         public string title { get; set; }
-        public double minimum { get; set; }
-        public double maximum { get; set; }
+        public double? minimum { get; set; }
+        public double? maximum { get; set; }
     }
     public class CanvasJSVerticalBarData
     {

@@ -572,9 +572,16 @@ namespace AssetManager.IOWs
                     severityMessage1 = limit.Level.Name;
                     severityMessage2 = localize.GetString("IowMsgLast24Hours");
                     if (limit.Level.Criticality == 1)
-                        severityClass = "label label-warning";
+                        severityClass = "label label-danger";
                     else if (limit.Level.Criticality == 2)
-                        severityClass = "label label-default";
+                        severityClass = "label label-warning";
+                }
+                else if (limit.LastDeviationEndTimestamp.HasValue)
+                {
+                    double days = Math.Round((DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalDays,0);
+                    severityMessage1 = "";
+                    severityMessage2 = String.Format(localize.GetString("IowMsgNotRecent"), days);
+                    severityClass = "";
                 }
 
                 output.Add(new VariableLimitStatusDto

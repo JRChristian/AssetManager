@@ -234,18 +234,35 @@ namespace AssetManager.EntityFramework.DomainServices
             return output;
         }
 
-        public List<AssetLimitStatsByDay> GetAssetLimitStatsByDay(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp)
+        public List<AssetLimitStatsByDay> GetAssetLimitStatsByDay(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, bool includeAsset, bool includeChildren)
         {
-            List<AssetLimitStatsByDay> assetLimits = new List<AssetLimitStatsByDay>();
+            List<Asset> assets = null;
 
-            // Get all top level children of the specified asset. Add the parent asset (specified in the arguments) to the list as well.
-            List<Asset> assets = _assetManager.GetAssetChildren(assetId, assetName, true);
+            // Get all top level children of the specified asset. Possibly add the parent asset (specified in the arguments) to the list as well.
+            if( includeChildren )
+                assets = _assetManager.GetAssetChildren(assetId, assetName, includeAsset);
+            else
+            {
+                Asset oneAsset = _assetManager.GetAsset(assetId, assetName);
+                if( oneAsset != null )
+                {
+                    assets = new List<Asset>();
+                    assets.Add(oneAsset);
+                }
+            }
 
+            List<AssetLimitStatsByDay> assetLimits = null;
             if( assets != null )
             {
-                foreach( Asset asset in assets )
+                assetLimits = new List<AssetLimitStatsByDay>();
+                foreach ( Asset asset in assets )
                 {
-                    AssetLimitStatsByDay assetLimit = new AssetLimitStatsByDay { AssetId = asset.Id, AssetName = asset.Name, Limits = new List<LimitStatsByDay>() };
+                    AssetLimitStatsByDay assetLimit = new AssetLimitStatsByDay
+                    {
+                        AssetId = asset.Id,
+                        AssetName = asset.Name,
+                        Limits = new List<LimitStatsByDay>()
+                    };
 
                     // Get the list of unique limits for this asset
                     List<long> limitIds = (from av in _assetVariableRepository.GetAllList()
@@ -254,13 +271,28 @@ namespace AssetManager.EntityFramework.DomainServices
                                 select l.Id).Distinct().ToList();
 
                     // Get the stats for these limits and add them to the output. Group statistics by level name and criticality. (This does something different only if this asset has multiple variables.)
-                    if ( limitIds != null )
+                    if ( limitIds != null && limitIds.Count > 0 )
                     {
-                        List<LimitStatsByDay> stats = _iowManager.GetLimitStatsByDayGroupByLevel(limitIds, startTimestamp, endTimestamp);
-                        if( stats != null)
+                        List<LimitStatsByDay> limitStats = _iowManager.GetLimitStatsByDayGroupByLevel(limitIds, startTimestamp, endTimestamp);
+                        if( limitStats != null && limitStats.Count > 0 )
                         {
-                            foreach( LimitStatsByDay s in stats)
-                                assetLimit.Limits.Add(s);
+                            foreach( LimitStatsByDay ls in limitStats)
+                            {
+                                LimitStatsByDay onels = new LimitStatsByDay
+                                {
+                                    LimitId = ls.LimitId,
+                                    LevelName = ls.LevelName,
+                                    Criticality = ls.Criticality,
+                                    Direction = ls.Direction,
+                                    Days = new List<LimitStatDays>()
+                                };
+                                if( ls.Days != null && ls.Days.Count > 0 )
+                                {
+                                    foreach(LimitStatDays oneDay in ls.Days )
+                                        onels.Days.Add(new LimitStatDays { Day = oneDay.Day, NumberDeviations = oneDay.NumberDeviations, DurationHours = oneDay.DurationHours });
+                                }
+                                assetLimit.Limits.Add(onels);
+                            }
                         }
                     }
                     assetLimits.Add(assetLimit);

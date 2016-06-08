@@ -46,7 +46,7 @@ namespace AssetManager.AssetHealth
                 output.AssetVariables = new List<AssetVariableDto>();
                 foreach (AssetVariable av in assetVariables)
                 {
-                    output.AssetVariables.Add(new AssetVariableDto { Id = av.Id, AssetName = av.Asset.Name, VariableName = av.IOWVariable.Name });
+                    output.AssetVariables.Add(new AssetVariableDto { Id = av.Id, AssetId = av.AssetId, AssetName = av.Asset.Name, VariableId = av.IOWVariableId, VariableName = av.IOWVariable.Name });
                 }
             }
             return output;
@@ -177,7 +177,7 @@ namespace AssetManager.AssetHealth
             output.StartTimestamp = _iowManager.NormalizeStartDay(input.StartTimestamp);
             output.EndTimestamp = _iowManager.NormalizeEndDay(output.StartTimestamp, input.EndTimestamp);
 
-            List<AssetLimitStatsByDay> assetLimits = _assetHealthManager.GetAssetLimitStatsByDay(input.AssetId, input.AssetName, input.StartTimestamp, input.EndTimestamp);
+            List<AssetLimitStatsByDay> assetLimits = _assetHealthManager.GetAssetLimitStatsByDay(input.AssetId, input.AssetName, input.StartTimestamp, input.EndTimestamp, true, true);
 
             if (assetLimits != null)
                 output.AssetLimits = assetLimits.MapTo<List<AssetLimitStatsByDayDto>>();
@@ -185,7 +185,76 @@ namespace AssetManager.AssetHealth
             return output;
         }
 
-        public GetAssetLevelChartOutput GetAssetLevelChartCanvasJS(GetAssetLevelChartInput input)
+        public GetAssetLimitChartByDayOutput GetAssetLimitChartByDay(GetAssetLimitChartByDayInput input)
+        {
+            // The color index corresponds to the criticality
+            string[] colors =
+            {
+                "rgba(0,75,141,0.7)",   // 0 - blue
+                "rgba(255,0,0,0.7)",    // 1 - red
+                "rgba(255,102,0,0.7)",  // 2 - orange
+                "darkgreen",            // 3 - green
+                "rgba(51,51,51,0.7)",   // 4 - gray
+                "rgba(100,100,100,0.7)" // 5 - lighter gray
+            };
+
+            Asset asset = _assetManager.GetAsset(input.AssetId, input.AssetName);
+            GetAssetLimitChartByDayOutput output = new GetAssetLimitChartByDayOutput
+            {
+                AssetId = (asset != null) ? asset.Id : 0,
+                AssetName = (asset != null) ? asset.Name : "",
+                StartTimestamp = _iowManager.NormalizeStartDay(input.StartTimestamp),
+                NumberLimits = 0,
+                CanvasJS = new CanvasJSVerticalBar
+                {
+                    exportEnabled = true,
+                    title = new CanvasJSVerticalBarTitle { text = (asset != null) ? (asset.Name + ": " + asset.Description) : "" },
+                    axisX = new CanvasJSVerticalBarAxisX { },
+                    axisY = new CanvasJSVerticalBarAxisY { title = "Deviation hours" },
+                    data = new List<CanvasJSVerticalBarData>()
+                }
+            };
+            output.EndTimestamp = _iowManager.NormalizeEndDay(output.StartTimestamp, input.EndTimestamp);
+
+            List<AssetLimitStatsByDay> assetLimits = _assetHealthManager.GetAssetLimitStatsByDay(input.AssetId, input.AssetName, input.StartTimestamp, input.EndTimestamp, true, false);
+
+            if (assetLimits != null && assetLimits.Count > 0 && assetLimits[0].Limits != null && assetLimits[0].Limits.Count > 0 )
+            {
+                // There should be exactly one asset
+                // Each limit will be its own series
+                output.NumberLimits = assetLimits[0].Limits.Count;
+                foreach (LimitStatsByDay limit in assetLimits[0].Limits)
+                {
+                    CanvasJSVerticalBarData data = new CanvasJSVerticalBarData
+                    {
+                        name = limit.Criticality.ToString() + " - " + limit.LevelName,
+                        type = "stackedColumn",
+                        legendText = limit.Criticality.ToString() + " - " + limit.LevelName,
+                        showInLegend = true,
+                        color = colors[limit.Criticality],
+                        dataPoints = new List<CanvasJSVerticalBarDataPoints>()
+                    };
+
+                    // Now add the daily records
+                    if (limit.Days != null)
+                    {
+                        foreach (LimitStatDays day in limit.Days)
+                        {
+                            CanvasJSVerticalBarDataPoints point = new CanvasJSVerticalBarDataPoints
+                            {
+                                y = day.DurationHours,
+                                label = day.Day.ToString("m")
+                            };
+                            data.dataPoints.Add(point);
+                        }
+                    }
+                    output.CanvasJS.data.Add(data);
+                }
+            }
+            return output;
+        }
+
+    public GetAssetLevelChartOutput GetAssetLevelChartCanvasJS(GetAssetLevelChartInput input)
         {
             var localize = _localizationManager.GetSource("AssetManager");
 

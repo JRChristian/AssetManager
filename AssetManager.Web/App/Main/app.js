@@ -68,6 +68,11 @@
                     templateUrl: '/App/Main/views/assethealth/assetlevelbarchart.cshtml',
                     menu: 'AssetLevelBarChart' //Matches to menu name in AssetManagerNavigationProvider
                 })
+                .state('assetlimitview', {
+                    url: '/assetlimitview?assetId',
+                    templateUrl: '/App/Main/views/assethealth/assetlimitview.cshtml',
+                    menu: 'AssetLimitView' //Matches to menu name in AssetManagerNavigationProvider
+                })
                 .state('assetnew', {
                     url: '/assetnew',
                     templateUrl: '/App/Main/views/asset/new.cshtml',

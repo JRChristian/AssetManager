@@ -208,15 +208,27 @@ namespace AssetManager.EntityFramework.DomainServices
             return success;
         }
 
+        public Asset GetAssetParent(long? id, string name)
+        {
+            Asset parent = null;
+            Asset asset = GetAsset(id, name);
+            if (asset != null )
+            {
+                AssetHierarchy node = _assetHierarchyRepository.FirstOrDefault(p => p.AssetId == asset.Id);
+                if (node != null && node.ParentAssetHierarchyId.HasValue )
+                {
+                    AssetHierarchy parentNode = _assetHierarchyRepository.FirstOrDefault(node.ParentAssetHierarchyId.Value);
+                    if( parentNode != null )
+                        parent = parentNode.Asset;
+                }
+            }
+            return parent;
+        }
+
         public List<Asset> GetAssetChildren(long? id, string name, bool includeParent)
         {
-            Asset asset = null;
+            Asset asset = GetAsset(id, name);
             List<Asset> children = new List<Asset>();
-
-            if (id.HasValue)
-                asset = GetAsset(id.Value);
-            else if (!string.IsNullOrEmpty(name))
-                asset = GetAsset(name);
 
             if( asset != null )
             {

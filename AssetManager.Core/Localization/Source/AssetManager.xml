@@ -93,7 +93,8 @@
     <text name="DeviationCount" value="Number of Violations" />
     <text name="DurationHours" value="Violation Hours" />
     <text name="IowMsgActive" value="active" />
-    <text name="IowMsgLast24Hours" value="last 24 hours" />
+    <text name="IowMsgLast24Hours" value="within last 24 hours" />
+    <text name="IowMsgNotRecent" value="not in last {0} days" />
     <text name="IowBtnDeviations" value="Deviations" />
     <text name="IowTblStartTimestamp" value="Start" />
     <text name="IowTblEndTimestamp" value="End" />
@@ -136,6 +137,8 @@
     <text name="AssetBtnGoToAssetList" value="Asset list view" />
     <text name="AssetBtnExpandHierarchy" value="Expand all" />
     <text name="AssetBtnCollapseHierarchy" value="Collapse all" />
+    <text name="AssetBtnParent" value="Parent" />
+    <text name="AssetBtnChildren" value="Children" />
 
     <text name="AssetMnuAssetVariableAssignment" value="Variable assignment" />
     <text name="AssetMnuAssetVariableList" value="Variable assignment (alt)" />
@@ -152,6 +155,9 @@
     <text name="AssetHealthBtnCancelAssetVariableChanges" value="Cancel" />
     <text name="AssetHealthTblVariableCount" value="Variables" />
     <text name="AssetHealthTblVariableIsUsed" value="In use?" />
+    <text name="AssetHealthTtlLevelBarChart" value="Asset Integrity" />
+    <text name="AssetHealthTtlLimitView" value="Asset Health:" />
+    <text name="AssetHealthMsgAssetHasNLimits" value="limits for" />
     
     <text name="ImgTtlImageList" value="Images" />
     <text name="ImgTtlImageListEdit" value="Edit Images" />

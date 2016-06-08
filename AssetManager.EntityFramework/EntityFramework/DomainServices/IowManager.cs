@@ -921,7 +921,7 @@ namespace AssetManager.DomainServices
                 LimitStatsByDay lastStat = null;
                 foreach (var d in results)
                 {
-                    if (lastStat == null || lastStat.LimitId != d.LimitId)
+                    if (lastStat == null || lastStat.LimitId != d.LimitId || lastStat.LevelName != d.LevelName || lastStat.Criticality != d.Criticality)
                     {
                         if (lastStat != null)
                             stats.Add(stat);

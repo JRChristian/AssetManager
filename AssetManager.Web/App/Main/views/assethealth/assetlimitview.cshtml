@@ -1,0 +1,36 @@
+﻿<div ng-controller="app.views.assethealth.limitview as vm">
+    <div class="container">
+        <div class="row">
+            <h3>@L("AssetHealthTtlLimitView") {{vm.asset.name}}</h3>
+            <p>{{vm.numberLimits}} @L("AssetHealthMsgAssetHasNLimits") {{vm.startDay | momentLocale}} - {{vm.endDay | momentLocale}}</p>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="chartContainer" style="width:100%; height:300px;"></div>
+            </div>
+        </div>
+        <div class="row">
+            <a ui-sref="assetlimitview({ assetId: vm.parentId })" ng-show="vm.parentId > 0" class="btn btn-info btn-sm"><i class="fa fa-arrow-up"></i> @L("AssetBtnParent"): {{vm.parentName}}</a>
+            <div class="btn-group">
+                <button id="childDropdown" type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-show="vm.numberChildren > 0">
+                    <i class="fa fa-arrow-down"></i> @L("AssetBtnChildren") <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="childDropdown">
+                    <li ng-repeat="child in vm.children"><a ui-sref="assetlimitview({ assetId: child.id })"> {{ child.name }}</a></li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <button id="variableDropdown" type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-show="vm.variables.length > 0">
+                    <i class="fa fa-list-alt"></i> @L("Variable") <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="variableDropdown">
+                    <li ng-repeat="x in vm.variables"><a ui-sref="iowvariabledeviations({ Id: x.variableId })"> {{ x.variableName }}</a></li>
+                </ul>
+            </div>
+            <a ui-sref="iowvariablelist" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+            <a ui-sref="assethierarchy" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("AssetBtnGoToAssetHierarchy")</a>
+            <a ui-sref="assetlist" class="btn btn-info btn-sm"><i class="fa fa-tags"></i> @L("AssetBtnGoToAssetList")</a>
+            <a ui-sref="iowlimitstatus" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("IowTtlLimitStatus")</a>
+        </div>
+    </div>
+</div>

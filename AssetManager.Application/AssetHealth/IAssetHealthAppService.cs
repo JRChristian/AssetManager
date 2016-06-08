@@ -17,6 +17,7 @@ namespace AssetManager.AssetHealth
         DeleteAssetVariableListOutput DeleteAssetVariableList(DeleteAssetVariableListInput input);
         GetAssetLevelTimeSummaryOutput GetAssetLevelTimeSummary(GetAssetLevelTimeSummaryInput input);
         GetAssetLimitStatsByDayOutput GetAssetLimitStatsByDay(GetAssetLimitStatsByDayInput input);
+        GetAssetLimitChartByDayOutput GetAssetLimitChartByDay(GetAssetLimitChartByDayInput input);
         GetAssetLevelChartOutput GetAssetLevelChartCanvasJS(GetAssetLevelChartInput input);
     }
 }

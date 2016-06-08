@@ -239,5 +239,19 @@ namespace AssetManager.Assets
             }
             return output;
         }
+
+        public GetAssetRelativesOutput GetAssetRelatives(GetAssetRelativesInput input)
+        {
+            GetAssetRelativesOutput output = new GetAssetRelativesOutput { };
+
+            Asset asset = _assetManager.GetAsset(input.Id, input.Name);
+            if (asset != null)
+            {
+                output.Asset = asset.MapTo<AssetDto>();
+                output.Parent = _assetManager.GetAssetParent(asset.Id, asset.Name).MapTo<AssetDto>();
+                output.Children = _assetManager.GetAssetChildren(asset.Id, asset.Name, false).MapTo<List<AssetDto>>();
+            }
+            return output;
+        }
     }
 }

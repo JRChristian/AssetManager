@@ -111,6 +111,10 @@
     <Compile Include="AssetHealth\Dtos\AssetLevelTimeDto.cs" />
     <Compile Include="AssetHealth\Dtos\AssetLimitStatsByDayDto.cs" />
     <Compile Include="AssetHealth\Dtos\AssetVariableArrayDto.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLimitChartByDayInput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLimitChartByDayOutput.cs" />
+    <Compile Include="Assets\Dtos\GetAssetRelativesInput.cs" />
+    <Compile Include="Assets\Dtos\GetAssetRelativesOutput.cs" />
     <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayInput.cs" />
     <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayOutput.cs" />
     <Compile Include="Utilities\CanvasJSHorizontalBar.cs" />

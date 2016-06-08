@@ -285,6 +285,7 @@
     <Content Include="App\Main\views\admin\useredit.js" />
     <Content Include="App\Main\views\admin\userlist.js" />
     <Content Include="App\Main\views\assethealth\assetlevelbarchart.js" />
+    <Content Include="App\Main\views\assethealth\assetlimitview.js" />
     <Content Include="App\Main\views\assethealth\assetvariableassignment.js" />
     <Content Include="App\Main\views\assethealth\assetvariablelist.js" />
     <Content Include="App\Main\views\asset\assethierarchy.js" />
@@ -466,6 +467,7 @@
     <Content Include="App\Main\views\assethealth\assetvariableassignment.cshtml" />
     <Content Include="App\Main\views\assethealth\assetvariablelist.cshtml" />
     <Content Include="App\Main\views\assethealth\assetlevelbarchart.cshtml" />
+    <Content Include="App\Main\views\assethealth\assetlimitview.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />

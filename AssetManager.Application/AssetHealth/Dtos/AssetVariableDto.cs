@@ -9,7 +9,9 @@ namespace AssetManager.AssetHealth.Dtos
 {
     public class AssetVariableDto : EntityDto<long>
     {
+        public long AssetId { get; set; }
         public string AssetName { get; set; }
+        public long VariableId { get; set; }
         public string VariableName { get; set; }
     }
 }
