@@ -113,6 +113,8 @@
     <Compile Include="AssetHealth\Dtos\AssetVariableArrayDto.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLimitChartByDayInput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLimitChartByDayOutput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLimitCurrentStatusInput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLimitCurrentStatusOutput.cs" />
     <Compile Include="Assets\Dtos\GetAssetRelativesInput.cs" />
     <Compile Include="Assets\Dtos\GetAssetRelativesOutput.cs" />
     <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayInput.cs" />

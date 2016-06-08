@@ -360,6 +360,26 @@ namespace AssetManager.DomainServices
             return output;
         }
 
+        public List<IOWLimit> GetAllLimits(List<long> variableIds)
+        {
+            List<IOWLimit> output = null;
+            if(variableIds != null )
+            {
+                var query = from limit in _iowLimitRespository.GetAll()
+                            join variableId in variableIds on limit.IOWVariableId equals variableId
+                            select limit;
+                var results = query.ToList();
+                if( results != null && results.Count > 0 )
+                {
+                    output = new List<IOWLimit>();
+                    foreach (var r in results)
+                        output.Add(r);
+                }
+
+            }
+            return output;
+        }
+
         public long InsertOrUpdateLimitAndGetId(IOWLimit input)
         {
             IOWLimit limit = null;

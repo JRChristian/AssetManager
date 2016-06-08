@@ -379,6 +379,7 @@
     <Content Include="App\Main\views\home\home.cshtml" />
     <Content Include="App\Main\views\about\about.cshtml" />
     <Content Include="App\Main\web.config" />
+    <Content Include="Images\Steam-Methane-Reformer-photo.jpg" />
     <Content Include="Images\Steam-Methane-Reformer.jpg" />
     <Content Include="log4net.config" />
     <Content Include="App\Main\views\layout\header.cshtml" />

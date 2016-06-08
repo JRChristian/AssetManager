@@ -12,6 +12,7 @@ namespace AssetManager.AssetHealth.Dtos
     {
         public long AssetId { get; set; }
         public string AssetName { get; set; }
+        public string AssetDescription { get; set; }
         public DateTime StartTimestamp { get; set; }
         public DateTime EndTimestamp { get; set; }
         public int NumberLimits { get; set; }
