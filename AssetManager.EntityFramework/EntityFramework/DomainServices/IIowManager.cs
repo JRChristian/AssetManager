@@ -67,10 +67,14 @@ namespace AssetManager.DomainServices
         List<LimitStatsByDay> GetLimitStatsByDay(List<long> limitIds, DateTime? startTimestamp, DateTime? endTimestamp);
         List<LimitStatsByDay> GetLimitStatsByDay(List<IOWVariable> variables, DateTime? startTimestamp, DateTime? endTimestamp);
         List<LimitStatsByDay> GetLimitStatsByDayGroupByLevel(List<long> limitIds, DateTime? startTimestamp, DateTime? endTimestamp);
+        List<LimitStats> GetPerLimitStatsOverTime(List<long> limitIds, DateTime? startTimestamp, DateTime? endTimestamp);
+        List<LevelStats> GetPerLevelStatsOverTime(List<long> limitIds, DateTime? startTimestamp, DateTime? endTimestamp);
+
         int CalculateStatisticsForAllLimits(DateTime? startTimestamp, DateTime? endTimestamp);
         int CalculateStatisticsForOneLimit(IOWLimit limit, DateTime? startTimestamp, DateTime? endTimestamp);
 
         DateTime NormalizeStartDay(DateTime? startTimestamp);
         DateTime NormalizeEndDay(DateTime startDay, DateTime? endTimestamp);
+        DateTime NormalizeEndTimestamp(DateTime? startTimestamp, DateTime? endTimestamp);
     }
 }

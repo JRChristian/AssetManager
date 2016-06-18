@@ -369,16 +369,6 @@ namespace AssetManager.IOWs
         {
             var localize = _localizationManager.GetSource("AssetManager");
 
-            string[] colors =
-            {
-                    "rgba(0,75,141,0.7)",   // 0 - blue
-                    "rgba(255,0,0,0.7)",    // 1 - red
-                    "rgba(255,102,0,0.7)",  // 2 - orange
-                    "darkgreen",            // 3 - green
-                    "rgba(51,51,51,0.7)",   // 4 - gray
-                    "rgba(100,100,100,0.7)" // 5 - lighter gray
-                };
-
             GetIowChartCanvasJSOutput output = new GetIowChartCanvasJSOutput
             {
                 Name = input.Name,
@@ -386,7 +376,7 @@ namespace AssetManager.IOWs
                 TagId = 0,
                 TagName = "",
                 UOM = "",
-                CanvasJS = new CanvasJSDto
+                CanvasJS = new CanvasJS
                 {
                     exportEnabled = true,
                     zoomEnabled = true,
@@ -411,6 +401,7 @@ namespace AssetManager.IOWs
                 
 
                 TagType tagType = variable.Tag.Type.HasValue ? variable.Tag.Type.Value : TagType.Continuous;
+                string hi = ChartColors.Criticality(0);
 
                 output.CanvasJS.title.text = output.Name;
                 output.CanvasJS.axisX.gridThickness = 0;
@@ -422,10 +413,11 @@ namespace AssetManager.IOWs
                     name = variable.Tag.Name,
                     type = tagType == TagType.Continuous ? "line" : "scatter",
                     lineDashType = "solid",
-                    markerColor = colors[0],
+                    lineThickness = tagType == TagType.Continuous ? 2 : 0,
+                    markerColor = ChartColors.Criticality(0),
                     markerType = tagType == TagType.Continuous ? "none" : "circle",
                     xValueType = "dateTime",
-                    color = colors[0],
+                    color = ChartColors.Criticality(0),
                     showInLegend = true,
                     legendText = variable.Tag.Name,
                     dataPoints = new List<CanvasJSDataPoints>()
@@ -474,63 +466,78 @@ namespace AssetManager.IOWs
                 output.CanvasJS.axisX.maximum = maxTimestamp.ToJavaScriptMilliseconds();
                 output.CanvasJS.axisX.valueFormatString = valueFormatString;
 
-                // Add some limit information to the chart. Sort the limits so that high criticality items are last. This helps with area chart shading.
-                List<IOWLimit> allLimits = variable.IOWLimits.OrderByDescending(p => p.Direction).ThenBy(p => p.Level.Criticality).ThenBy(p => p.Level.Name).ToList();
+                // Add some limit information to the chart. Sort the limits from bottom to top, to help with shading. Most critical lower limit should be first, most critical higher limit should be last.
+                List<IOWLimit> allLimits = variable.IOWLimits.OrderBy(p => ((int)p.Direction-2) * (1000-p.Level.Criticality)).ToList();
+
+                // Get the smallest and largest values in the data, including both raw data and limits
+                double maxValue = Math.Max(data.Max(p => p.Value), allLimits.Max(p => p.Value));
+                double minValue = Math.Min(data.Min(p => p.Value), allLimits.Min(p => p.Value));
+
+                // The "rangeArea" chart type needs an upper value for the highest limit. Set that to 10% (based on the range) above the maximum value in the data.
+                double maxLimit = maxValue + 0.10 * (maxValue - minValue);
+
+                bool isFirst = true;
+                IOWLimit lastLimit = null;
+                int lastHighIndex = -1;
                 foreach( IOWLimit limit in allLimits)
                 {
-                    // Get the color for this limit from the colors array.
-                    string color = limit.Level.Criticality > 0 && limit.Level.Criticality < colors.Length
-                        ? colors[limit.Level.Criticality] : colors[colors.Length-1];
-
-                    if(limit.Direction == Direction.High)
+                    // Add this limit to the series.
+                    // The first low limit (if there are any low limits) will be configured as an "area" series, which fills the area under the curve.
+                    // All remaining limits will be configured as "rangeArea" series, which fills the area between two lines.
+                    // For low limits that are configured as "rangeArea", the bottom line (y) is the previous limit and the top line (z) is the current limit.
+                    // For high limits, the bottom line (y) is the current limit and the top line (z) is the next limit (if there is one) or 10% more than the current limit.
+                    output.CanvasJS.data.Add(new CanvasJSData
                     {
-                        output.CanvasJS.data.Add(new CanvasJSData
-                        {
-                            name = limit.Level.Name,
-                            type = "line",
-                            lineDashType = "solid",
-                            markerColor = color,
-                            markerType = "none",
-                            xValueType = "dateTime",
-                            color = color,
-                            showInLegend = true,
-                            legendText = string.Format("{0}-", limit.Level.Criticality) + limit.Level.Name + "-" + localize.GetString("DirectionHigh"),
-                            dataPoints = new List<CanvasJSDataPoints>()
-                        });
+                        name = limit.Level.Name,
+                        type = (isFirst && limit.Direction == Direction.Low) ?  "area" : "rangeArea",
+                        lineDashType = "solid",
+                        lineThickness = 0,
+                        markerColor = ChartColors.Criticality(limit.Level.Criticality),
+                        markerType = "none",
+                        xValueType = "dateTime",
+                        color = ChartColors.Criticality(limit.Level.Criticality),
+                        showInLegend = true,
+                        legendText = string.Format("{0}-", limit.Level.Criticality) + limit.Level.Name + "-" 
+                            + localize.GetString(limit.Direction == Direction.Low ? "DirectionLow" : "DirectionHigh"),
+                        dataPoints = new List<CanvasJSDataPoints>()
+                    });
 
-                        // Charting time is in JavaScript ticks (milliseconds) since January 1, 1970
-                        // C# datetime is in ticks (milliseconds) since January 1, 0000
-                        int index = output.CanvasJS.data.Count - 1;
+                    // Charting time is in JavaScript ticks (milliseconds) since January 1, 1970
+                    // C# datetime is in ticks (milliseconds) since January 1, 0000
+                    int index = output.CanvasJS.data.Count - 1;
+
+                    if( isFirst && limit.Direction == Direction.Low )
+                    {
                         output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
                             { x = minTimestamp.ToJavaScriptMilliseconds(), y = limit.Value });
                         output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
                             { x = maxTimestamp.ToJavaScriptMilliseconds(), y = limit.Value });
                     }
-
-                    else if (limit.Direction == Direction.Low)
+                    else if( limit.Direction == Direction.Low )
                     {
-                        output.CanvasJS.data.Add(new CanvasJSData
-                        {
-                            name = limit.Level.Name,
-                            type = "area",
-                            lineDashType = "solid",
-                            markerColor = color,
-                            markerType = "none",
-                            xValueType = "dateTime",
-                            color = color,
-                            showInLegend = true,
-                            legendText = string.Format("{0}-", limit.Level.Criticality) + limit.Level.Name + "-" + localize.GetString("DirectionLow"),
-                            dataPoints = new List<CanvasJSDataPoints>()
-                        });
-
-                        // Charting time is in JavaScript ticks (milliseconds) since January 1, 1970
-                        // C# datetime is in ticks (milliseconds) since January 1, 0000
-                        int index = output.CanvasJS.data.Count - 1;
                         output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
-                            { x = minTimestamp.ToJavaScriptMilliseconds(), y = limit.Value });
+                        { x = minTimestamp.ToJavaScriptMilliseconds(), y = lastLimit.Value, z = limit.Value });
                         output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
-                            { x = maxTimestamp.ToJavaScriptMilliseconds(), y = limit.Value });
+                        { x = maxTimestamp.ToJavaScriptMilliseconds(), y = lastLimit.Value, z = limit.Value });
                     }
+                    else // limit.Direction == Direction.High
+                    {
+                        if( lastHighIndex >= 0 )
+                        {
+                            output.CanvasJS.data[lastHighIndex].dataPoints[0].z = limit.Value;
+                            output.CanvasJS.data[lastHighIndex].dataPoints[1].z = limit.Value;
+                        }
+
+                        output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
+                        { x = minTimestamp.ToJavaScriptMilliseconds(), y = limit.Value, z = maxLimit });
+                        output.CanvasJS.data[index].dataPoints.Add(new CanvasJSDataPoints
+                        { x = maxTimestamp.ToJavaScriptMilliseconds(), y = limit.Value, z = maxLimit });
+
+                        lastHighIndex = index;
+                    }
+
+                    isFirst = false;
+                    lastLimit = limit;
                 }
             }
             return output;

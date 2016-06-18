@@ -171,26 +171,16 @@ namespace AssetManager.IOWs
         {
             var localize = _localizationManager.GetSource("AssetManager");
 
-            string[] colors =
-            {
-                    "rgba(0,75,141,0.7)",   // 0 - blue
-                    "rgba(255,0,0,0.7)",    // 1 - red
-                    "rgba(255,102,0,0.7)",  // 2 - orange
-                    "darkgreen",            // 3 - green
-                    "rgba(51,51,51,0.7)",   // 4 - gray
-                    "rgba(100,100,100,0.7)" // 5 - lighter gray
-                };
-
             GetLimitStatsChartByDayOutput output = new GetLimitStatsChartByDayOutput
             {
                 VariableName = input.VariableName,
-                CanvasJS = new CanvasJSVerticalBar
+                CanvasJS = new CanvasJSBar
                 {
                     exportEnabled = true,
-                    title = new CanvasJSVerticalBarTitle { },
-                    axisX = new CanvasJSVerticalBarAxisX { },
-                    axisY = new CanvasJSVerticalBarAxisY { },
-                    data = new List<CanvasJSVerticalBarData>()
+                    title = new CanvasJSBarTitle { },
+                    axisX = new CanvasJSBarAxisX { },
+                    axisY = new CanvasJSBarAxisY { },
+                    data = new List<CanvasJSBarData>()
                 }
             };
 
@@ -220,14 +210,14 @@ namespace AssetManager.IOWs
                     // Each limit will be its own series
                     foreach(LimitStatsByDay limit in limitStats)
                     {
-                        CanvasJSVerticalBarData data = new CanvasJSVerticalBarData
+                        CanvasJSBarData data = new CanvasJSBarData
                         {
                             name = limit.Criticality.ToString() + " - " + limit.LevelName,
                             type = "stackedColumn",
                             legendText = limit.Criticality.ToString() + " - " + limit.LevelName,
                             showInLegend = true,
-                            color = colors[limit.Criticality],
-                            dataPoints = new List<CanvasJSVerticalBarDataPoints>()
+                            color = ChartColors.Criticality(limit.Criticality),
+                            dataPoints = new List<CanvasJSBarDataPoints>()
                         };
 
                         // Now add the daily records
@@ -235,7 +225,7 @@ namespace AssetManager.IOWs
                         {
                             foreach(LimitStatDays day in limit.Days )
                             {
-                                CanvasJSVerticalBarDataPoints point = new CanvasJSVerticalBarDataPoints
+                                CanvasJSBarDataPoints point = new CanvasJSBarDataPoints
                                 {
                                     y = day.DurationHours,
                                     label = day.Day.ToString("m")

@@ -1034,6 +1034,133 @@ namespace AssetManager.DomainServices
             return stats;
         }
 
+        /*
+         * Get statistics for each limit in a list of limits for a time period. Return totals for the entire time period.
+         */
+        public List<LimitStats> GetPerLimitStatsOverTime(List<long> limitIds, DateTime? startTimestamp, DateTime? endTimestamp)
+        {
+            List<LimitStats> stats = new List<LimitStats>();
+
+            DateTime startDay = NormalizeStartDay(startTimestamp);
+            DateTime endDay = NormalizeEndDay(startDay, endTimestamp);
+
+            // Get the unique set of limits
+            var query0 = from lim in _iowLimitRespository.GetAllList()
+                         join l in limitIds on lim.Id equals l
+                         orderby l
+                         select new { LimitId = lim.Id, LevelName = lim.Level.Name, Criticality = lim.Level.Criticality, Direction = lim.Direction };
+            var allLimits = query0.ToList();
+
+            // This query joins the limits to the stats table, fills in zeros whenever the stats table lacks a record, and sums across all days
+            var query2 = from all in allLimits
+                         join s in _iowStatsByDayRepository.GetAllList(p => p.Day >= startDay && p.Day <= endDay)
+                         on new { LimitId = all.LimitId } equals new { LimitId = s.IOWLimitId } into joinedStats
+                         from t in joinedStats.DefaultIfEmpty(new IOWStatsByDay { NumberDeviations = 0, DurationHours = 0 })
+                         group joinedStats by new
+                         {
+                             LimitId = all.LimitId,
+                             LevelName = all.LevelName,
+                             Criticality = all.Criticality
+                         } into g
+                         orderby g.Key.LimitId, g.Key.LevelName, g.Key.Criticality
+                         select new
+                         {
+                             LimitId = g.Key.LimitId,
+                             LevelName = g.Key.LevelName,
+                             Criticality = g.Key.Criticality,
+                             NumberDeviations = g.Sum(x => x.Sum(y => y.NumberDeviations)),
+                             DurationHours = g.Sum(x => x.Sum(y => y.DurationHours))
+                         };
+            var results = query2.ToList();
+
+            if (results != null && results.Count > 0 )
+            {
+                foreach (var d in results)
+                {
+                    stats.Add( new LimitStats
+                    {
+                        LimitId = d.LimitId,
+                        LevelName = d.LevelName,
+                        Criticality = d.Criticality,
+                        NumberDeviations = d.NumberDeviations,
+                        DurationHours = d.DurationHours
+                    });
+                }
+            }
+            return stats;
+        }
+
+        /*
+         * Get statistics by level for all limits in a list for a time period. Return totals for the entire time period.
+         */
+        public List<LevelStats> GetPerLevelStatsOverTime(List<long> limitIds, DateTime? startTimestamp, DateTime? endTimestamp)
+        {
+            List<LevelStats> stats = new List<LevelStats>();
+
+            DateTime startDay = NormalizeStartDay(startTimestamp);
+            DateTime endDay = NormalizeEndDay(startDay, endTimestamp);
+            double totalHours = (endDay - startDay).TotalHours;
+
+            // Get the unique set of limits
+            var query0 = from lim in _iowLimitRespository.GetAllList()
+                         join l in limitIds on lim.Id equals l
+                         orderby l
+                         select new { LimitId = lim.Id, LevelName = lim.Level.Name, Criticality = lim.Level.Criticality, Direction = lim.Direction };
+            var allLimits = query0.ToList();
+
+            // This query joins the limits to the stats table, fills in zeros whenever the stats table lacks a record, and sums across all days
+            var query2 = from all in allLimits
+                         join s in _iowStatsByDayRepository.GetAllList(p => p.Day >= startDay && p.Day <= endDay)
+                         on new { LimitId = all.LimitId } equals new { LimitId = s.IOWLimitId } into joinedStats
+                         from t in joinedStats.DefaultIfEmpty(new IOWStatsByDay { NumberDeviations = 0, DurationHours = 0 })
+                         group joinedStats by new
+                         {
+                             LimitId = all.LimitId,
+                             LevelName = all.LevelName,
+                             Criticality = all.Criticality
+                         } into g
+                         orderby g.Key.LimitId, g.Key.LevelName, g.Key.Criticality
+                         select new
+                         {
+                             LimitId = g.Key.LimitId,
+                             LevelName = g.Key.LevelName,
+                             Criticality = g.Key.Criticality,
+                             NumberDeviations = g.Sum(x => x.Sum(y => y.NumberDeviations)),
+                             DurationHours = g.Sum(x => x.Sum(y => y.DurationHours))
+                         };
+            var dataset = query2.ToList();
+
+            var query3 = from a in dataset
+                         group a by new { a.LevelName, a.Criticality } into k
+                         select new
+                         {
+                             LevelName = k.Key.LevelName,
+                             Criticality = k.Key.Criticality,
+                             NumberDeviations = k.Sum(x => x.NumberDeviations),
+                             DurationHours = k.Sum(x => x.DurationHours),
+                             NumberLimits = k.Count(),
+                             NumberDeviatingLimits = k.Count(x => x.NumberDeviations > 0)
+                         };
+            var results = query3.ToList();
+
+            if (results != null && results.Count > 0)
+            {
+                foreach (var d in results)
+                {
+                    stats.Add(new LevelStats
+                    {
+                        LevelName = d.LevelName,
+                        Criticality = d.Criticality,
+                        NumberDeviations = d.NumberDeviations,
+                        DurationHours = d.DurationHours,
+                        NumberLimits = d.NumberLimits,
+                        NumberDeviatingLimits = d.NumberDeviatingLimits
+                    });
+                }
+            }
+            return stats;
+        }
+
 
         /*
          * CalculateStatisticsForAllLimits()
@@ -1190,7 +1317,7 @@ namespace AssetManager.DomainServices
             return numberRecordsUpdated;
         }
 
-        /* Translate an optional, arbitrary start time to a normalized start day that is timestamped at midnight.
+        /* Translate an optional, arbitrary start TIME to a normalized start DAY that is timestamped at midnight.
          * Basically we round back and limit the time period to 60 days.
          */
         public DateTime NormalizeStartDay(DateTime? startTimestamp)
@@ -1202,6 +1329,10 @@ namespace AssetManager.DomainServices
             return startDay;
         }
 
+        /*
+         *  Translate an optional, arbitrary end TIME to a normalized end DAY that is timestamped at midnight.
+         *  Basically we take the given time, make sure it falls between the start and now, and go forward to the next midnight.
+         */
         public DateTime NormalizeEndDay(DateTime startDay, DateTime? endTimestamp)
         {
             DateTime endDay = endTimestamp.HasValue ? endTimestamp.Value : DateTime.Now;
@@ -1211,6 +1342,21 @@ namespace AssetManager.DomainServices
                 endDay = DateTime.Now.AddDays(1).Date;
             return endDay;
         }
+
+        /*
+         *  Translate an optional, arbitrary end time.
+         *  Basically we take the given time and make sure it falls between the start and now.
+         */
+        public DateTime NormalizeEndTimestamp(DateTime? startTimestamp, DateTime? endTimestamp)
+        {
+            DateTime end = endTimestamp.HasValue ? endTimestamp.Value : DateTime.Now;
+            if (startTimestamp.HasValue && startTimestamp.Value > end)
+                end = startTimestamp.Value;
+            if (end > DateTime.Now )
+                end = DateTime.Now;
+            return end;
+        }
+
 
         private int FillInMissingStatRecords(DateTime startDay)
         {

@@ -15,6 +15,6 @@ namespace AssetManager.AssetHealth.Dtos
         public DateTime EndTimestamp { get; set; }
         public int NumberPeriods { get; set; }
         public int HoursInPeriod { get; set; }
-        public CanvasJSHorizontalBar CanvasJS { get; set; }
+        public CanvasJSBar CanvasJS { get; set; }
     }
 }

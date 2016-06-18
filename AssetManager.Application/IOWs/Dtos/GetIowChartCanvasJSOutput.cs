@@ -16,6 +16,6 @@ namespace AssetManager.IOWs.Dtos
         public long TagId { get; set; }
         public string TagName { get; set; }
         public string UOM { get; set; }
-        public CanvasJSDto CanvasJS { get; set; }
+        public CanvasJS CanvasJS { get; set; }
     }
 }

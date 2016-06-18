@@ -108,7 +108,7 @@ namespace AssetManager.Tags
                 Description = "",
                 UOM = "",
                 Precision = null,
-                CanvasJS = new CanvasJSDto
+                CanvasJS = new CanvasJS
                 {
                     exportEnabled = true,
                     zoomEnabled = true,
@@ -146,6 +146,7 @@ namespace AssetManager.Tags
                     name = tag.Name,
                     type = tagType == TagType.Continuous ? "line" : "scatter",
                     lineDashType = "solid",
+                    lineThickness = tagType == TagType.Continuous ? 2 : 0,
                     markerColor = "rgba(0,75,141,0.7)",
                     markerType = tagType == TagType.Continuous ? "none" : "circle",
                     xValueType = "dateTime",

@@ -26,6 +26,16 @@
                     vm.description = data.description;
 
                     vm.canvasChart.options = data.canvasJS;
+                    for (var i = 0; i < vm.canvasChart.options.data.length; i++ ) {
+                        if (vm.canvasChart.options.data[i].type == "rangeArea") {
+                            for (var j = 0; j < vm.canvasChart.options.data[i].dataPoints.length; j++) {
+                                y = vm.canvasChart.options.data[i].dataPoints[j].y;
+                                z = vm.canvasChart.options.data[i].dataPoints[j].z;
+                                vm.canvasChart.options.data[i].dataPoints[j].y = [y,z];
+                            }
+                        }
+                    }
+
                     vm.canvasChart.render();
                 });
         }

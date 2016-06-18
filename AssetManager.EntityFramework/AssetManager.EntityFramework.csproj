@@ -114,6 +114,8 @@
     <Compile Include="EntityFramework\AssetManagerDbContext.cs" />
     <Compile Include="EntityFramework\DomainServices\AssetDeviationSummary.cs" />
     <Compile Include="EntityFramework\DomainServices\AssetHealthManager.cs" />
+    <Compile Include="EntityFramework\DomainServices\AssetLevelStats.cs" />
+    <Compile Include="EntityFramework\DomainServices\AssetLimitStats.cs" />
     <Compile Include="EntityFramework\DomainServices\AssetManager.cs" />
     <Compile Include="EntityFramework\DomainServices\AssetVariableCombinations.cs" />
     <Compile Include="EntityFramework\DomainServices\DetectDeviationsOut.cs" />

@@ -111,6 +111,8 @@
     <Compile Include="AssetHealth\Dtos\AssetLevelTimeDto.cs" />
     <Compile Include="AssetHealth\Dtos\AssetLimitStatsByDayDto.cs" />
     <Compile Include="AssetHealth\Dtos\AssetVariableArrayDto.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLevelStatsInput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLevelStatsOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLimitChartByDayInput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLimitChartByDayOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLimitCurrentStatusInput.cs" />
@@ -119,7 +121,7 @@
     <Compile Include="Assets\Dtos\GetAssetRelativesOutput.cs" />
     <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayInput.cs" />
     <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayOutput.cs" />
-    <Compile Include="Utilities\CanvasJSHorizontalBar.cs" />
+    <Compile Include="Utilities\CanvasJSBar.cs" />
     <Compile Include="AssetHealth\Dtos\DeleteAssetVariableListInput.cs" />
     <Compile Include="AssetHealth\Dtos\DeleteAssetVariableListOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetHierarchyWithVariablesAsListInput.cs" />
@@ -233,7 +235,7 @@
     <Compile Include="Tags\Dtos\GetTagInput.cs" />
     <Compile Include="Tags\Dtos\GetTagOutput.cs" />
     <Compile Include="IOWs\Dtos\LevelDto.cs" />
-    <Compile Include="Utilities\CanvasJSDto.cs" />
+    <Compile Include="Utilities\CanvasJS.cs" />
     <Compile Include="Tags\Dtos\PostTagDataBulkOutput.cs" />
     <Compile Include="Tags\Dtos\TagDataBulkDto.cs" />
     <Compile Include="Tags\Dtos\TagDataChartDto.cs" />
@@ -266,7 +268,7 @@
     <Compile Include="Sessions\SessionAppService.cs" />
     <Compile Include="Users\Dto\ProhibitPermissionInput.cs" />
     <Compile Include="Users\UserAppService.cs" />
-    <Compile Include="Utilities\CanvasJSVerticalBar.cs" />
+    <Compile Include="Utilities\ChartColors.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

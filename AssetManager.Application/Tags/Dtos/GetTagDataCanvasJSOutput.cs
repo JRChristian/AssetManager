@@ -14,6 +14,6 @@ namespace AssetManager.Tags.Dtos
         public string Description { get; set; }
         public string UOM { get; set; }
         public int? Precision { get; set; }
-        public CanvasJSDto CanvasJS { get; set; }
+        public CanvasJS CanvasJS { get; set; }
     }
 }

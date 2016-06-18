@@ -17,6 +17,6 @@ namespace AssetManager.IOWs.Dtos
         public string UOM { get; set; }
         public DateTime StartTimestamp { get; set; }
         public DateTime EndTimestamp { get; set; }
-        public CanvasJSVerticalBar CanvasJS { get; set; }
+        public CanvasJSBar CanvasJS { get; set; }
     }
 }

@@ -300,5 +300,67 @@ namespace AssetManager.EntityFramework.DomainServices
             }
             return assetLimits;
         }
+
+        public List<AssetLevelStats> GetAssetLevelStats(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality, bool includeAsset, bool includeChildren)
+        {
+            List<Asset> assets = null;
+
+            // Get all top level children of the specified asset. Possibly add the parent asset (specified in the arguments) to the list as well.
+            if (includeChildren)
+                assets = _assetManager.GetAssetChildren(assetId, assetName, includeAsset);
+            else
+            {
+                Asset oneAsset = _assetManager.GetAsset(assetId, assetName);
+                if (oneAsset != null)
+                {
+                    assets = new List<Asset>();
+                    assets.Add(oneAsset);
+                }
+            }
+
+            List<AssetLevelStats> assetLevels = null;
+            if (assets != null)
+            {
+                assetLevels = new List<AssetLevelStats>();
+                foreach (Asset asset in assets)
+                {
+                    // Get the list of unique limits for this asset
+                    List<long> limitIds = null;
+                    if( minCriticality.HasValue || maxCriticality.HasValue )
+                    {
+                        // Criticality was specified in the input, so get just limits matching the specified criticality range
+                        int lowerCriticality = minCriticality.HasValue ? minCriticality.Value : -1;
+                        int upperCriticality = maxCriticality.HasValue ? maxCriticality.Value : 999;
+
+                        limitIds = (from av in _assetVariableRepository.GetAllList()
+                                    join l in _iowManager.GetAllLimits() on av.IOWVariableId equals l.IOWVariableId
+                                    where av.AssetId == asset.Id && l.Level.Criticality >= lowerCriticality && l.Level.Criticality <= upperCriticality
+                                    select l.Id).Distinct().ToList();
+                    }
+                    else
+                    {
+                        // Criticality was not specified in the input, so get all limits
+                        limitIds = (from av in _assetVariableRepository.GetAllList()
+                                    join l in _iowManager.GetAllLimits() on av.IOWVariableId equals l.IOWVariableId
+                                    where av.AssetId == asset.Id
+                                    select l.Id).Distinct().ToList();
+                    }
+
+                    AssetLevelStats assetLevel = new AssetLevelStats
+                    {
+                        AssetId = asset.Id,
+                        AssetName = asset.Name,
+                        Levels = null
+                    };
+
+                    // Get the stats for these limits and add them to the output. Group statistics by level name and criticality. (This does something different only if this asset has multiple variables.)
+                    if (limitIds != null && limitIds.Count > 0)
+                        assetLevel.Levels = _iowManager.GetPerLevelStatsOverTime(limitIds, startTimestamp, endTimestamp);
+
+                    assetLevels.Add(assetLevel);
+                }
+            }
+            return assetLevels;
+        }
     }
 }

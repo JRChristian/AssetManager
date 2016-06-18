@@ -19,6 +19,7 @@ namespace AssetManager.AssetHealth
         GetAssetLimitStatsByDayOutput GetAssetLimitStatsByDay(GetAssetLimitStatsByDayInput input);
         GetAssetLimitChartByDayOutput GetAssetLimitChartByDay(GetAssetLimitChartByDayInput input);
         GetAssetLevelChartOutput GetAssetLevelChartCanvasJS(GetAssetLevelChartInput input);
+        GetAssetLevelStatsOutput GetAssetLevelStats(GetAssetLevelStatsInput input);
         GetAssetLimitCurrentStatusOutput GetAssetLimitCurrentStatus(GetAssetLimitCurrentStatusInput input);
     }
 }

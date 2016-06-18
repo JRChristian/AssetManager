@@ -1,0 +1,138 @@
+﻿/* Bootstrap custom buttons. See http://twitterbootstrap3buttons.w3masters.nl/ and http://blog.koalite.com/bbg/ */
+
+.btn-dimgray { 
+  color: #FFFFFF; 
+  background-color: #696969; 
+  border-color: #161616; 
+} 
+ 
+.btn-dimgray:hover, 
+.btn-dimgray:focus, 
+.btn-dimgray:active, 
+.btn-dimgray.active, 
+.open .dropdown-toggle.btn-dimgray { 
+  color: #FFFFFF; 
+  background-color: #484848; 
+  border-color: #161616; 
+} 
+ 
+.btn-dimgray:active, 
+.btn-dimgray.active, 
+.open .dropdown-toggle.btn-dimgray { 
+  background-image: none; 
+} 
+ 
+.btn-dimgray.disabled, 
+.btn-dimgray[disabled], 
+fieldset[disabled] .btn-dimgray, 
+.btn-dimgray.disabled:hover, 
+.btn-dimgray[disabled]:hover, 
+fieldset[disabled] .btn-dimgray:hover, 
+.btn-dimgray.disabled:focus, 
+.btn-dimgray[disabled]:focus, 
+fieldset[disabled] .btn-dimgray:focus, 
+.btn-dimgray.disabled:active, 
+.btn-dimgray[disabled]:active, 
+fieldset[disabled] .btn-dimgray:active, 
+.btn-dimgray.disabled.active, 
+.btn-dimgray[disabled].active, 
+fieldset[disabled] .btn-dimgray.active { 
+  background-color: #696969; 
+  border-color: #161616; 
+} 
+ 
+.btn-dimgray .badge { 
+  color: #696969; 
+  background-color: #FFFFFF; 
+}
+
+.btn-sienna { 
+  color: #FFFFFF; 
+  background-color: #A0522D; 
+  border-color: #422D23; 
+} 
+ 
+.btn-sienna:hover, 
+.btn-sienna:focus, 
+.btn-sienna:active, 
+.btn-sienna.active, 
+.open .dropdown-toggle.btn-sienna { 
+  color: #FFFFFF; 
+  background-color: #69402D; 
+  border-color: #422D23; 
+} 
+ 
+.btn-sienna:active, 
+.btn-sienna.active, 
+.open .dropdown-toggle.btn-sienna { 
+  background-image: none; 
+} 
+ 
+.btn-sienna.disabled, 
+.btn-sienna[disabled], 
+fieldset[disabled] .btn-sienna, 
+.btn-sienna.disabled:hover, 
+.btn-sienna[disabled]:hover, 
+fieldset[disabled] .btn-sienna:hover, 
+.btn-sienna.disabled:focus, 
+.btn-sienna[disabled]:focus, 
+fieldset[disabled] .btn-sienna:focus, 
+.btn-sienna.disabled:active, 
+.btn-sienna[disabled]:active, 
+fieldset[disabled] .btn-sienna:active, 
+.btn-sienna.disabled.active, 
+.btn-sienna[disabled].active, 
+fieldset[disabled] .btn-sienna.active { 
+  background-color: #A0522D; 
+  border-color: #422D23; 
+} 
+ 
+.btn-sienna .badge { 
+  color: #A0522D; 
+  background-color: #FFFFFF; 
+}
+.btn-indigo { 
+  color: #FFFFFF; 
+  background-color: #611BBD; 
+  border-color: #130269; 
+} 
+ 
+.btn-indigo:hover, 
+.btn-indigo:focus, 
+.btn-indigo:active, 
+.btn-indigo.active, 
+.open .dropdown-toggle.btn-indigo { 
+  color: #FFFFFF; 
+  background-color: #49247A; 
+  border-color: #130269; 
+} 
+ 
+.btn-indigo:active, 
+.btn-indigo.active, 
+.open .dropdown-toggle.btn-indigo { 
+  background-image: none; 
+} 
+ 
+.btn-indigo.disabled, 
+.btn-indigo[disabled], 
+fieldset[disabled] .btn-indigo, 
+.btn-indigo.disabled:hover, 
+.btn-indigo[disabled]:hover, 
+fieldset[disabled] .btn-indigo:hover, 
+.btn-indigo.disabled:focus, 
+.btn-indigo[disabled]:focus, 
+fieldset[disabled] .btn-indigo:focus, 
+.btn-indigo.disabled:active, 
+.btn-indigo[disabled]:active, 
+fieldset[disabled] .btn-indigo:active, 
+.btn-indigo.disabled.active, 
+.btn-indigo[disabled].active, 
+fieldset[disabled] .btn-indigo.active { 
+  background-color: #611BBD; 
+  border-color: #130269; 
+} 
+ 
+.btn-indigo .badge { 
+  color: #611BBD; 
+  background-color: #FFFFFF; 
+}

@@ -294,6 +294,7 @@
     <Content Include="App\Main\views\asset\edit.js" />
     <Content Include="App\Main\views\asset\list.js" />
     <Content Include="App\Main\views\asset\new.js" />
+    <Content Include="App\Main\views\home\Bootstrap-custom-buttons.css" />
     <Content Include="App\Main\views\home\Bootstrap-square-buttons.css" />
     <Content Include="App\Main\views\home\ui-grid-customizations.css" />
     <Content Include="App\Main\views\images\imagelistedit.js" />
