@@ -14,11 +14,13 @@ namespace AssetManager.Entities
         public string Name { get; set; }
         public DateTime CreationTime { get; set; }
         public virtual ICollection<Asset> Assets { get; set; }
+        public virtual ICollection<HealthMetric> HealthMetrics { get; set; }
 
         public AssetType()
         {
             CreationTime = DateTime.Now;
             Assets = new List<Asset>();
+            HealthMetrics = new List<HealthMetric>();
         }
     }
 }

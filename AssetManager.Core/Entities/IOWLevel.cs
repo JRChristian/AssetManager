@@ -21,5 +21,6 @@ namespace AssetManager.Entities
         public string MetricGoal { get; set; }
 
         public virtual ICollection<IOWLimit> IOWLimits { get; set; }
+        public virtual ICollection<HealthMetric> HealthMetrics { get; set; }
     }
 }

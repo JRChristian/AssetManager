@@ -49,6 +49,7 @@ namespace AssetManager.EntityFramework
             modelBuilder.Configurations.Add(new AssetImageConfiguration());
             modelBuilder.Configurations.Add(new AssetTypeConfiguration());
             modelBuilder.Configurations.Add(new AssetVariableConfiguration());
+            modelBuilder.Configurations.Add(new HealthMetricConfiguration());
             modelBuilder.Configurations.Add(new ImageConfiguration());
             modelBuilder.Configurations.Add(new IOWDeviationConfiguration());
             modelBuilder.Configurations.Add(new IOWLevelConfiguration());

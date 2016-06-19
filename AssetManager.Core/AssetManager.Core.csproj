@@ -107,6 +107,7 @@
     <Compile Include="Configurations\AssetImageConfiguration.cs" />
     <Compile Include="Configurations\AssetVariableConfiguration.cs" />
     <Compile Include="Configurations\AssetTypeConfiguration.cs" />
+    <Compile Include="Configurations\HealthMetricConfiguration.cs" />
     <Compile Include="Configurations\ImageConfiguration.cs" />
     <Compile Include="Configurations\IOWDeviationConfiguration.cs" />
     <Compile Include="Configurations\IOWLevelConfiguration.cs" />
@@ -123,8 +124,10 @@
     <Compile Include="Entities\AssetImage.cs" />
     <Compile Include="Entities\AssetType.cs" />
     <Compile Include="Entities\AssetVariable.cs" />
+    <Compile Include="Entities\HealthMetric.cs" />
     <Compile Include="Entities\IAssetHierarchyRepository.cs" />
     <Compile Include="Entities\IAssetVariableRepository.cs" />
+    <Compile Include="Entities\IHealthMetricRepository.cs" />
     <Compile Include="Entities\IImageRepository.cs" />
     <Compile Include="Entities\IIOWLevelRepository.cs" />
     <Compile Include="Entities\IIOWLimitRepository.cs" />
@@ -157,6 +160,7 @@
     <Compile Include="Users\UserManager.cs" />
     <Compile Include="Users\UserStore.cs" />
     <Compile Include="Utilities\Direction.cs" />
+    <Compile Include="Utilities\MetricType.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="Utilities\DateTimeJavaScript.cs" />
     <Compile Include="Utilities\TagType.cs" />

@@ -135,6 +135,7 @@
     <Compile Include="EntityFramework\Repositories\AssetManagerRepositoryBase.cs" />
     <Compile Include="EntityFramework\Repositories\AssetRepository.cs" />
     <Compile Include="EntityFramework\Repositories\AssetVariableRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\HealthMetricRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IIOWDeviationRepository.cs" />
     <Compile Include="EntityFramework\Repositories\ImageRepository.cs" />
     <Compile Include="EntityFramework\Repositories\IOWDeviationRepository.cs" />
@@ -241,6 +242,10 @@
     <Compile Include="Migrations\201606020028369_UpdatedIOWStatsByDay.Designer.cs">
       <DependentUpon>201606020028369_UpdatedIOWStatsByDay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606191915025_AddedHealthMetricTable.cs" />
+    <Compile Include="Migrations\201606191915025_AddedHealthMetricTable.Designer.cs">
+      <DependentUpon>201606191915025_AddedHealthMetricTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -330,6 +335,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606020028369_UpdatedIOWStatsByDay.resx">
       <DependentUpon>201606020028369_UpdatedIOWStatsByDay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606191915025_AddedHealthMetricTable.resx">
+      <DependentUpon>201606191915025_AddedHealthMetricTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
