@@ -1102,46 +1102,70 @@ namespace AssetManager.DomainServices
             double totalHours = (endDay - startDay).TotalHours;
 
             // Get the unique set of limits
-            var query0 = from lim in _iowLimitRespository.GetAllList()
+            var query1 = from lim in _iowLimitRespository.GetAllList()
                          join l in limitIds on lim.Id equals l
-                         orderby l
-                         select new { LimitId = lim.Id, LevelName = lim.Level.Name, Criticality = lim.Level.Criticality, Direction = lim.Direction };
-            var allLimits = query0.ToList();
-
-            // This query joins the limits to the stats table, fills in zeros whenever the stats table lacks a record, and sums across all days
-            var query2 = from all in allLimits
-                         join s in _iowStatsByDayRepository.GetAllList(p => p.Day >= startDay && p.Day <= endDay)
-                         on new { LimitId = all.LimitId } equals new { LimitId = s.IOWLimitId } into joinedStats
-                         from t in joinedStats.DefaultIfEmpty(new IOWStatsByDay { NumberDeviations = 0, DurationHours = 0 })
-                         group joinedStats by new
+                         select new
                          {
-                             LimitId = all.LimitId,
-                             LevelName = all.LevelName,
-                             Criticality = all.Criticality
+                             LimitId = lim.Id,
+                             LevelName = lim.Level.Name,
+                             Criticality = lim.Level.Criticality,
+                             Direction = lim.Direction
+                         };
+            var allLimits = query1.ToList();
+
+            // Add statistics to these limits
+            var query2 = from lim in allLimits
+                         join s in _iowStatsByDayRepository.GetAllList(p => p.Day >= startDay && p.Day <= endDay) 
+                         on lim.LimitId equals s.IOWLimitId into joined
+                         from s in joined.DefaultIfEmpty()
+                         select new
+                         {
+                             LimitId = lim.LimitId,
+                             LevelName = lim.LevelName,
+                             Criticality = lim.Criticality,
+                             Direction = lim.Direction,
+                             Day = (s != null) ? s.Day : startDay,
+                             NumberDeviations = (s != null) ? s.NumberDeviations : 0,
+                             DurationHours = (s != null) ? s.DurationHours : 0
+                         };
+            var allLimitsWithStats = query2.ToList();
+
+            // This query groups by limit and sums across all days
+            var query3 = from lim in allLimitsWithStats
+                         group lim by new 
+                         {
+                             LimitId = lim.LimitId,
+                             LevelName = lim.LevelName,
+                             Criticality = lim.Criticality
                          } into g
-                         orderby g.Key.LimitId, g.Key.LevelName, g.Key.Criticality
                          select new
                          {
                              LimitId = g.Key.LimitId,
                              LevelName = g.Key.LevelName,
                              Criticality = g.Key.Criticality,
-                             NumberDeviations = g.Sum(x => x.Sum(y => y.NumberDeviations)),
-                             DurationHours = g.Sum(x => x.Sum(y => y.DurationHours))
+                             NumberDeviations = g.Sum(x => x.NumberDeviations),
+                             DurationHours = g.Sum(x => x.DurationHours)
                          };
-            var dataset = query2.ToList();
+            var allLimitsWithStatsSummed = query3.ToList();
 
-            var query3 = from a in dataset
-                         group a by new { a.LevelName, a.Criticality } into k
+            // This query groups by level, so combines multiple limits having the same level
+            var query4 = from lim in allLimitsWithStatsSummed
+                         group lim by new
+                         {
+                             LevelName = lim.LevelName,
+                             Criticality = lim.Criticality
+                         } into g
+                         orderby g.Key.Criticality, g.Key.LevelName
                          select new
                          {
-                             LevelName = k.Key.LevelName,
-                             Criticality = k.Key.Criticality,
-                             NumberDeviations = k.Sum(x => x.NumberDeviations),
-                             DurationHours = k.Sum(x => x.DurationHours),
-                             NumberLimits = k.Count(),
-                             NumberDeviatingLimits = k.Count(x => x.NumberDeviations > 0)
+                             LevelName = g.Key.LevelName,
+                             Criticality = g.Key.Criticality,
+                             NumberDeviations = g.Sum(x => x.NumberDeviations),
+                             DurationHours = g.Sum(x => x.DurationHours),
+                             NumberLimits = g.Count(),
+                             NumberDeviatingLimits = g.Count(x => x.NumberDeviations > 0)
                          };
-            var results = query3.ToList();
+            var results = query4.ToList();
 
             if (results != null && results.Count > 0)
             {
@@ -1221,14 +1245,15 @@ namespace AssetManager.DomainServices
             // Get any stats that already exist for the time period of interest, and zero out the data.
             // Do this before getting the deviations because it is possible that there are not any deviations, in which case
             // the stats should be zeroed.
-            List<IOWStatsByDay> allStats = _iowStatsByDayRepository.GetAllList(p => p.IOWLimitId == limit.Id && p.Day >= startTimestamp && p.Day <= endTimestamp).ToList();
+            List<IOWStatsByDay> allStats = _iowStatsByDayRepository.GetAllList(p => p.IOWLimitId == limit.Id && p.Day >= startDay && p.Day <= endDay).ToList();
             if( allStats != null && allStats.Count > 0 )
             {
-                foreach(IOWStatsByDay stat in allStats)
+                allStats.Select(p => { p.NumberDeviations = 0; p.DurationHours = 0; return p; }).ToList();
+                /*foreach(IOWStatsByDay stat in allStats)
                 {
                     stat.NumberDeviations = 0;
                     stat.DurationHours = 0;
-                }
+                }*/
             }
 
             List<IOWDeviation> deviations = GetDeviations(limit.Id, startDay);

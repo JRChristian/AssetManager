@@ -5,21 +5,28 @@
         </div>
         <div class="row">
             <div class="col-sm-4">
-                <h4>@L("Assets")</h4>
+                <h4>Metrics</h4>
                 <a ui-sref="assetlist" class="btn btn-primary btn-sm"><i class="fa fa-tags"></i> @L("Assets")</a>
                 <p><i>...coming soon...</i></p>
                 <div class="table-responsive">
                     <table class="table table-condensed">
                         <thead>
                             <tr>
-                                <th>@L("Name")</th>
-                                <th>@L("Description")</th>
+                                <th>Level</th>
+                                <th>Number limits</th>
+                                <th>% deviation time</th>
+                                <th>% limits deviating</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr ng-repeat="asset in vm.assets">
-                                <td>{{asset.name}}</td>
-                                <td>{{asset.description}}</td>
+                        <tbody ng-repeat="a in vm.assetLevelStats">
+                            <tr>
+                                <td>{{a.assetName}}</td>
+                            </tr>
+                            <tr ng-repeat="s in a.levels">
+                                <td>{{s.criticality}} - {{s.levelName}}</td>
+                                <td>{{s.numberLimits}}</td>
+                                <td>{{(s.durationHours / vm.durationHours / s.numberLimits * 100) | number:0 }}</td>
+                                <td>{{(s.numberDeviatingLimits / s.numberLimits * 100) | number:0 }}</td>
                             </tr>
                         </tbody>
                     </table>
