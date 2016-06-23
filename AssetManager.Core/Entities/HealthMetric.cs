@@ -25,5 +25,7 @@ namespace AssetManager.Entities
         public Direction GoodDirection { get; set; }
         public double WarningLevel { get; set; }
         public double ErrorLevel { get; set; }
+        public bool ApplyToEachAsset { get; set; }
+        public int Order { get; set; }
     }
 }

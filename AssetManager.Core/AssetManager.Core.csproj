@@ -141,6 +141,7 @@
     <Compile Include="Entities\IOWStatsByDay.cs" />
     <Compile Include="Entities\IOWStatus.cs" />
     <Compile Include="Entities\IOWVariable.cs" />
+    <Compile Include="Utilities\AssetTypeMetricValue.cs" />
     <Compile Include="Utilities\IsVariableAssignedToAsset.cs" />
     <Compile Include="Entities\ITagDataRawRepository.cs" />
     <Compile Include="Entities\ITagDataRawUpdateRepository.cs" />

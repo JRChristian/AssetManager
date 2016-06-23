@@ -158,6 +158,103 @@ namespace AssetManager.AssetHealth
             return output;
         }
 
+        public GetHealthMetricTypesOutput GetHealthMetricTypes()
+        {
+            var localize = _localizationManager.GetSource("AssetManager");
+
+            List<HealthMetricTypesDto> metricTypes = new List<HealthMetricTypesDto>();
+            metricTypes.Add(new HealthMetricTypesDto { Code = MetricType.None, Description = localize.GetString("AssetHealthLblMetricTypeNone") });
+            metricTypes.Add(new HealthMetricTypesDto { Code = MetricType.PercentTimeInDeviation, Description = localize.GetString("AssetHealthLblMetricTypePctTime") });
+            metricTypes.Add(new HealthMetricTypesDto { Code = MetricType.PercentLimitsInDeviation, Description = localize.GetString("AssetHealthLblMetricTypePctLimits") });
+
+            return new GetHealthMetricTypesOutput { MetricTypes = metricTypes };
+        }
+
+        public GetHealthMetricOutput GetHealthMetric(GetHealthMetricInput input)
+        {
+            HealthMetric healthMetric = _assetHealthManager.GetHealthMetric(input.HealthMetricId, input.HealthMetricName);
+            GetHealthMetricOutput output = new GetHealthMetricOutput
+            {
+                Metric = healthMetric.MapTo<HealthMetricDto>()
+            };
+            if (output.Metric != null && healthMetric.Level != null)
+                output.Metric.Criticality = healthMetric.Level.Criticality;
+            return output;
+        }
+
+        public GetHealthMetricListOutput GetHealthMetricList(GetHealthMetricListInput input)
+        {
+            List<HealthMetric> healthMetrics = _assetHealthManager.GetHealthMetricList();
+            GetHealthMetricListOutput output = new GetHealthMetricListOutput
+            {
+                Metrics = new List<HealthMetricDto>()
+            };
+            if( healthMetrics != null && healthMetrics.Count > 0 )
+            {
+                foreach( HealthMetric metric in healthMetrics )
+                {
+                    HealthMetricDto metricDto = metric.MapTo<HealthMetricDto>();
+                    metricDto.Criticality = metric.Level.Criticality;
+                    output.Metrics.Add(metricDto);
+                }
+            }
+            return output;
+        }
+
+        public UpdateHealthMetricOutput UpdateHealthMetric(UpdateHealthMetricInput input)
+        {
+            UpdateHealthMetricOutput output = new UpdateHealthMetricOutput { Metric = null };
+            AssetType assetType = null;
+            IOWLevel level = null;
+
+            if (input != null)
+            {
+
+                if (input.Metric.AssetTypeId > 0)
+                    assetType = _assetManager.GetAssetType(input.Metric.AssetTypeId);
+                else
+                    assetType = _assetManager.GetAssetType(input.Metric.AssetTypeName);
+
+                if (input.Metric.LevelId > 0)
+                    level = _iowManager.FirstOrDefaultLevel(input.Metric.LevelId);
+                else
+                    level = _iowManager.FirstOrDefaultLevel(input.Metric.LevelName);
+
+                if( assetType != null && level != null )
+                {
+                    HealthMetric metric = _assetHealthManager.GetHealthMetric(input.Metric.Id, input.Metric.Name);
+
+                    if (metric == null)
+                        metric = new HealthMetric { };
+
+                    metric.TenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
+                    metric.Name = input.Metric.Name;
+                    metric.AssetTypeId = assetType.Id;
+                    metric.ApplyToEachAsset = input.Metric.ApplyToEachAsset;
+                    metric.IOWLevelId = level.Id;
+                    metric.Period = input.Metric.Period;
+                    metric.MetricType = input.Metric.MetricType;
+                    metric.GoodDirection = input.Metric.GoodDirection;
+                    metric.WarningLevel = input.Metric.WarningLevel;
+                    metric.ErrorLevel = input.Metric.ErrorLevel;
+                    metric.Order = input.Metric.Order;
+
+                    HealthMetric outputMetric =  _assetHealthManager.UpdateHealthMetric( metric );
+                    if (outputMetric != null)
+                        output.Metric = outputMetric.MapTo<HealthMetricDto>();
+                }
+            }
+            return output;
+        }
+
+        public DeleteHealthMetricOutput DeleteHealthMetric(DeleteHealthMetricInput input)
+        {
+            return new DeleteHealthMetricOutput
+            {
+                Succeeded = _assetHealthManager.DeleteHealthMetric(input.Id, input.Name)
+            };
+        }
+
         public GetAssetLevelTimeSummaryOutput GetAssetLevelTimeSummary(GetAssetLevelTimeSummaryInput input)
         {
             AssetDeviationSummaryOutput assetSummary = _assetHealthManager.GetAssetLevelTimeSummary(input.StartTimestamp, input.HoursInPeriod);
@@ -350,7 +447,7 @@ namespace AssetManager.AssetHealth
             output.StartTimestamp = _iowManager.NormalizeStartDay(input.StartTimestamp);
             output.EndTimestamp = _iowManager.NormalizeEndTimestamp(output.StartTimestamp, input.EndTimestamp);
             output.DurationHours = (output.EndTimestamp - output.StartTimestamp).TotalHours;
-            output.AssetLevelStats = _assetHealthManager.GetAssetLevelStats(input.AssetId, input.AssetName, output.StartTimestamp, output.EndTimestamp, null, null, true, true);
+            output.AssetLevelStats = _assetHealthManager.GetAssetLevelStats(input.AssetId, input.AssetName, true, true, output.StartTimestamp, output.EndTimestamp, null, null);
 
             return output;
         }
@@ -447,6 +544,14 @@ namespace AssetManager.AssetHealth
                 });
             }
             return new GetAssetLimitCurrentStatusOutput { variablelimits = output };
+        }
+
+        public GetAssetHealthMetricValuesOutput GetAssetHealthMetricValues()
+        {
+            return new GetAssetHealthMetricValuesOutput
+            {
+                Metrics = _assetHealthManager.GetAssetHealthMetricValues()
+            };
         }
     }
 }

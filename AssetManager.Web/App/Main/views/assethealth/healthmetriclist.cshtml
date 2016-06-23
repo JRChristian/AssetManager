@@ -1,0 +1,109 @@
+﻿<div ng-controller="app.views.assethealth.metriclist as vm">
+    <script type="text/ng-template" id="assetHealthMetricEdit.html">
+        <div class="modal-header">
+            <h3 class="modal-title">@L("AssetHealthTtlHealthMetricDefinitions")</h3>
+        </div>
+        <div class="modal-body">
+            <form id="editAssetHealthMetricForm" class="form-horizontal" role="form" name="editAssetHealthMetricForm" novalidate>
+                <div class="form-group">
+                    <label class="col-sm-4" control-label for="Order">@L("SortOrder")</label>
+                    <div class="col-sm-8"><input id="Order" type="number" min="0" max="999999" ng-model="vm.metric.order" class="form-control" required></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4" control-label for="MetricName">@L("AssetHealthLblMetricName")</label>
+                    <div class="col-sm-8"><input id="MetricName" type="text" ng-model="vm.metric.name" class="form-control" required></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4" control-label for="AssetType">@L("AssetType")</label>
+                    <div class="col-sm-8">
+                        <select id="AssetType" class="form-control" ng-model="vm.metric.assetTypeId" ng-options="x.id as x.name for x in vm.assetTypes"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4" control-label for="ApplyToEachAsset">@L("AssetHealthLblApplyToEach")</label>
+                    <div class="col-sm-8">
+                        <input id="ApplyToEachAsset" type="checkbox" ng-model="vm.metric.applyToEachAsset">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4" control-label for="LevelName">@L("IOWLevel")</label>
+                    <div class="col-sm-8">
+                        <select id="LevelName" class="form-control" ng-model="vm.metric.levelId" ng-options="x.id as x.name for x in vm.levels"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4" control-label for="MetricType">@L("AssetHealthTblMetricType")</label>
+                    <div class="col-sm-8">
+                        <select id="MetricType" class="form-control" ng-model="vm.metric.metricType" ng-options="x.code as x.description for x in vm.metricTypes"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4" control-label for="Period">@L("AssetHealthTblPeriod")</label>
+                    <div class="col-sm-8"><input id="Period" type="number" min="1" max="60" ng-model="vm.metric.period" class="form-control" required></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4" control-label for="Direction">@L("AssetHealthTblMetricDirection")</label>
+                    <div class="col-sm-8">
+                        <input id="DirectionHigh" type="radio" value="3" ng-model="vm.metric.goodDirection"> @L("AssetHealthMsgMetricDirectionHigh")<br>
+                        <input id="DirectionLow" type="radio" value="1" ng-model="vm.metric.goodDirection"> @L("AssetHealthMsgMetricDirectionLow")
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4" control-label for="WarningLevel">@L("AssetHealthTblMetricWarningLevel")</label>
+                    <div class="col-sm-8"><input id="WarningLevel" type="number" min="0" max="100" ng-model="vm.metric.warningLevel" class="form-control" required></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4" control-label for="ErrorLevel">@L("AssetHealthTblMetricErrorLevel")</label>
+                    <div class="col-sm-8"><input id="ErrorLevel" type="number" min="0" max="100" ng-model="vm.metric.errorLevel" class="form-control" required></div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-sm" ng-click="cancel()">@L("AssetHealthBtnCancel")</button>
+            <button type="button" class="btn btn-primary btn-sm" ng-click="ok()"><i class="fa fa-save"></i> @L("AssetHealthBtnSave")</button>
+            <button type="button" class="btn btn-warning btn-sm" ng-click="delete()" ng-hide="vm.disableDelete"><i class="fa fa-trash-o"></i> @L("AssetHealthBtnDelete")</button>
+        </div>
+    </script>
+    <div class="container">
+        <div class="row">
+            <h3>@L("AssetHealthTtlHealthMetricDefinitions")</h3>
+        </div>
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>@L("SortOrder")</th>
+                        <th>@L("Name")</th>
+                        <th>@L("AssetType")</th>
+                        <th>@L("AssetHealthLblApplyToEach")</th>
+                        <th>@L("IOWLevel")</th>
+                        <th>@L("AssetHealthTblMetricType")</th>
+                        <th>@L("AssetHealthTblPeriod")</th>
+                        <th>@L("AssetHealthTblMetricDirection")</th>
+                        <th>@L("AssetHealthTblMetricWarningLevel")</th>
+                        <th>@L("AssetHealthTblMetricErrorLevel")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="metric in vm.metrics">
+                        <td><button type="button" class="btn btn-default btn-xs" ng-click="vm.open(metric)"><i class="fa fa-pencil-square-o"></i></button></td>
+                        <td class="text-center">{{metric.order}}</td>
+                        <td>{{metric.name}}</td>
+                        <td>{{metric.assetTypeName}}</td>
+                        <td class="text-center">{{metric.applyToEachAsset}}</td>
+                        <td>{{metric.criticality}} - {{metric.levelName}}</td>
+                        <td>{{metric.metricType | metricType}}</td>
+                        <td class="text-center">{{metric.period}}</td>
+                        <td class="text-center">{{metric.goodDirection | direction}}</td>
+                        <td class="text-center">{{metric.warningLevel | number:0}}%</td>
+                        <td class="text-center">{{metric.errorLevel | number:0}}%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <button type="button" class="btn btn-success btn-sm" ng-click="vm.new()"><i class="fa fa-plus"></i> @L("AssetHealthBtnCreateMetric")</button>
+        </div>
+    </div>
+</div>

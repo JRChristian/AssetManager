@@ -12,22 +12,31 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity.SqlServer;
 using Abp.Domain.Uow;
+using AssetManager.Utilities;
 
 namespace AssetManager.EntityFramework.DomainServices
 {
     public class AssetHealthManager : DomainService, IAssetHealthManager
     {
         private readonly IAssetVariableRepository _assetVariableRepository;
+        private readonly IHealthMetricRepository _healthMetricRepository;
         private readonly IAssetManager _assetManager;
         private readonly IIowManager _iowManager;
 
+        private readonly int minimumPeriod = 1; // Days
+        private readonly int maximumPeriod = 30; // Days
+        private readonly double minimumLevel = 0; // 0%
+        private readonly double maximumLevel = 100; // 100%
+
         public AssetHealthManager(
             IAssetVariableRepository assetVariableRepository,
+            IHealthMetricRepository healthMetricRepository,
             IAssetManager assetManager,
             IIowManager iowManager
             )
         {
             _assetVariableRepository = assetVariableRepository;
+            _healthMetricRepository = healthMetricRepository;
             _assetManager = assetManager;
             _iowManager = iowManager;
         }
@@ -104,6 +113,98 @@ namespace AssetManager.EntityFramework.DomainServices
             return success;
         }
 
+        public HealthMetric GetHealthMetric(long? Id, string Name)
+        {
+            HealthMetric metric = null;
+            if (Id.HasValue)
+                metric = _healthMetricRepository.FirstOrDefault(p => p.Id == Id.Value);
+            else if (!string.IsNullOrEmpty(Name))
+                metric = _healthMetricRepository.FirstOrDefault(p => p.Name == Name);
+
+            return metric;
+        }
+
+        public List<HealthMetric> GetHealthMetricList()
+        {
+            return _healthMetricRepository.GetAll().OrderBy(p => p.Order).ThenBy(p => p.Name).ToList();
+        }
+
+        public HealthMetric UpdateHealthMetric(HealthMetric input)
+        {
+            // Validate information
+            if (string.IsNullOrEmpty(input.Name))
+                return null;
+
+            if (input.Period < minimumPeriod)
+                input.Period = minimumPeriod;
+            if (input.Period > maximumPeriod)
+                input.Period = maximumPeriod;
+
+            // If the good direction is down, then the warning level must be below the error level (going down: error, warning, good)
+            if (input.GoodDirection == Direction.Low)
+            {
+                if (input.WarningLevel < minimumLevel)
+                    input.WarningLevel = minimumLevel;
+                if (input.ErrorLevel > maximumLevel)
+                    input.ErrorLevel = maximumLevel;
+                if (input.WarningLevel > input.ErrorLevel)
+                    input.WarningLevel = input.ErrorLevel;
+            }
+            // If the good direction is up, then the warning level must be above the error level (going down: good, warning, error)
+            else if (input.GoodDirection == Direction.High)
+            {
+                if (input.WarningLevel > maximumLevel)
+                    input.WarningLevel = maximumLevel;
+                if (input.ErrorLevel < minimumLevel)
+                    input.ErrorLevel = minimumLevel;
+                if (input.WarningLevel < input.ErrorLevel)
+                    input.WarningLevel = input.ErrorLevel;
+            }
+            else
+                // Good direction is not valid
+                return null;
+
+            // Do we have this metric?
+            HealthMetric metric = GetHealthMetric(input.Id, input.Name);
+            if (metric == null)
+            {
+                metric = new HealthMetric
+                {
+                    TenantId = input.TenantId,
+                    Name = input.Name,
+                    AssetTypeId = input.AssetTypeId,
+                    IOWLevelId = input.IOWLevelId,
+                    Period = input.Period,
+                    MetricType = input.MetricType,
+                    GoodDirection = input.GoodDirection,
+                    WarningLevel = input.WarningLevel,
+                    ErrorLevel = input.ErrorLevel,
+                    Order = input.Order
+                };
+                metric.Id = _healthMetricRepository.InsertAndGetId(metric);
+                return metric;
+            }
+
+            // No need to call the update method
+
+            return metric;
+        }
+
+        public bool DeleteHealthMetric(long? Id, string Name)
+        {
+            bool successfullyDeleted = false;
+            HealthMetric metric = GetHealthMetric(Id, Name);
+            if (metric != null)
+            {
+                // To do: prevent deleting metrics that are in use
+                _healthMetricRepository.Delete(metric);
+                successfullyDeleted = true;
+            }
+            return successfullyDeleted;
+        }
+
+
+
         [UnitOfWork]
         public AssetDeviationSummaryOutput GetAssetLevelTimeSummary(DateTime? startTime, int? hoursInPeriodInput)
         {
@@ -120,7 +221,7 @@ namespace AssetManager.EntityFramework.DomainServices
             if (hoursInPeriodInput.HasValue && hoursInPeriodInput.Value > 0 && hoursInPeriodInput.Value < 1000)
             {
                 hoursInPeriod = hoursInPeriodInput.Value;
-                numberPeriods = (int)((DateTime.Now - startTimestamp).TotalHours/hoursInPeriod) + 1;
+                numberPeriods = (int)((DateTime.Now - startTimestamp).TotalHours / hoursInPeriod) + 1;
             }
             else
             {
@@ -141,7 +242,7 @@ namespace AssetManager.EntityFramework.DomainServices
             // Build a datetime array for the output
             List<DateTime> datetimes = new List<DateTime>();
             DateTime dt = startTimestamp;
-            for(int i=0; i < numberPeriods; i++)
+            for (int i = 0; i < numberPeriods; i++)
             {
                 datetimes.Add(dt);
                 dt = dt.AddHours(hoursInPeriod);
@@ -156,7 +257,7 @@ namespace AssetManager.EntityFramework.DomainServices
                         from l in _iowManager.GetAllLimits()
                             .Where(l => l.IOWVariableId == v.Id)
                         orderby a.Name, v.Name, l.Level.Criticality, l.Level.Name
-                        select new 
+                        select new
                         {
                             AssetId = a.Id,
                             AssetName = a.Name,
@@ -173,7 +274,7 @@ namespace AssetManager.EntityFramework.DomainServices
             // Note that allLimits may contain multiple asset/variable/limit combinations that need to be mapped to a single asset/level combination,
             // as there can be multiple variables for a single asset, and we are lumping together high and low violations. If there are N input
             // records, expect M output records, where M <= N.
-            if( allLimits != null && allLimits.Count > 0 )
+            if (allLimits != null && allLimits.Count > 0)
             {
                 var lastLimit = allLimits[0];
                 bool isFirstTimeThrough = true;
@@ -182,9 +283,9 @@ namespace AssetManager.EntityFramework.DomainServices
                 foreach (var limit in allLimits)
                 {
                     // If this is the first time through OR the asset/level information changed, save the previous record (if any) and start a new one
-                    if (isFirstTimeThrough || limit.AssetId != lastLimit.AssetId || limit.LevelName != lastLimit.LevelName )
+                    if (isFirstTimeThrough || limit.AssetId != lastLimit.AssetId || limit.LevelName != lastLimit.LevelName)
                     {
-                        if( !isFirstTimeThrough )
+                        if (!isFirstTimeThrough)
                             output.AssetDeviations.Add(oneItem);
 
                         oneItem = new AssetDeviationSummary
@@ -195,7 +296,7 @@ namespace AssetManager.EntityFramework.DomainServices
                             Criticality = limit.Criticality,
                             DeviationDetails = new List<DeviationDetails>()
                         };
-                        foreach(var d in datetimes)
+                        foreach (var d in datetimes)
                         {
                             oneItem.DeviationDetails.Add(new DeviationDetails { Timestamp = d, DeviationCount = 0, DurationHours = 0 });
                         }
@@ -203,10 +304,10 @@ namespace AssetManager.EntityFramework.DomainServices
 
                     // Get deviations
                     List<IOWDeviation> deviations = _iowManager.GetDeviations(limit.LimitId, startTimestamp);
-                    if( deviations != null && deviations.Count > 0 )
+                    if (deviations != null && deviations.Count > 0)
                     {
                         int i = 0;
-                        foreach(IOWDeviation dev in deviations)
+                        foreach (IOWDeviation dev in deviations)
                         {
                             // Deviations are in ascending date order.
                             // Each entry in the output array represents a range from [i].Timestamp to [i+1].Timestamp, typically an hour, a day, or several days.
@@ -215,7 +316,7 @@ namespace AssetManager.EntityFramework.DomainServices
                             for (; i < numberPeriods && oneItem.DeviationDetails[i].Timestamp.AddHours(hoursInPeriod) < dev.StartTimestamp; i++) ;
 
                             // Continue moving ahead in the output array, adding the deviation to the output array records until we reach the end of the deviation.
-                            for( ; i < numberPeriods && oneItem.DeviationDetails[i].Timestamp <= (dev.EndTimestamp ?? DateTime.Now); i++ )
+                            for (; i < numberPeriods && oneItem.DeviationDetails[i].Timestamp <= (dev.EndTimestamp ?? DateTime.Now); i++)
                             {
                                 DateTime usableStartTimestamp = dev.StartTimestamp > oneItem.DeviationDetails[i].Timestamp ? dev.StartTimestamp : oneItem.DeviationDetails[i].Timestamp;
                                 DateTime usableEndTimestamp = (dev.EndTimestamp ?? DateTime.Now) < oneItem.DeviationDetails[i].Timestamp.AddHours(hoursInPeriod) ? (dev.EndTimestamp ?? DateTime.Now) : oneItem.DeviationDetails[i].Timestamp.AddHours(hoursInPeriod);
@@ -239,12 +340,12 @@ namespace AssetManager.EntityFramework.DomainServices
             List<Asset> assets = null;
 
             // Get all top level children of the specified asset. Possibly add the parent asset (specified in the arguments) to the list as well.
-            if( includeChildren )
+            if (includeChildren)
                 assets = _assetManager.GetAssetChildren(assetId, assetName, includeAsset);
             else
             {
                 Asset oneAsset = _assetManager.GetAsset(assetId, assetName);
-                if( oneAsset != null )
+                if (oneAsset != null)
                 {
                     assets = new List<Asset>();
                     assets.Add(oneAsset);
@@ -252,10 +353,10 @@ namespace AssetManager.EntityFramework.DomainServices
             }
 
             List<AssetLimitStatsByDay> assetLimits = null;
-            if( assets != null )
+            if (assets != null)
             {
                 assetLimits = new List<AssetLimitStatsByDay>();
-                foreach ( Asset asset in assets )
+                foreach (Asset asset in assets)
                 {
                     AssetLimitStatsByDay assetLimit = new AssetLimitStatsByDay
                     {
@@ -266,17 +367,17 @@ namespace AssetManager.EntityFramework.DomainServices
 
                     // Get the list of unique limits for this asset
                     List<long> limitIds = (from av in _assetVariableRepository.GetAllList()
-                                join l in _iowManager.GetAllLimits() on av.IOWVariableId equals l.IOWVariableId
-                                where av.AssetId == asset.Id
-                                select l.Id).Distinct().ToList();
+                                           join l in _iowManager.GetAllLimits() on av.IOWVariableId equals l.IOWVariableId
+                                           where av.AssetId == asset.Id
+                                           select l.Id).Distinct().ToList();
 
                     // Get the stats for these limits and add them to the output. Group statistics by level name and criticality. (This does something different only if this asset has multiple variables.)
-                    if ( limitIds != null && limitIds.Count > 0 )
+                    if (limitIds != null && limitIds.Count > 0)
                     {
                         List<LimitStatsByDay> limitStats = _iowManager.GetLimitStatsByDayGroupByLevel(limitIds, startTimestamp, endTimestamp);
-                        if( limitStats != null && limitStats.Count > 0 )
+                        if (limitStats != null && limitStats.Count > 0)
                         {
-                            foreach( LimitStatsByDay ls in limitStats)
+                            foreach (LimitStatsByDay ls in limitStats)
                             {
                                 LimitStatsByDay onels = new LimitStatsByDay
                                 {
@@ -286,9 +387,9 @@ namespace AssetManager.EntityFramework.DomainServices
                                     Direction = ls.Direction,
                                     Days = new List<LimitStatDays>()
                                 };
-                                if( ls.Days != null && ls.Days.Count > 0 )
+                                if (ls.Days != null && ls.Days.Count > 0)
                                 {
-                                    foreach(LimitStatDays oneDay in ls.Days )
+                                    foreach (LimitStatDays oneDay in ls.Days)
                                         onels.Days.Add(new LimitStatDays { Day = oneDay.Day, NumberDeviations = oneDay.NumberDeviations, DurationHours = oneDay.DurationHours });
                                 }
                                 assetLimit.Limits.Add(onels);
@@ -301,7 +402,14 @@ namespace AssetManager.EntityFramework.DomainServices
             return assetLimits;
         }
 
-        public List<AssetLevelStats> GetAssetLevelStats(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality, bool includeAsset, bool includeChildren)
+        /*
+         * Get statistics for assets in a variety of ways
+         *   - For a specified asset
+         *   - For a specified asset and its children
+         *   - For the children of a specified asset (but not the asset itself - useful when there isn't a top level, or the top level isn't known)
+         *   - For all assets of a particular type
+         */
+        public List<AssetLevelStats> GetAssetLevelStats(long? assetId, string assetName, bool includeAsset, bool includeChildren, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
         {
             List<Asset> assets = null;
 
@@ -318,6 +426,23 @@ namespace AssetManager.EntityFramework.DomainServices
                 }
             }
 
+            return GetAssetLevelStats(assets, startTimestamp, endTimestamp, minCriticality, maxCriticality);
+        }
+
+        public List<AssetLevelStats> GetAssetLevelStats(long? assetTypeId, string assetTypeName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
+        {
+            List<Asset> assets = null;
+            AssetType assetType = _assetManager.GetAssetType(assetTypeId, assetTypeName);
+            if (assetType != null)
+            {
+                assets = _assetManager.GetAssetListForType(assetType.Id);
+            }
+
+            return GetAssetLevelStats(assets, startTimestamp, endTimestamp, minCriticality, maxCriticality);
+        }
+
+        public List<AssetLevelStats> GetAssetLevelStats(List<Asset> assets, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
+        {
             List<AssetLevelStats> assetLevels = null;
             if (assets != null)
             {
@@ -326,7 +451,7 @@ namespace AssetManager.EntityFramework.DomainServices
                 {
                     // Get the list of unique limits for this asset
                     List<long> limitIds = null;
-                    if( minCriticality.HasValue || maxCriticality.HasValue )
+                    if (minCriticality.HasValue || maxCriticality.HasValue)
                     {
                         // Criticality was specified in the input, so get just limits matching the specified criticality range
                         int lowerCriticality = minCriticality.HasValue ? minCriticality.Value : -1;
@@ -361,6 +486,132 @@ namespace AssetManager.EntityFramework.DomainServices
                 }
             }
             return assetLevels;
+        }
+
+        public List<AssetTypeMetricValue> GetAssetHealthMetricValues()
+        {
+            List<AssetTypeMetricValue> output = new List<AssetTypeMetricValue>();
+
+            // Get all the metrics, and process them individually
+            List<HealthMetric> metrics = GetHealthMetricList();
+            if (metrics != null && metrics.Count > 0)
+            {
+                foreach (HealthMetric m in metrics)
+                {
+
+                    // Get a list of unique limits for the specified asset type and other dimensions
+                    List<long> limitIds = null;
+                    if( m.ApplyToEachAsset )
+                    {
+                        // Get metrics for each asset of the specified asset type
+                        List<Asset> assets = _assetManager.GetAssetListForType(m.AssetTypeId);
+                        if( assets != null && assets.Count > 0 )
+                        {
+                            foreach( Asset a in assets )
+                            {
+                                limitIds = (from av in _assetVariableRepository.GetAllList()
+                                    join l in _iowManager.GetAllLimits() on av.IOWVariableId equals l.IOWVariableId
+                                    where av.Asset.Id == a.Id && l.Level.Name == m.Level.Name
+                                    select l.Id).Distinct().ToList();
+
+                                AssetTypeMetricValue n = new AssetTypeMetricValue
+                                {
+                                    Id = m.Id,
+                                    Name = m.Name,
+                                    AssetTypeId = m.AssetTypeId,
+                                    AssetTypeName = m.AssetType.Name,
+                                    ApplyToEachAsset = m.ApplyToEachAsset,
+                                    AssetId = a.Id,
+                                    AssetName = a.Name,
+                                    LevelId = m.IOWLevelId,
+                                    LevelName = m.Level.Name,
+                                    Criticality = m.Level.Criticality,
+                                    MetricType = m.MetricType,
+                                    GoodDirection = m.GoodDirection,
+                                    Period = m.Period,
+                                    Warning = m.WarningLevel,
+                                    Error = m.ErrorLevel,
+                                    Value = 0,
+                                    StartTimestamp = DateTime.Now.Date.AddDays(-m.Period),
+                                    EndTimestamp = DateTime.Now,
+                                    NumberLimits = 0,
+                                    Order = m.Order
+                                };
+                                n.DurationHours = (n.EndTimestamp - n.StartTimestamp).TotalHours;
+
+                                // Get the stats for these limits and add them to the output. Group statistics by level name and criticality. (This does something different only if this asset has multiple variables.)
+                                if (limitIds != null && limitIds.Count > 0)
+                                {
+                                    List<LevelStats> levelStats = _iowManager.GetPerLevelStatsOverTime(limitIds, n.StartTimestamp, n.EndTimestamp);
+
+                                    // There should be just one member in the array (or zero), since there was only one level in the input and the above function groups by level name.
+                                    if (levelStats != null && levelStats.Count > 0 && levelStats[0].NumberLimits > 0)
+                                    {
+                                        if (n.MetricType == MetricType.PercentLimitsInDeviation)
+                                            n.Value = levelStats[0].NumberDeviatingLimits / levelStats[0].NumberLimits * 100;
+                                        else if (n.MetricType == MetricType.PercentTimeInDeviation)
+                                            n.Value = levelStats[0].DurationHours / n.DurationHours / levelStats[0].NumberLimits * 100;
+                                    }
+                                    n.NumberLimits = (int)levelStats[0].NumberLimits;
+                                }
+                                output.Add(n);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Get overall metrics for all assets of the specified asset type
+                        limitIds = (from av in _assetVariableRepository.GetAllList()
+                                           join l in _iowManager.GetAllLimits() on av.IOWVariableId equals l.IOWVariableId
+                                           where av.Asset.AssetTypeId == m.AssetTypeId && l.Level.Name == m.Level.Name
+                                           select l.Id).Distinct().ToList();
+
+                        AssetTypeMetricValue n = new AssetTypeMetricValue
+                        {
+                            Id = m.Id,
+                            Name = m.Name,
+                            AssetTypeId = m.AssetTypeId,
+                            AssetTypeName = m.AssetType.Name,
+                            ApplyToEachAsset = m.ApplyToEachAsset,
+                            AssetId = 0,
+                            AssetName = "",
+                            LevelId = m.IOWLevelId,
+                            LevelName = m.Level.Name,
+                            Criticality = m.Level.Criticality,
+                            MetricType = m.MetricType,
+                            GoodDirection = m.GoodDirection,
+                            Period = m.Period,
+                            Warning = m.WarningLevel,
+                            Error = m.ErrorLevel,
+                            Value = 0,
+                            StartTimestamp = DateTime.Now.Date.AddDays(-m.Period),
+                            EndTimestamp = DateTime.Now,
+                            NumberLimits = 0,
+                            Order = m.Order
+                        };
+                        n.DurationHours = (n.EndTimestamp - n.StartTimestamp).TotalHours;
+                    
+                        // Get the stats for these limits and add them to the output. Group statistics by level name and criticality. (This does something different only if this asset has multiple variables.)
+                        if (limitIds != null && limitIds.Count > 0)
+                        {
+                            List<LevelStats> levelStats = _iowManager.GetPerLevelStatsOverTime(limitIds, n.StartTimestamp, n.EndTimestamp);
+
+                            // There should be just one member in the array (or zero), since there was only one level in the input and the above function groups by level name.
+                            if( levelStats != null && levelStats.Count > 0 && levelStats[0].NumberLimits > 0)
+                            {
+                                if (n.MetricType == MetricType.PercentLimitsInDeviation)
+                                    n.Value = levelStats[0].NumberDeviatingLimits / levelStats[0].NumberLimits * 100;
+                                else if (n.MetricType == MetricType.PercentTimeInDeviation)
+                                    n.Value = levelStats[0].DurationHours / n.DurationHours / levelStats[0].NumberLimits * 100;
+                            }
+
+                            n.NumberLimits = (int) levelStats[0].NumberLimits;
+                        }
+                        output.Add(n);
+                    }
+                }
+            }
+            return output;
         }
     }
 }

@@ -35,6 +35,7 @@ namespace AssetManager
             Mapper.CreateMap<AssetLimitStatsByDay, AssetLimitStatsByDayDto>();
             Mapper.CreateMap<LimitStatsByDay, LimitStatsByDayDto>();
             Mapper.CreateMap<LimitStatDays, LimitStatDaysDto>();
+            Mapper.CreateMap<HealthMetric, HealthMetricDto>();
         }
     }
 }

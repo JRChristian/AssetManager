@@ -125,6 +125,14 @@ namespace AssetManager.Web
                             icon: "fa fa-exchange"
                             )
                     )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "HealthMetricList",
+                            new LocalizableString("AssetHealthMnuHealthMetricList", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/healthmetriclist",
+                            icon: "fa fa-heartbeat"
+                            )
+                    )
                 )
                 .AddItem(
                     new MenuItemDefinition(

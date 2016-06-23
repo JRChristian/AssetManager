@@ -246,6 +246,14 @@
     <Compile Include="Migrations\201606191915025_AddedHealthMetricTable.Designer.cs">
       <DependentUpon>201606191915025_AddedHealthMetricTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606222350348_UpdatedHealthMetricTable.cs" />
+    <Compile Include="Migrations\201606222350348_UpdatedHealthMetricTable.Designer.cs">
+      <DependentUpon>201606222350348_UpdatedHealthMetricTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606230033425_UpdatedHealthMetricTableAgain.cs" />
+    <Compile Include="Migrations\201606230033425_UpdatedHealthMetricTableAgain.Designer.cs">
+      <DependentUpon>201606230033425_UpdatedHealthMetricTableAgain.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -338,6 +346,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606191915025_AddedHealthMetricTable.resx">
       <DependentUpon>201606191915025_AddedHealthMetricTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606222350348_UpdatedHealthMetricTable.resx">
+      <DependentUpon>201606222350348_UpdatedHealthMetricTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606230033425_UpdatedHealthMetricTableAgain.resx">
+      <DependentUpon>201606230033425_UpdatedHealthMetricTableAgain.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

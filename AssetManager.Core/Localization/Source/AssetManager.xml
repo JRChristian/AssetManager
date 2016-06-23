@@ -37,6 +37,7 @@
     <text name="IowMnuDashboard" value="Dashboard" />
     <text name="IowTtlDashboard" value="IOW Dashboard" />
     <text name="IOWs" value="IOWs" />
+    <text name="IOWLevel" value="Level" />
     <text name="IOWLevels" value="Levels" />
     <text name="IOWVariables" value="Variables" />
     <text name="IowTtlLimitStatus" value="Limit Status" />
@@ -158,7 +159,28 @@
     <text name="AssetHealthTtlLevelBarChart" value="Asset Integrity" />
     <text name="AssetHealthTtlLimitView" value="Asset Health:" />
     <text name="AssetHealthMsgAssetHasNLimits" value="limits for" />
-    
+    <text name="AssetHealthMnuHealthMetricList" value="Metric Definitions" />
+    <text name="AssetHealthLblMetricTypeNone" value="No metric" />
+    <text name="AssetHealthLblMetricTypePctTime" value="Percentage time in deviation" />
+    <text name="AssetHealthLblMetricTypePctLimits" value="Percentage limits deviating" />
+    <text name="AssetHealthTblPeriod" value="Days" />
+    <text name="AssetHealthTblMetricType" value="Metric type" />
+    <text name="AssetHealthTblMetricDirection" value="Good is..." />
+    <text name="AssetHealthMsgMetricDirectionHigh" value="Higher values (100%) are good" />
+    <text name="AssetHealthMsgMetricDirectionLow" value="Lower values (0%) are good" />
+    <text name="AssetHealthTblMetricWarningLevel" value="Warning" />
+    <text name="AssetHealthTblMetricErrorLevel" value="Error" />
+    <text name="AssetHealthTtlHealthMetricDefinitions" value="Asset Health Metric Definitions" />
+    <text name="AssetHealthBtnCancel" value="Cancel" />
+    <text name="AssetHealthBtnSave" value="Save" />
+    <text name="AssetHealthBtnDelete" value="Delete" />
+    <text name="AssetHealthMsgMetricUpdated" value="Metric {0} has been updated" />
+    <text name="AssetHealthMsgMetricDeleted" value="Metric {0} has been deleted" />
+    <text name="AssetHealthBtnCreateMetric" value="Define a new metric" />
+    <text name="SortOrder" value="Order" />
+    <text name="AssetHealthLblMetricName" value="Metric" />
+    <text name="AssetHealthLblApplyToEach" value="Apply to each asset?" />
+
     <text name="ImgTtlImageList" value="Images" />
     <text name="ImgTtlImageListEdit" value="Edit Images" />
     <text name="ImgTxtNumberOfImagesTotal" value="Total images:" />

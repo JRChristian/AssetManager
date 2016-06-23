@@ -27,4 +27,11 @@
             return all[input];
         };
     })
+    .filter('metricType', function () {
+        return function (input) {
+            var localize = abp.localization.getSource('AssetManager');
+            all = new Array(localize('AssetHealthLblMetricTypeNone'), localize('AssetHealthLblMetricTypePctTime'), localize('AssetHealthLblMetricTypePctLimits'));
+            return all[input];
+        };
+    })
 ;

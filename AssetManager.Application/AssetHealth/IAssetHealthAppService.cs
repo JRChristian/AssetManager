@@ -15,11 +15,19 @@ namespace AssetManager.AssetHealth
         GetAssetHierarchyWithVariablesAsListOutput GetAssetHierarchyWithVariablesAsList(GetAssetHierarchyWithVariablesAsListInput input);
         UpdateAssetVariableListOutput UpdateAssetVariableList(UpdateAssetVariableListInput input);
         DeleteAssetVariableListOutput DeleteAssetVariableList(DeleteAssetVariableListInput input);
+
+        GetHealthMetricTypesOutput GetHealthMetricTypes();
+        GetHealthMetricOutput GetHealthMetric(GetHealthMetricInput input);
+        GetHealthMetricListOutput GetHealthMetricList(GetHealthMetricListInput input);
+        UpdateHealthMetricOutput UpdateHealthMetric(UpdateHealthMetricInput input);
+        DeleteHealthMetricOutput DeleteHealthMetric(DeleteHealthMetricInput input);
+
         GetAssetLevelTimeSummaryOutput GetAssetLevelTimeSummary(GetAssetLevelTimeSummaryInput input);
         GetAssetLimitStatsByDayOutput GetAssetLimitStatsByDay(GetAssetLimitStatsByDayInput input);
         GetAssetLimitChartByDayOutput GetAssetLimitChartByDay(GetAssetLimitChartByDayInput input);
         GetAssetLevelChartOutput GetAssetLevelChartCanvasJS(GetAssetLevelChartInput input);
         GetAssetLevelStatsOutput GetAssetLevelStats(GetAssetLevelStatsInput input);
         GetAssetLimitCurrentStatusOutput GetAssetLimitCurrentStatus(GetAssetLimitCurrentStatusInput input);
+        GetAssetHealthMetricValuesOutput GetAssetHealthMetricValues();
     }
 }

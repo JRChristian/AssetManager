@@ -21,6 +21,8 @@ namespace AssetManager.Configurations
             Property(x => x.GoodDirection).IsRequired();
             Property(x => x.WarningLevel).IsRequired();
             Property(x => x.ErrorLevel).IsRequired();
+            Property(x => x.ApplyToEachAsset).IsRequired();
+            Property(x => x.Order).IsRequired();
         }
     }
 }

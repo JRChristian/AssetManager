@@ -93,6 +93,16 @@
                     templateUrl: '/App/Main/views/assethealth/assetvariablelist.cshtml',
                     menu: 'AssetVariableList'
                 })
+                .state('healthmetriclist', {
+                    url: '/healthmetriclist',
+                    templateUrl: '/App/Main/views/assethealth/healthmetriclist.cshtml',
+                    menu: 'healthmetriclist' //Matches to name of menu in AssetManagerNavigationProvider
+                })
+                .state('assethealthdashboard', {
+                    url: '/assethealthdashboard',
+                    templateUrl: '/App/Main/views/assethealth/assethealthdashboard.cshtml',
+                     menu: 'AssetHealthDashboard' //Matches to name of 'IOW' menu in AssetManagerNavigationProvider
+                })
                 .state('imagelist', {
                     url: '/imagelist',
                     templateUrl: '/App/Main/views/images/imagelist.cshtml',
