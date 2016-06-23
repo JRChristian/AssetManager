@@ -49,6 +49,7 @@ namespace AssetManager.DomainServices
         List<IOWLimit> GetAllLimits(string variableName, string levelName);
         List<IOWLimit> GetAllLimits(long? variableId, string variableName, long? levelId, string levelName);
         List<IOWLimit> GetAllLimits(List<long> variableIds);
+        List<IOWLimit> GetAllLimits(int maxCriticality, double mostRecentDeviation);
         long InsertOrUpdateLimitAndGetId(IOWLimit input);
         bool DeleteLimit(long id);
 

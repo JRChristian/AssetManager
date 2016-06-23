@@ -380,6 +380,32 @@ namespace AssetManager.DomainServices
             return output;
         }
 
+        public List<IOWLimit> GetAllLimits(int maxCriticality, double hoursBack)
+        {
+            if (maxCriticality <= 0)
+                maxCriticality = 9999;
+            if (hoursBack <= 0)
+                hoursBack = 24;
+
+            List<IOWLimit> output = null;
+            // First part of where clause includes limits with active deviations (end time is null) and those recently ended (end time < threshold)
+            // Second part excludes limits there have never had a deviation (both start and end times are null)
+            // Third part includes just limits in the desired range of criticality.
+            var query = from limit in _iowLimitRespository.GetAll()
+                .Where(t => SqlFunctions.DateDiff("hour", (t.LastDeviationEndTimestamp ?? SqlFunctions.GetDate()), SqlFunctions.GetDate()) < hoursBack
+                         && (t.LastDeviationStartTimestamp ?? SqlFunctions.DateAdd("day",1,SqlFunctions.GetDate())) < SqlFunctions.GetDate()
+                         && t.Level.Criticality <= maxCriticality)
+                select limit;
+            var results = query.ToList();
+            if (results != null && results.Count > 0)
+            {
+                output = new List<IOWLimit>();
+                foreach (var r in results)
+                    output.Add(r);
+            }
+            return output;
+        }
+
         public long InsertOrUpdateLimitAndGetId(IOWLimit input)
         {
             IOWLimit limit = null;

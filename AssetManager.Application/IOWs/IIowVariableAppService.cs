@@ -21,5 +21,6 @@ namespace AssetManager.IOWs
 
         GetIowChartCanvasJSOutput GetIowChartCanvasJS(GetIowChartCanvasJSInput input);
         GetVariableLimitStatusOutput GetVariableLimitStatus(GetVariableLimitStatusInput input);
+        GetRecentlyDeviatingLimitsOutput GetRecentlyDeviatingLimits(GetRecentlyDeviatingLimitsInput input);
     }
 }

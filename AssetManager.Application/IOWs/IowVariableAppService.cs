@@ -551,7 +551,8 @@ namespace AssetManager.IOWs
                 localize.GetString("DirectionNone"),
                 localize.GetString("DirectionLow"),
                 localize.GetString("DirectionFocus"),
-                localize.GetString("DirectionHigh") };
+                localize.GetString("DirectionHigh")
+            };
 
             // Get all the variable/limit combinations that match the input
             List<IOWLimit> limits = _iowManager.GetAllLimits(input.VariableName, input.LevelName);
@@ -629,5 +630,94 @@ namespace AssetManager.IOWs
             return new GetVariableLimitStatusOutput { variablelimits = output };
         }
 
+        public GetRecentlyDeviatingLimitsOutput GetRecentlyDeviatingLimits(GetRecentlyDeviatingLimitsInput input)
+        {
+            var localize = _localizationManager.GetSource("AssetManager");
+            string[] localizedDirectionNames = new string[4]
+            {
+                localize.GetString("DirectionNone"),
+                localize.GetString("DirectionLow"),
+                localize.GetString("DirectionFocus"),
+                localize.GetString("DirectionHigh")
+            };
+
+            List<IOWLimit> limits = _iowManager.GetAllLimits(input.MaxCriticality, input.HoursBack);
+            // Transform into our output format
+            List<VariableLimitStatusDto> output = new List<VariableLimitStatusDto>();
+            foreach (IOWLimit limit in limits)
+            {
+                string severityMessage1 = "";
+                string severityMessage2 = "";
+                string severityClass = "";
+                if (limit.LastStatus == IOWStatus.OpenDeviation)
+                {
+                    severityMessage1 = limit.Level.Name;
+                    severityMessage2 = localize.GetString("IowMsgActive");
+                    if (limit.Level.Criticality == 1)
+                        severityClass = "label label-danger";
+                    else if (limit.Level.Criticality == 2)
+                        severityClass = "label label-warning";
+                    else if (limit.Level.Criticality == 3)
+                        severityClass = "label label-default";
+                }
+                else if (limit.LastDeviationEndTimestamp.HasValue && (DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalHours <= 24)
+                {
+                    severityMessage1 = limit.Level.Name;
+                    severityMessage2 = localize.GetString("IowMsgLast24Hours");
+                    if (limit.Level.Criticality == 1)
+                        severityClass = "label label-danger";
+                    else if (limit.Level.Criticality == 2)
+                        severityClass = "label label-warning";
+                }
+                else if (limit.LastDeviationEndTimestamp.HasValue)
+                {
+                    double days = Math.Round((DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalDays, 0);
+                    severityMessage1 = "";
+                    severityMessage2 = String.Format(localize.GetString("IowMsgNotRecent"), days);
+                    severityClass = "";
+                }
+
+                output.Add(new VariableLimitStatusDto
+                {
+                    VariableId = limit.Variable.Id,
+                    VariableName = limit.Variable.Name,
+                    VariableDescription = limit.Variable.Description,
+                    TagId = limit.Variable.TagId,
+                    TagName = limit.Variable.Tag.Name,
+                    UOM = limit.Variable.UOM,
+                    LastTimestamp = limit.Variable.Tag.LastTimestamp,
+                    LastValue = limit.Variable.Tag.LastValue,
+                    LastQuality = limit.Variable.Tag.LastQuality,
+
+                    IOWLevelId = limit.IOWLevelId,
+                    LevelName = limit.Level.Name,
+                    LevelDescription = limit.Level.Description,
+                    Criticality = limit.Level.Criticality,
+                    ResponseGoal = limit.Level.ResponseGoal,
+                    MetricGoal = limit.Level.MetricGoal,
+
+                    LimitName = string.Format("{0}-", limit.Level.Criticality) + limit.Level.Name + "-" + localizedDirectionNames[Convert.ToInt32(limit.Direction)],
+                    Direction = limit.Direction,
+                    LimitValue = limit.Value,
+                    Cause = limit.Cause,
+                    Consequences = limit.Consequences,
+                    Action = limit.Action,
+
+                    LastStatus = limit.LastStatus,
+                    LastDeviationStartTimestamp = limit.LastDeviationStartTimestamp,
+                    LastDeviationEndTimestamp = limit.LastDeviationEndTimestamp,
+
+                    SeverityMessage1 = severityMessage1,
+                    SeverityMessage2 = severityMessage2,
+                    SeverityClass = severityClass
+                });
+            }
+
+            return new GetRecentlyDeviatingLimitsOutput
+            {
+                variablelimits = output
+            };
+
+        }
     }
 }

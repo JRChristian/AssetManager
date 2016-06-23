@@ -133,6 +133,8 @@
     <Compile Include="Assets\Dtos\GetAssetRelativesOutput.cs" />
     <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayInput.cs" />
     <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayOutput.cs" />
+    <Compile Include="IOWs\Dtos\GetRecentlyDeviatingLimitsInput.cs" />
+    <Compile Include="IOWs\Dtos\GetRecentlyDeviatingLimitsOutput.cs" />
     <Compile Include="Utilities\CanvasJSBar.cs" />
     <Compile Include="AssetHealth\Dtos\DeleteAssetVariableListInput.cs" />
     <Compile Include="AssetHealth\Dtos\DeleteAssetVariableListOutput.cs" />

@@ -80,6 +80,7 @@
     <text name="Causes" value="Causes" />
     <text name="Consequences" value="Consequences" />
     <text name="Limit" value="Limit" />
+    <text name="Level" value="Level" />
     <text name="Actual" value="Actual" />
     <text name="Direction" value="Direction" />
     <text name="DirectionNone" value="None" />
@@ -110,6 +111,7 @@
     <text name="AssetDescription" value="Description" />
     <text name="AssetList" value="Asset List" />
     <text name="AssetName" value="Asset name" />
+    <text name="Asset" value="Asset" />
     <text name="Assets" value="Assets" />
     <text name="AssetType" value="Asset type" />
     <text name="Created" value="Created" />
@@ -180,6 +182,11 @@
     <text name="SortOrder" value="Order" />
     <text name="AssetHealthLblMetricName" value="Metric" />
     <text name="AssetHealthLblApplyToEach" value="Apply to each asset?" />
+    <text name="AssetHealthTtlRecentDeviations" value="Variables with recent deviations" />
+    <text name="Warning" value="Warning" />
+    <text name="Error" value="Error" />
+    <text name="AssetHealthTtlMetrics" value="Metrics" />
+    <text name="AssetHealthTtlDashboard" value="Asset Health Dashboard" />
 
     <text name="ImgTtlImageList" value="Images" />
     <text name="ImgTtlImageListEdit" value="Edit Images" />

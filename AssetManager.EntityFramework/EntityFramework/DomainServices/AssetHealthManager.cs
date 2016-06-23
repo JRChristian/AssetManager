@@ -173,6 +173,7 @@ namespace AssetManager.EntityFramework.DomainServices
                     TenantId = input.TenantId,
                     Name = input.Name,
                     AssetTypeId = input.AssetTypeId,
+                    ApplyToEachAsset = input.ApplyToEachAsset,
                     IOWLevelId = input.IOWLevelId,
                     Period = input.Period,
                     MetricType = input.MetricType,
@@ -551,8 +552,8 @@ namespace AssetManager.EntityFramework.DomainServices
                                             n.Value = levelStats[0].NumberDeviatingLimits / levelStats[0].NumberLimits * 100;
                                         else if (n.MetricType == MetricType.PercentTimeInDeviation)
                                             n.Value = levelStats[0].DurationHours / n.DurationHours / levelStats[0].NumberLimits * 100;
+                                        n.NumberLimits = (int)levelStats[0].NumberLimits;
                                     }
-                                    n.NumberLimits = (int)levelStats[0].NumberLimits;
                                 }
                                 output.Add(n);
                             }
@@ -597,15 +598,14 @@ namespace AssetManager.EntityFramework.DomainServices
                             List<LevelStats> levelStats = _iowManager.GetPerLevelStatsOverTime(limitIds, n.StartTimestamp, n.EndTimestamp);
 
                             // There should be just one member in the array (or zero), since there was only one level in the input and the above function groups by level name.
-                            if( levelStats != null && levelStats.Count > 0 && levelStats[0].NumberLimits > 0)
+                            if( levelStats != null && levelStats.Count > 0 && levelStats[0].NumberLimits > 0 )
                             {
                                 if (n.MetricType == MetricType.PercentLimitsInDeviation)
                                     n.Value = levelStats[0].NumberDeviatingLimits / levelStats[0].NumberLimits * 100;
                                 else if (n.MetricType == MetricType.PercentTimeInDeviation)
                                     n.Value = levelStats[0].DurationHours / n.DurationHours / levelStats[0].NumberLimits * 100;
+                                n.NumberLimits = (int) levelStats[0].NumberLimits;
                             }
-
-                            n.NumberLimits = (int) levelStats[0].NumberLimits;
                         }
                         output.Add(n);
                     }
