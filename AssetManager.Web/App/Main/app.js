@@ -17,6 +17,7 @@
         'ui.bootstrap.showErrors',  // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
 
         'angular-flot', // Flot helper library -- see https://docs.omniref.com/js/npm/angular-flot/0.0.6 
+        'nvd3',         // see http://krispo.github.io/angular-nvd3
 
         'abp'
     ]);

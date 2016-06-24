@@ -24,7 +24,8 @@ namespace AssetManager.Web
                     .Include("~/Content/flags/famfamfam-flags.css", new CssRewriteUrlTransform())
                     .Include("~/Content/font-awesome.min.css", new CssRewriteUrlTransform())
                     .Include("~/Content/ui-grid.min.css", new CssRewriteUrlTransform())     // Angular UI Grid
-                    .Include("~/Content/showErrors.css", new CssRewriteUrlTransform())     // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
+                    .Include("~/Content/showErrors.css", new CssRewriteUrlTransform())      // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
+                    .Include("~/Content/nv.d3.min.css", new CssRewriteUrlTransform())       // Charting with nvd3 and d3 -- see http://cmaurer.github.io/angularjs-nvd3-directives
                 );
 
             //~/Bundles/App/vendor/js
@@ -66,6 +67,10 @@ namespace AssetManager.Web
 
                         //"~/Scripts/validator.min.js",           // Bootstrap form validation -- see http://1000hz.github.io/bootstrap-validator/
                         "~/Scripts/showErrors.min.js",          // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
+
+                        "~/Scripts/d3/d3.min.js",
+                        "~/scripts/nv.d3.min.js",
+                        "~/Scripts/angular-nvd3.min.js",        // Charting with nvd3 and d3 -- see http://krispo.github.io/angular-nvd3
 
                         "~/Abp/Framework/scripts/abp.js",
                         "~/Abp/Framework/scripts/libs/abp.jquery.js",

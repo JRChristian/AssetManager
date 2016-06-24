@@ -2,37 +2,22 @@
     <div class="container">
         <div class="row">
             <h3>@L("AssetHealthTtlDashboard")</h3>
+            <a ui-sref="assetlist" class="btn btn-default btn-sm"><i class="fa fa-tags"></i> @L("AssetBtnGoToAssetList")</a>
+            <a ui-sref="assetlevelbarchart" class="btn btn-default btn-sm"><i class="fa fa-area-chart"></i> @L("AssetMnuAssetLevelBarChart")</a>
         </div>
         <div class="row">
             <div class="col-sm-6">
                 <h4>@L("AssetHealthTtlMetrics")</h4>
-                <div class="table-responsive">
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>@L("Asset")</th>
-                                <th>@L("Level")</th>
-                                <th>@L("Actual")</th>
-                                <th>@L("Warning")</th>
-                                <th>@L("Error")</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="m in vm.metrics | filter: { hasLimits: true }">
-                                <td>
-                                    <div class="btn-group btn-group-xs" ng-hide="m.assetId<=0">
-                                        <a class="btn btn-default" ui-sref="assetlimitview({ assetId: m.assetId })"><i class="fa fa-bar-chart"></i></a>
-                                    </div>
-                                </td>
-                                <td>{{m.applyToEachAsset ? m.assetName : m.assetTypeName}}</td>
-                                <td>{{m.criticality}} - {{m.levelName}}</td>
-                                <td class="text-center">{{m.value | number:1}}%</td>
-                                <td class="text-center">{{m.warning}}%</td>
-                                <td class="text-center">{{m.error}}%</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div ng-repeat="m in vm.metrics | filter: { hasLimits: true }">
+                    <div ng-hide="m.repeated">
+                        <h5>
+                            {{m.name}}
+                            <div class="btn-group btn-group-xs" ng-hide="m.assetId<=0">
+                                <a class="btn btn-default" ui-sref="assetlimitview({ assetId: m.assetId })"><i class="fa fa-bar-chart"></i></a>
+                            </div>
+                        </h5>
+                    </div>
+                    <div><nvd3 options="vm.chartOptions" data="m.chartData"></nvd3></div>
                 </div>
             </div>
             <div class="col-sm-6">
@@ -43,15 +28,9 @@
         </div>
         <div class="row">
             <div class="col-sm-6">
-                <a ui-sref="assetlist" class="btn btn-default btn-sm"><i class="fa fa-tags"></i> @L("AssetBtnGoToAssetList")</a>
-                <a ui-sref="assetlevelbarchart" class="btn btn-default btn-sm"><i class="fa fa-area-chart"></i> @L("AssetMnuAssetLevelBarChart")</a>
-            </div>
-            <div class="col-sm-6">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6">
                 <h4>@L("AssetHealthTtlRecentDeviations")</h4>
+                <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+                <a ui-sref="iowlimitstatus" class="btn btn-default btn-sm"><i class="fa fa-crosshairs"></i> @L("IowTtlLimitStatus")</a>
                 <div class="table-responsive">
                     <table class="table table-condensed">
                         <thead>
@@ -80,18 +59,9 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                    <h4>Resources</h4>
-                    <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-envelope-o"></i> @L("ImgTtlImageList")</a>
-                    <p><i>...coming soon...</i></p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6">
-                <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
-                <a ui-sref="iowlimitstatus" class="btn btn-default btn-sm"><i class="fa fa-crosshairs"></i> @L("IowTtlLimitStatus")</a>
-            </div>
-            <div class="col-sm-6">
-
+                <h4>Resources</h4>
+                <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-envelope-o"></i> @L("ImgTtlImageList")</a>
+                <p><i>...coming soon...</i></p>
             </div>
         </div>
     </div>
