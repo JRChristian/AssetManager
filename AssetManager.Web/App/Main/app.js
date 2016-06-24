@@ -244,9 +244,9 @@
 
     // Set page title.
     // See http://conceptf1.blogspot.com/2014/11/angularjs-dynamic-page-title.html and http://stackoverflow.com/questions/12506329/how-to-dynamically-change-header-based-on-angularjs-partial-view/12506795#12506795
-    app.run(function ($rootScope, $state) {
+    app.run(['$rootScope', '$state', function ($rootScope, $state) {
         $rootScope.$on('$stateChangeSuccess', function () {
             $rootScope.title = $state.current.title;
         });
-    });
+    }]);
 })();
