@@ -1,7 +1,10 @@
 ﻿@using System.Threading
 @using System.Web.Optimization
 <!DOCTYPE html>
-<html lang="en">
+@* Moved ng-app from the first <div> tag under <body> to here to be able to set the page title
+   See http://conceptf1.blogspot.com/2014/11/angularjs-dynamic-page-title.html and http://stackoverflow.com/questions/12506329/how-to-dynamically-change-header-based-on-angularjs-partial-view/12506795#12506795
+*@
+<html lang="en" ng-app="app">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,7 +12,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>AssetManager</title>
+    <title ng-bind="'Xtend - ' + $root.title">Xtend</title>
 
     <link rel="shortcut icon" href="~/favicon.ico">
 
@@ -42,7 +45,7 @@
     
 </head>
 <body>
-    <div ng-app="app">
+    <div @*ng-app="app"*@>
         <div ng-controller="app.views.layout as vm">
             <div ng-include="'/App/Main/views/layout/header.cshtml'"></div>
             <div class="container">
