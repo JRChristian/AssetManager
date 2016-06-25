@@ -81,7 +81,6 @@
     <text name="Consequences" value="Consequences" />
     <text name="Limit" value="Limit" />
     <text name="Level" value="Level" />
-    <text name="Actual" value="Actual" />
     <text name="Direction" value="Direction" />
     <text name="DirectionNone" value="None" />
     <text name="DirectionLow" value="Low" />
@@ -187,6 +186,7 @@
     <text name="Error" value="Error" />
     <text name="AssetHealthTtlMetrics" value="Metrics" />
     <text name="AssetHealthTtlDashboard" value="Asset Health Dashboard" />
+    <text name="AssetHealthTtlSpecialAttention" value="Special attention" />
 
     <text name="ImgTtlImageList" value="Images" />
     <text name="ImgTtlImageListEdit" value="Edit Images" />
@@ -231,7 +231,9 @@
     <text name="TagNameIsRequired" value="Tag name is required" />
     <text name="TagDescriptionIsRequired" value="Tag description is required" />
     <text name="PrecisionIsNotInRange" value="Precision must be between {0} and {1}" />
- 
+    <text name="Actual" value="Actual" />
+    <text name="Current" value="Current" />
+
     <text name="QualityGood" value="OK" />
     <text name="QualityUncertain" value="?" />
     <text name="QualityBad" value="Bad" />

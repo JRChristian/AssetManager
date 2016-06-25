@@ -8,6 +8,7 @@
             var vm = this;
             vm.$log = $log;
             vm.localize = abp.localization.getSource('AssetManager');
+            vm.startDate = Date.now();
 
             vm.metrics = [];
             abp.ui.setBusy(
@@ -25,15 +26,18 @@
 
                             // Build the bullet chart information
                             vm.metrics[i].value = Math.round(100 * vm.metrics[i].value)/100.0;
-                            var maxValue = Math.max(vm.metrics[i].error, vm.metrics[i].value + 2);
+                            vm.metrics[i].recentValue = Math.round(100 * vm.metrics[i].recentValue) / 100.0;
+                            var maxValue = Math.max(vm.metrics[i].error, vm.metrics[i].value, vm.metrics[i].recentValue) * 1.2;
                             vm.metrics[i].chartData = {
                                 title: vm.metrics[i].criticality + '-' + vm.metrics[i].levelName,
-                                subtitle: '% deviation',
+                                subtitle: '% deviation ' + vm.metrics[i].period + ' days',
                                 ranges: [vm.metrics[i].warning, vm.metrics[i].error, maxValue],
                                 measures: [vm.metrics[i].value],
-                                markers: [vm.metrics[i].value]
+                                markers: [vm.metrics[i].recentValue]
                             };
                         }
+                        if (vm.metrics.length > 0)
+                            vm.startDate = vm.metrics[0].startTimestamp;
                     })
                 );
 
@@ -52,7 +56,7 @@
                     type: 'bulletChart',
                     width: 400,
                     height: 48,
-                    margins: { top: 0, bottom: 0, left: 50, right: 0 },
+                    margins: { top: 0, bottom: 0, left: 0, right: 0 },
                     duration: 500
                 }
             };

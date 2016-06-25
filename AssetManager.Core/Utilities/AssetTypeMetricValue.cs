@@ -24,6 +24,7 @@ namespace AssetManager.Utilities
         public double Warning { get; set; }
         public double Error { get; set; }
         public double Value { get; set; }
+        public double RecentValue { get; set; }
         public DateTime StartTimestamp { get; set; }
         public DateTime EndTimestamp { get; set; }
         public double DurationHours { get; set; }

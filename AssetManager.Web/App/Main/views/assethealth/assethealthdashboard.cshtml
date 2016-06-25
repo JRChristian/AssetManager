@@ -1,12 +1,10 @@
 ﻿<div ng-controller="app.views.assethealth.dashboard as vm">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <h3>@L("AssetHealthTtlDashboard")</h3>
-            <a ui-sref="assetlist" class="btn btn-default btn-sm"><i class="fa fa-tags"></i> @L("AssetBtnGoToAssetList")</a>
-            <a ui-sref="assetlevelbarchart" class="btn btn-default btn-sm"><i class="fa fa-area-chart"></i> @L("AssetMnuAssetLevelBarChart")</a>
+            <h3>@L("AssetHealthTtlDashboard") <small> {{vm.startDate | momentLocale}} - {{Date.now() | momentLocale}}</small></h3>
         </div>
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-7">
                 <h4>@L("AssetHealthTtlMetrics")</h4>
                 <div ng-repeat="m in vm.metrics | filter: { hasLimits: true }">
                     <div ng-hide="m.repeated">
@@ -17,27 +15,26 @@
                             </div>
                         </h5>
                     </div>
-                    <div><nvd3 options="vm.chartOptions" data="m.chartData"></nvd3></div>
+                    <div>
+                        <nvd3 options="vm.chartOptions" data="m.chartData"></nvd3>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-5">
                 <h4>Activity</h4>
-                <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-envelope-o"></i> Notices</a>
                 <p><i>...coming soon...</i></p>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-6">
-                <h4>@L("AssetHealthTtlRecentDeviations")</h4>
-                <a ui-sref="iowvariablelist" class="btn btn-default btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
-                <a ui-sref="iowlimitstatus" class="btn btn-default btn-sm"><i class="fa fa-crosshairs"></i> @L("IowTtlLimitStatus")</a>
+            <div class="col-sm-7">
+                <h4>@L("AssetHealthTtlSpecialAttention")</h4>
                 <div class="table-responsive">
                     <table class="table table-condensed">
                         <thead>
                             <tr>
                                 <th></th>
                                 <th>@L("Variable")</th>
-                                <th>@L("Actual")</th>
+                                <th>@L("Current")</th>
                                 <th>@L("Status")</th>
                             </tr>
                         </thead>
@@ -58,10 +55,21 @@
                     </table>
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-5">
                 <h4>Resources</h4>
-                <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-envelope-o"></i> @L("ImgTtlImageList")</a>
                 <p><i>...coming soon...</i></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="btn-group btn-group-sm">
+                <a ui-sref="assetlist" class="btn btn-default"><i class="fa fa-tags"></i> @L("AssetBtnGoToAssetList")</a>
+                <a ui-sref="assetlevelbarchart" class="btn btn-default"><i class="fa fa-area-chart"></i> @L("AssetMnuAssetLevelBarChart")</a>
+            </div>
+            <div class="btn-group btn-group-sm">
+                <a ui-sref="iowvariablelist" class="btn btn-default"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+                <a ui-sref="iowlimitstatus" class="btn btn-default"><i class="fa fa-crosshairs"></i> @L("IowTtlLimitStatus")</a>
+                <a href="#" class="btn btn-default"><i class="fa fa-envelope-o"></i> Notices</a>
+                <a ui-sref="imagelist" class="btn btn-default"><i class="fa fa-envelope-o"></i> @L("ImgTtlImageList")</a>
             </div>
         </div>
     </div>

@@ -533,6 +533,7 @@ namespace AssetManager.EntityFramework.DomainServices
                                     Warning = m.WarningLevel,
                                     Error = m.ErrorLevel,
                                     Value = 0,
+                                    RecentValue = 0,
                                     StartTimestamp = DateTime.Now.Date.AddDays(-m.Period),
                                     EndTimestamp = DateTime.Now,
                                     NumberLimits = 0,
@@ -553,6 +554,17 @@ namespace AssetManager.EntityFramework.DomainServices
                                         else if (n.MetricType == MetricType.PercentTimeInDeviation)
                                             n.Value = levelStats[0].DurationHours / n.DurationHours / levelStats[0].NumberLimits * 100;
                                         n.NumberLimits = (int)levelStats[0].NumberLimits;
+                                    }
+
+                                    // Repeat for recent values, defined as since midnight yesterday
+                                    DateTime yesterday = DateTime.Now.Date.AddDays(-1);
+                                    levelStats = _iowManager.GetPerLevelStatsOverTime(limitIds, yesterday, n.EndTimestamp);
+                                    if (levelStats != null && levelStats.Count > 0 && levelStats[0].NumberLimits > 0)
+                                    {
+                                        if (n.MetricType == MetricType.PercentLimitsInDeviation)
+                                            n.RecentValue = levelStats[0].NumberDeviatingLimits / levelStats[0].NumberLimits * 100;
+                                        else if (n.MetricType == MetricType.PercentTimeInDeviation)
+                                            n.RecentValue = levelStats[0].DurationHours / (n.EndTimestamp - yesterday).TotalHours / levelStats[0].NumberLimits * 100;
                                     }
                                 }
                                 output.Add(n);
