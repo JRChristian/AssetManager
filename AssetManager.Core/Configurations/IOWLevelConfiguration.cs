@@ -18,6 +18,10 @@ namespace AssetManager.Configurations
             Property(x => x.Criticality).IsRequired();
             Property(x => x.ResponseGoal).IsRequired().HasMaxLength(255);
             Property(x => x.MetricGoal).IsRequired().HasMaxLength(255);
+            Property(x => x.MetricType).IsRequired();
+            Property(x => x.GoodDirection).IsRequired();
+            Property(x => x.WarningLevel).IsRequired();
+            Property(x => x.ErrorLevel).IsRequired();
         }
     }
 }

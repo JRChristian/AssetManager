@@ -22,24 +22,45 @@
                 <div class="form-group" show-errors>
                     <label class="col-sm-2" control-label for="LevelDescription">@L("Description")</label>
                     <div class="col-sm-10">
-                        <textarea id="levelDescription" name="levelDescription" class="form-control" ng-model="vm.level.description" rows="3" required></textarea>
+                        <textarea id="levelDescription" name="levelDescription" class="form-control" ng-model="vm.level.description" rows="2" required></textarea>
                         <p class="help-block" ng-if="editLevelForm.levelDescription.$error.required">@L("DescriptionIsRequired")</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2" control-label for="LevelResponseGoal">@L("ResponseGoal")</label>
-                    <div class="col-sm-10"><textarea id="LevelResponseGoal" class="form-control" ng-model="vm.level.responseGoal" rows="3"></textarea></div>
+                    <div class="col-sm-10"><textarea id="LevelResponseGoal" class="form-control" ng-model="vm.level.responseGoal" rows="2"></textarea></div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2" control-label for="LevelMetricGoal">@L("MetricGoal")</label>
-                    <div class="col-sm-10"><textarea id="LevelMetricGoal" class="form-control" ng-model="vm.level.metricGoal" rows="3"></textarea></div>
+                    <div class="col-sm-10"><textarea id="LevelMetricGoal" class="form-control" ng-model="vm.level.metricGoal" rows="2"></textarea></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="MetricType">@L("AssetHealthTblMetricType")</label>
+                    <div class="col-sm-10">
+                        <select id="MetricType" class="form-control" ng-model="vm.level.metricType" ng-options="x.code as x.description for x in vm.metricTypes"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="Direction">@L("AssetHealthTblMetricDirection")</label>
+                    <div class="col-sm-10">
+                        <input id="DirectionHigh" type="radio" value="3" ng-model="vm.level.goodDirection"> @L("AssetHealthMsgMetricDirectionHigh")<br>
+                        <input id="DirectionLow" type="radio" value="1" ng-model="vm.level.goodDirection"> @L("AssetHealthMsgMetricDirectionLow")
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="WarningLevel">@L("AssetHealthTblMetricWarningLevel")</label>
+                    <div class="col-sm-2"><input id="WarningLevel" type="number" min="0" max="100" ng-model="vm.level.warningLevel" class="form-control" required></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2" control-label for="ErrorLevel">@L("AssetHealthTblMetricErrorLevel")</label>
+                    <div class="col-sm-2"><input id="ErrorLevel" type="number" min="0" max="100" ng-model="vm.level.errorLevel" class="form-control" required></div>
                 </div>
             </form>
         </div>
         <div class="row">
-            <a ui-sref="iowlevellist" class="btn btn-info btn-sm"><i class="fa fa-tasks"></i> @L("LevelList")</a>
-            <button ng-click="vm.saveLevel()" ng-disabled="editLevelForm.$invalid" type="submit" class="btn btn-success btn-sm"><i class="fa fa-save"></i> @L("UpdateTheLevel")</button>
-            <button ng-show="vm.deleteEnabled" ng-click="vm.deleteLevel()" type="submit" class="btn btn-warning btn-sm"><i class="fa fa-trash"></i> @L("DeleteTheLevel")</button>
+            <a ui-sref="iowlevellist" class="btn btn-info btn-sm"> @L("AssetHealthBtnCancel")</a>
+            <button type="submit" class="btn btn-success btn-sm" ng-click="vm.saveLevel()" ng-disabled="editLevelForm.$invalid"><i class="fa fa-save"></i> @L("UpdateTheLevel")</button>
+            <button type="submit" class="btn btn-warning btn-sm" ng-click="vm.deleteLevel()" ng-show="vm.deleteEnabled"><i class="fa fa-trash"></i> @L("DeleteTheLevel")</button>
         </div>
     </div>
 </div>

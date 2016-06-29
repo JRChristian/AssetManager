@@ -7,11 +7,15 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th class="col-sm-1"> </th>
+                        <th> </th>
                         <th class="col-sm-2">@L("Name")</th>
-                        <th class="col-sm-3">@L("Description")</th>
-                        <th class="col-sm-3">@L("ResponseGoal")</th>
-                        <th class="col-sm-3">@L("MetricGoal")</th>
+                        <th class="col-sm-2">@L("Description")</th>
+                        <th>@L("ResponseGoal")</th>
+                        <th>@L("MetricGoal")</th>
+                        <th>@L("AssetHealthTblMetricType")</th>
+                        <th>@L("AssetHealthTblMetricDirection")</th>
+                        <th>@L("AssetHealthTblMetricWarningLevel")</th>
+                        <th>@L("AssetHealthTblMetricErrorLevel")</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -21,13 +25,17 @@
                         <td>{{level.description}}</td>
                         <td>{{level.responseGoal}}</td>
                         <td>{{level.metricGoal}}</td>
+                        <td>{{level.metricType | metricType}}</td>
+                        <td>{{level.goodDirection | direction }}</td>
+                        <td>{{level.warningLevel | number:1}}%</td>
+                        <td>{{level.errorLevel | number:1}}%</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         <div class="row">
-                <a ui-sref="iowleveledit({ Id: 0 })" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> @L("CreateLevel")</a>
-                <button ng-click="vm.createDefaults()" type="submit" class="btn btn-success btn-sm">@L("CreateDefaultLevels")</button>
+            <a ui-sref="iowleveledit({ Id: 0 })" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> @L("CreateLevel")</a>
+            <button ng-click="vm.createDefaults()" type="submit" class="btn btn-success btn-sm">@L("CreateDefaultLevels")</button>
         </div>
     </div>
 </div>

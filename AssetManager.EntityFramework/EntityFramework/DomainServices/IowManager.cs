@@ -21,6 +21,8 @@ namespace AssetManager.DomainServices
         // Validation information
         private static int minCriticality = 1;
         private static int maxCriticality = 5;
+        private readonly double minimumLevel = 0; // 0%
+        private readonly double maximumLevel = 100; // 100%
 
         private readonly IOWLevelRepository _iowLevelRepository;
         private readonly IOWVariableRepository _iowVariableRepository;
@@ -128,6 +130,25 @@ namespace AssetManager.DomainServices
 
         public IOWLevel InsertOrUpdateLevel(IOWLevel input)
         {
+            // Validate information
+
+            // Make sure criticality is in the proper range
+            input.Criticality = input.Criticality.Clamp(minCriticality, maxCriticality);
+
+            // If the good direction is down, then the warning level must be below the error level (going down: error, warning, good)
+            if (input.GoodDirection == Direction.Low)
+            {
+                input.ErrorLevel = input.ErrorLevel.Clamp(minimumLevel, maximumLevel);
+                input.WarningLevel = input.WarningLevel.Clamp(minimumLevel, input.ErrorLevel);
+            }
+            // If the good direction is up, then the warning level must be above the error level (going down: good, warning, error)
+            else if (input.GoodDirection == Direction.High)
+            {
+                input.ErrorLevel = input.ErrorLevel.Clamp(minimumLevel, maximumLevel);
+                input.WarningLevel = input.WarningLevel.Clamp(input.ErrorLevel, maximumLevel);
+            }
+            // Ignore other settings for good direction
+
             // Look to see if a level already exists. If so, fetch it.
             IOWLevel level = _iowLevelRepository.FirstOrDefault(input.Id);
             if( level == null )
@@ -142,15 +163,16 @@ namespace AssetManager.DomainServices
                 level.Criticality = input.Criticality;
                 level.ResponseGoal = input.ResponseGoal;
                 level.MetricGoal = input.MetricGoal;
+                level.MetricType = input.MetricType;
+                level.GoodDirection = input.GoodDirection;
+                level.WarningLevel = input.WarningLevel;
+                level.ErrorLevel = input.ErrorLevel;
             }
             else
             {
                 // Did not find a record. Use the input as is.
                 level = input;
             }
-
-            // Make sure criticality is in the proper range
-            level.Criticality = level.Criticality.Clamp(minCriticality, maxCriticality);
 
             return _iowLevelRepository.InsertOrUpdate(level);
         }

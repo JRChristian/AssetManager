@@ -3,8 +3,8 @@
 
     var controllerId = 'app.views.level.edit';
     app.controller(controllerId, [
-        '$scope', '$location', '$stateParams', 'abp.services.app.iowLevel',
-        function ($scope, $location, $stateParams, levelService) {
+        '$scope', '$location', '$stateParams', 'abp.services.app.iowLevel', 'abp.services.app.assetHealth',
+        function ($scope, $location, $stateParams, levelService, assetHealthService) {
             var vm = this;
             vm.localize = abp.localization.getSource('AssetManager');
             vm.deleteEnabled = false;
@@ -18,6 +18,13 @@
                         if (data.levelUseCount == 0 && data.level != null && data.level.id > 0)
                             vm.deleteEnabled = true;
                     }));
+
+            vm.metricTypes = [];
+            abp.ui.setBusy(
+                null,
+                assetHealthService.getHealthMetricTypes().success(function (data) {
+                    vm.metricTypes = data.metricTypes;
+                }));
 
             vm.saveLevel = function () {
                 $scope.$broadcast('show-errors-check-validity');
@@ -46,6 +53,10 @@
                                 abp.notify.error(abp.utils.formatString(vm.localize("LevelNotDeleted"), data.name));
                             $location.path('/iowlevellist');
                         }));
+            };
+
+            vm.cancel = function () {
+                $location.path('/iowlevellist');
             };
         }
     ]);

@@ -4,6 +4,7 @@ using Abp.Domain.Repositories;
 using AssetManager.DomainServices;
 using AssetManager.Entities;
 using AssetManager.IOWs.Dtos;
+using AssetManager.Utilities;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,10 @@ namespace AssetManager.IOWs
                 Criticality = input.Criticality,
                 ResponseGoal = !string.IsNullOrEmpty(input.ResponseGoal) ? input.ResponseGoal : "",
                 MetricGoal = !string.IsNullOrEmpty(input.MetricGoal) ? input.MetricGoal : "",
+                MetricType = input.MetricType,
+                GoodDirection = input.GoodDirection,
+                WarningLevel = input.WarningLevel,
+                ErrorLevel = input.ErrorLevel,
                 TenantId = tenantid
             };
             if (input.Id.HasValue)
@@ -93,7 +98,11 @@ namespace AssetManager.IOWs
                 Description = "Critical limit. Failure occurs quickly.",
                 Criticality = 1,
                 ResponseGoal = "One hour",
-                MetricGoal = "Zero incidents"
+                MetricGoal = "Zero incidents.",
+                MetricType = MetricType.PercentTimeInDeviation,
+                GoodDirection = Direction.Low,
+                WarningLevel = 0,
+                ErrorLevel = 0
             });
 
             UpdateLevel(new UpdateLevelInput
@@ -102,7 +111,11 @@ namespace AssetManager.IOWs
                 Description = "Standard limit. Failure occurs with sustained operations.",
                 Criticality = 2,
                 ResponseGoal = "12 hours",
-                MetricGoal = "Zero incidents laster longer than 24 hours"
+                MetricGoal = "No more than 2% time violating limits and no single violation lasting longer than 12 hours.",
+                MetricType = MetricType.PercentTimeInDeviation,
+                GoodDirection = Direction.Low,
+                WarningLevel = 1,
+                ErrorLevel = 2
             });
 
             UpdateLevel(new UpdateLevelInput
@@ -111,7 +124,11 @@ namespace AssetManager.IOWs
                 Description = "Optimal operating range. Inefficient or uneconomical with sustained operations.",
                 Criticality = 3,
                 ResponseGoal = "7 days",
-                MetricGoal = "Zero incidents lasting longer than 10 days"
+                MetricGoal = "No more than 10% time violating limits and no single violation lasting longer than 10 days.",
+                MetricType = MetricType.PercentTimeInDeviation,
+                GoodDirection = Direction.Low,
+                WarningLevel = 5,
+                ErrorLevel = 10
             });
 
             UpdateLevel(new UpdateLevelInput
@@ -120,7 +137,12 @@ namespace AssetManager.IOWs
                 Description = "Information only. No consequences expected with sustained operations.",
                 Criticality = 4,
                 ResponseGoal = "N/A",
-                MetricGoal = "N/A"
+                MetricGoal = "N/A",
+                MetricType = MetricType.None,
+                GoodDirection = Direction.None,
+                WarningLevel = 100,
+                ErrorLevel = 100
+
             });
         }
     }

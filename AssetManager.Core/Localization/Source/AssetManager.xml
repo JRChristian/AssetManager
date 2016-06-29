@@ -51,7 +51,7 @@
     <text name="Status" value="Status" />
     <text name="Criticality" value="Criticality" />
     <text name="ResponseGoal" value="Response goal" />
-    <text name="MetricGoal" value="Metric - last 30 days" />
+    <text name="MetricGoal" value="Metric goal" />
     <text name="CreateDefaultLevels" value="Create default levels" />
     <text name="VariableName" value="Variable" />
     <text name="DeleteTheLevel" value="Delete this level" />
