@@ -27,6 +27,7 @@ namespace AssetManager.EntityFramework.DomainServices
         List<AssetLimitStatsByDay> GetAssetLimitStatsByDay(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, bool includeAsset, bool includeChildren);
         List<AssetLevelStats> GetAssetLevelStatsForAsset(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
         List<AssetLevelStats> GetAssetLevelStatsForAssetType(long? assetTypeId, string assetTypeName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
+        List<AssetLevelStats> GetAssetLevelStatsByAssetType(DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
         List<AssetLevelStats> GetAssetLevelStatsForTopLevel(DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
         List<AssetLevelStats> GetAssetLevelStatsForChildren(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
         List<AssetLevelStats> GetAssetLevelStats(long? assetId, string assetName, bool includeAsset, bool includeChildren, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);

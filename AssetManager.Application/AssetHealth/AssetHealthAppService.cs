@@ -466,6 +466,9 @@ namespace AssetManager.AssetHealth
 
         public GetCompoundAssetLevelStatsOutput GetCompoundAssetLevelStats(GetCompoundAssetLevelStatsInput input)
         {
+            int? minCriticality = null;
+            int? maxCriticality = null;
+
             Asset asset = _assetManager.GetAsset(input.AssetId, input.AssetName);
             Asset assetParent = (asset != null) ? _assetManager.GetAssetParent(asset.Id, asset.Name) : null;
             //Asset assetWithChildren = _assetManager.GetAsset(input.AssetParentId, input.AssetParentName);
@@ -487,30 +490,36 @@ namespace AssetManager.AssetHealth
             // If a valid asset was specified in the input, return stats for that asset.
             // Otherwise, if a valid asset type was specified, return details for all assets of that type.
             // Otherwise, return details for all top level assets that do not have a parent.
-            if (asset != null && input.IncludeChildren <= 0)
+            if (asset != null && input.IncludeAssetChildren > 0)
             {
-                assetStats = _assetHealthManager.GetAssetLevelStatsForAsset(asset.Id, asset.Name, output.StartTimestamp, output.EndTimestamp, null, null);
-                assets.Add(asset);
+                assetStats = _assetHealthManager.GetAssetLevelStatsForChildren(asset.Id, asset.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+                // Need to include the parent in this query (third argument=true) in case this asset does not have children
+                assets = _assetManager.GetAssetChildren(asset.Id, asset.Name, true);
             }
-            else if (asset != null && input.IncludeChildren > 0)
+            else if (asset != null && input.IncludeAssetChildren <= 0)
             {
-                assetStats = _assetHealthManager.GetAssetLevelStatsForChildren(asset.Id, asset.Name, output.StartTimestamp, output.EndTimestamp, null, null);
-                assets = _assetManager.GetAssetChildren(asset.Id, asset.Name, false);
+                assetStats = _assetHealthManager.GetAssetLevelStatsForAsset(asset.Id, asset.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+                assets.Add(asset);
             }
             else if (assetType != null)
             {
-                assetStats = _assetHealthManager.GetAssetLevelStatsForAssetType(assetType.Id, assetType.Name, output.StartTimestamp, output.EndTimestamp, null, null);
+                assetStats = _assetHealthManager.GetAssetLevelStatsForAssetType(assetType.Id, assetType.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
                 assets = _assetManager.GetAssetListForType(assetType.Id);
+            }
+            else if(input.IncludeAssetTypesAsChildren <= 0)
+            {
+                assetStats = _assetHealthManager.GetAssetLevelStatsForTopLevel(output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+                assets = _assetManager.GetAssetChildren(null, null, false);
             }
             else
             {
-                assetStats = _assetHealthManager.GetAssetLevelStatsForTopLevel(output.StartTimestamp, output.EndTimestamp, null, null);
-                assets = _assetManager.GetAssetChildren(null, null, false);
+                assetStats = _assetHealthManager.GetAssetLevelStatsByAssetType(output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+                assets = _assetManager.GetAssetList();
             }
 
             // Save the number of assets and get overall statistics for all assets together
             output.NumberAssets = (assets !=  null) ? assets.Count : 0;
-            output.OverallStats = _assetHealthManager.GetAssetSummaryLevelStats(assets, output.StartTimestamp, output.EndTimestamp, null, null);
+            output.OverallStats = _assetHealthManager.GetAssetSummaryLevelStats(assets, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
 
             // Get the unique list of levels. The overall statistics will include all levels that are used for these assets
             // var allLevels = output.OverallStats.Select(p => new LevelInfo { Criticality = p.Criticality, LevelName = p.LevelName }).Distinct().OrderBy(p => p.Criticality).ThenBy(p => p.LevelName).ToList();
@@ -523,6 +532,8 @@ namespace AssetManager.AssetHealth
                 {
                     AssetId = inStats.AssetId,
                     AssetName = inStats.AssetName,
+                    AssetTypeId = inStats.AssetTypeId,
+                    AssetTypeName = inStats.AssetTypeName,
                     Levels = new List<LevelStats>()
                 };
 

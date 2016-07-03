@@ -240,7 +240,7 @@ namespace AssetManager.EntityFramework.DomainServices
                 AssetHierarchy parentNode = _assetHierarchyRepository.FirstOrDefault(p => p.AssetId == asset.Id);
                 if( parentNode != null )
                 {
-                    List<AssetHierarchy> childNodes = _assetHierarchyRepository.GetAllList(p => p.ParentAssetHierarchyId == parentNode.Id).ToList();
+                    List<AssetHierarchy> childNodes = _assetHierarchyRepository.GetAllList(p => p.ParentAssetHierarchyId == parentNode.Id).OrderBy(p => p.Asset.Name).ToList();
                     if( childNodes != null && childNodes.Count > 0 )
                     {
                         foreach (AssetHierarchy child in childNodes)
@@ -255,7 +255,7 @@ namespace AssetManager.EntityFramework.DomainServices
             else
             {
                 // No parent asset is given. Select all assets in the hierarchy that do not have a parent.
-                List<AssetHierarchy> assetsWithoutParent = _assetHierarchyRepository.GetAllList(p => !p.ParentAssetHierarchyId.HasValue);
+                List<AssetHierarchy> assetsWithoutParent = _assetHierarchyRepository.GetAllList(p => !p.ParentAssetHierarchyId.HasValue).OrderBy(p => p.Asset.Name).ToList();
                 if( assetsWithoutParent != null && assetsWithoutParent.Count > 0 )
                 {
                     foreach (AssetHierarchy child in assetsWithoutParent)

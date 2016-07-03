@@ -120,7 +120,7 @@
                     menu: 'AssetHealthDashboard'
                 })
                 .state('assethealthdashboard2', {
-                    url: '/assethealthdashboard2?AssetId&AssetTypeId&IncludeChildren',
+                    url: '/assethealthdashboard2?AssetId&AssetTypeId&IncludeChildren&Days',
                     templateUrl: '/App/Main/views/assethealth/assethealthdashboard2.cshtml',
                     title: 'Asset Health Dashboard',
                     menu: 'AssetHealthDashboard2'

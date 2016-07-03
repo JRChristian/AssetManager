@@ -436,6 +436,24 @@ namespace AssetManager.EntityFramework.DomainServices
             return output;
         }
 
+        public List<AssetLevelStats> GetAssetLevelStatsByAssetType(DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
+        {
+            List<AssetLevelStats> output = new List<AssetLevelStats>();
+
+            List<AssetType> assetTypes = _assetManager.GetAssetTypeList();
+            if (assetTypes != null)
+            {
+                foreach(AssetType assetType in assetTypes)
+                {
+                    List<Asset> assets = _assetManager.GetAssetListForType(assetType.Id);
+                    List<LevelStats> levels = GetAssetSummaryLevelStats(assets, startTimestamp, endTimestamp, minCriticality, maxCriticality);
+                    if( levels != null && levels.Count > 0)
+                        output.Add(new AssetLevelStats { AssetTypeId = assetType.Id, AssetTypeName = assetType.Name, Levels = levels });
+                }
+            }
+            return output;
+        }
+
         public List<AssetLevelStats> GetAssetLevelStatsForTopLevel(DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
         {
             // This call to GetAssetChildren() returns all assets that do not have a parent
@@ -504,6 +522,8 @@ namespace AssetManager.EntityFramework.DomainServices
                     {
                         AssetId = asset.Id,
                         AssetName = asset.Name,
+                        AssetTypeId = asset.AssetTypeId,
+                        AssetTypeName = (asset.AssetType != null) ? asset.AssetType.Name : "",
                         Levels = null
                     };
 

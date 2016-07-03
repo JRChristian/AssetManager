@@ -1,7 +1,7 @@
 ﻿<div ng-controller="app.views.assethealth.dashboard2 as vm">
     <div class="container-fluid">
         <div class="row">
-            <h3>@L("AssetHealthTtlDashboard") <small> {{vm.startDate | momentLocale}} - {{Date.now() | momentLocale}}</small></h3>
+            <h3>@L("AssetHealthTtlDashboard") <small> {{vm.startDate | date:'MMMM d, yyyy' : 'UTC'}} - {{Date.now() | momentLocale}}</small></h3>
         </div>
         <div class="row">
             <div class="col-sm-7">
@@ -31,7 +31,7 @@
                                 </td>
                                 <td>{{vm.assetOverallName}}</td>
                                 <td><span class="{{vm.label}}">&nbsp;</span></td>
-                                <td ng-repeat="c in vm.overallStats" class="text-center">{{c.metricValue | number:1}}%</td>
+                                <td ng-repeat="c in vm.overallStats" class="text-center" uib-tooltip-html="c.tooltip" tooltip-append-to-body=true>{{c.metricValue | number:1}}%</td>
                             </tr>
                             <tr ng-repeat="a in vm.assetStats">
                                 <td>
@@ -42,7 +42,7 @@
                                 </td>
                                 <td>{{a.assetName}}</td>
                                 <td><span class="{{a.label}}">&nbsp;</span></td>
-                                <td ng-repeat="c in a.levels" class="text-center {{c.style}}">{{c.metricValue | number:1}}%</td>
+                                <td ng-repeat="c in a.levels" class="text-center {{c.style}}" uib-tooltip-html="c.tooltip" tooltip-append-to-body=true>{{c.metricValue | number:1}}%</td>
                             </tr>
                         </tbody>
                     </table>
@@ -90,6 +90,7 @@
         </div>
         <div class="row">
             <div class="btn-group btn-group-sm">
+                <button id="changeDayRange" type="button" class="btn btn-success" ng-click="vm.changeDayRange()">{{vm.viewButtonLabel}}</button>
                 <a ui-sref="assetlist" class="btn btn-default"><i class="fa fa-tags"></i> @L("AssetBtnGoToAssetList")</a>
                 <a ui-sref="assetlevelbarchart" class="btn btn-default"><i class="fa fa-area-chart"></i> @L("AssetMnuAssetLevelBarChart")</a>
             </div>
