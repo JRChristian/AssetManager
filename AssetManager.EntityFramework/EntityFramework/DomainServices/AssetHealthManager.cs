@@ -410,6 +410,46 @@ namespace AssetManager.EntityFramework.DomainServices
          *   - For the children of a specified asset (but not the asset itself - useful when there isn't a top level, or the top level isn't known)
          *   - For all assets of a particular type
          */
+        public List<AssetLevelStats> GetAssetLevelStatsForAsset(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
+        {
+            List<Asset> assets = null;
+
+            Asset oneAsset = _assetManager.GetAsset(assetId, assetName);
+            if (oneAsset != null)
+            {
+                assets = new List<Asset>();
+                assets.Add(oneAsset);
+            }
+            return GetAssetLevelStats(assets, startTimestamp, endTimestamp, minCriticality, maxCriticality);
+        }
+
+        public List<AssetLevelStats> GetAssetLevelStatsForAssetType(long? assetTypeId, string assetTypeName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
+        {
+            List<AssetLevelStats> output = new List<AssetLevelStats>();
+
+            AssetType assetType = _assetManager.GetAssetType(assetTypeId, assetTypeName);
+            if( assetType != null )
+            {
+                List<Asset> assets = _assetManager.GetAssetListForType(assetType.Id);
+                output = GetAssetLevelStats(assets, startTimestamp, endTimestamp, minCriticality, maxCriticality);
+            }
+            return output;
+        }
+
+        public List<AssetLevelStats> GetAssetLevelStatsForTopLevel(DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
+        {
+            // This call to GetAssetChildren() returns all assets that do not have a parent
+            List<Asset> assets = _assetManager.GetAssetChildren(null, null, false);
+            return GetAssetLevelStats(assets, startTimestamp, endTimestamp, minCriticality, maxCriticality);
+        }
+
+        public List<AssetLevelStats> GetAssetLevelStatsForChildren(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
+        {
+            // This call to GetAssetChildren() returns all assets that are children of the specified asset, and does not include the parent
+            List<Asset> assets = _assetManager.GetAssetChildren(assetId, assetName, false);
+            return GetAssetLevelStats(assets, startTimestamp, endTimestamp, minCriticality, maxCriticality);
+        }
+
         public List<AssetLevelStats> GetAssetLevelStats(long? assetId, string assetName, bool includeAsset, bool includeChildren, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
         {
             List<Asset> assets = null;
@@ -425,18 +465,6 @@ namespace AssetManager.EntityFramework.DomainServices
                     assets = new List<Asset>();
                     assets.Add(oneAsset);
                 }
-            }
-
-            return GetAssetLevelStats(assets, startTimestamp, endTimestamp, minCriticality, maxCriticality);
-        }
-
-        public List<AssetLevelStats> GetAssetLevelStats(long? assetTypeId, string assetTypeName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
-        {
-            List<Asset> assets = null;
-            AssetType assetType = _assetManager.GetAssetType(assetTypeId, assetTypeName);
-            if (assetType != null)
-            {
-                assets = _assetManager.GetAssetListForType(assetType.Id);
             }
 
             return GetAssetLevelStats(assets, startTimestamp, endTimestamp, minCriticality, maxCriticality);
@@ -489,6 +517,42 @@ namespace AssetManager.EntityFramework.DomainServices
             return assetLevels;
         }
 
+        public List<LevelStats> GetAssetSummaryLevelStats(List<Asset> assets, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
+        {
+            List<LevelStats> levelStats = null;
+            if (assets != null)
+            {
+                    // Get the list of unique limits for this asset
+                    List<long> limitIds = null;
+                    if (minCriticality.HasValue || maxCriticality.HasValue)
+                    {
+                        // Criticality was specified in the input, so get just limits matching the specified criticality range
+                        int lowerCriticality = minCriticality.HasValue ? minCriticality.Value : -1;
+                        int upperCriticality = maxCriticality.HasValue ? maxCriticality.Value : 999;
+
+                        limitIds = (from av in _assetVariableRepository.GetAllList()
+                                    join l in _iowManager.GetAllLimits() on av.IOWVariableId equals l.IOWVariableId
+                                    join a in assets on av.AssetId equals a.Id
+                                    where l.Level.Criticality >= lowerCriticality && l.Level.Criticality <= upperCriticality
+                                    select l.Id).Distinct().ToList();
+                    }
+                    else
+                    {
+                        // Criticality was not specified in the input, so get all limits
+                        limitIds = (from av in _assetVariableRepository.GetAllList()
+                                    join l in _iowManager.GetAllLimits() on av.IOWVariableId equals l.IOWVariableId
+                                    join a in assets on av.AssetId equals a.Id
+                                    select l.Id).Distinct().ToList();
+                    }
+
+                    // Get the stats for these limits and add them to the output. Group statistics by level name and criticality. (This does something different only if this asset has multiple variables.)
+                    if (limitIds != null && limitIds.Count > 0)
+                        levelStats = _iowManager.GetPerLevelStatsOverTime(limitIds, startTimestamp, endTimestamp);
+            }
+            return levelStats;
+        }
+
+
         public List<AssetTypeMetricValue> GetAssetHealthMetricValues()
         {
             List<AssetTypeMetricValue> output = new List<AssetTypeMetricValue>();
@@ -530,8 +594,8 @@ namespace AssetManager.EntityFramework.DomainServices
                                     MetricType = m.MetricType,
                                     GoodDirection = m.GoodDirection,
                                     Period = m.Period,
-                                    Warning = m.WarningLevel,
-                                    Error = m.ErrorLevel,
+                                    WarningLevel = m.WarningLevel,
+                                    ErrorLevel = m.ErrorLevel,
                                     Value = 0,
                                     RecentValue = 0,
                                     StartTimestamp = DateTime.Now.Date.AddDays(-m.Period),
@@ -594,8 +658,8 @@ namespace AssetManager.EntityFramework.DomainServices
                             MetricType = m.MetricType,
                             GoodDirection = m.GoodDirection,
                             Period = m.Period,
-                            Warning = m.WarningLevel,
-                            Error = m.ErrorLevel,
+                            WarningLevel = m.WarningLevel,
+                            ErrorLevel = m.ErrorLevel,
                             Value = 0,
                             StartTimestamp = DateTime.Now.Date.AddDays(-m.Period),
                             EndTimestamp = DateTime.Now,

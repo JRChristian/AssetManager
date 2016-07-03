@@ -120,6 +120,8 @@
     <Compile Include="AssetHealth\Dtos\GetAssetLimitChartByDayOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLimitCurrentStatusInput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLimitCurrentStatusOutput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetCompoundAssetLevelStatsInput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetCompoundAssetLevelStatsOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetHealthMetricInput.cs" />
     <Compile Include="AssetHealth\Dtos\GetHealthMetricListInput.cs" />
     <Compile Include="AssetHealth\Dtos\GetHealthMetricListOutput.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="AssetHealth\Dtos\GetHealthMetricTypesOutput.cs" />
     <Compile Include="AssetHealth\Dtos\HealthMetricDto.cs" />
     <Compile Include="AssetHealth\Dtos\HealthMetricTypesDto.cs" />
+    <Compile Include="AssetHealth\Dtos\AssetTypeMetricsDto.cs" />
     <Compile Include="AssetHealth\Dtos\UpdateHealthMetricInput.cs" />
     <Compile Include="AssetHealth\Dtos\UpdateHealthMetricOutput.cs" />
     <Compile Include="Assets\Dtos\GetAssetRelativesInput.cs" />

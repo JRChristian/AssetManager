@@ -135,6 +135,11 @@ namespace AssetManager.DomainServices
             // Make sure criticality is in the proper range
             input.Criticality = input.Criticality.Clamp(minCriticality, maxCriticality);
 
+            if (input.MetricType == MetricType.PercentLimitsInDeviation)
+                input.GoodDirection = Direction.Low;
+            else if (input.MetricType == MetricType.PercentTimeInDeviation)
+                input.GoodDirection = Direction.Low;
+
             // If the good direction is down, then the warning level must be below the error level (going down: error, warning, good)
             if (input.GoodDirection == Direction.Low)
             {
@@ -1149,6 +1154,11 @@ namespace AssetManager.DomainServices
             DateTime endDay = NormalizeEndDay(startDay, endTimestamp);
             double totalHours = (endDay - startDay).TotalHours;
 
+            // Calculate the total duration possible for deviations, which is from the starting time to the earlier of the specified end time and now.
+            double durationHours = totalHours;
+            if (endDay > DateTime.Now)
+                durationHours = (DateTime.Now - startDay).TotalHours;
+
             // Get the unique set of limits
             var query1 = from lim in _iowLimitRespository.GetAllList()
                          join l in limitIds on lim.Id equals l
@@ -1157,6 +1167,10 @@ namespace AssetManager.DomainServices
                              LimitId = lim.Id,
                              LevelName = lim.Level.Name,
                              Criticality = lim.Level.Criticality,
+                             MetricType = lim.Level.MetricType,
+                             GoodDirection = lim.Level.GoodDirection,
+                             WarningLevel = lim.Level.WarningLevel,
+                             ErrorLevel = lim.Level.ErrorLevel,
                              Direction = lim.Direction
                          };
             var allLimits = query1.ToList();
@@ -1171,6 +1185,10 @@ namespace AssetManager.DomainServices
                              LimitId = lim.LimitId,
                              LevelName = lim.LevelName,
                              Criticality = lim.Criticality,
+                             MetricType = lim.MetricType,
+                             GoodDirection = lim.GoodDirection,
+                             WarningLevel = lim.WarningLevel,
+                             ErrorLevel = lim.ErrorLevel,
                              Direction = lim.Direction,
                              Day = (s != null) ? s.Day : startDay,
                              NumberDeviations = (s != null) ? s.NumberDeviations : 0,
@@ -1184,13 +1202,21 @@ namespace AssetManager.DomainServices
                          {
                              LimitId = lim.LimitId,
                              LevelName = lim.LevelName,
-                             Criticality = lim.Criticality
+                             Criticality = lim.Criticality,
+                             MetricType = lim.MetricType,
+                             GoodDirection = lim.GoodDirection,
+                             WarningLevel = lim.WarningLevel,
+                             ErrorLevel = lim.ErrorLevel
                          } into g
                          select new
                          {
                              LimitId = g.Key.LimitId,
                              LevelName = g.Key.LevelName,
                              Criticality = g.Key.Criticality,
+                             MetricType = g.Key.MetricType,
+                             GoodDirection = g.Key.GoodDirection,
+                             WarningLevel = g.Key.WarningLevel,
+                             ErrorLevel = g.Key.ErrorLevel,
                              NumberDeviations = g.Sum(x => x.NumberDeviations),
                              DurationHours = g.Sum(x => x.DurationHours)
                          };
@@ -1201,13 +1227,21 @@ namespace AssetManager.DomainServices
                          group lim by new
                          {
                              LevelName = lim.LevelName,
-                             Criticality = lim.Criticality
+                             Criticality = lim.Criticality,
+                             MetricType = lim.MetricType,
+                             GoodDirection = lim.GoodDirection,
+                             WarningLevel = lim.WarningLevel,
+                             ErrorLevel = lim.ErrorLevel
                          } into g
                          orderby g.Key.Criticality, g.Key.LevelName
                          select new
                          {
                              LevelName = g.Key.LevelName,
                              Criticality = g.Key.Criticality,
+                             MetricType = g.Key.MetricType,
+                             GoodDirection = g.Key.GoodDirection,
+                             WarningLevel = g.Key.WarningLevel,
+                             ErrorLevel = g.Key.ErrorLevel,
                              NumberDeviations = g.Sum(x => x.NumberDeviations),
                              DurationHours = g.Sum(x => x.DurationHours),
                              NumberLimits = g.Count(),
@@ -1219,14 +1253,28 @@ namespace AssetManager.DomainServices
             {
                 foreach (var d in results)
                 {
+                    double metricValue = d.GoodDirection == Direction.High ? 100.0 : 0.0;
+                    if (d.NumberLimits > 0)
+                    {
+                        if (d.MetricType == MetricType.PercentLimitsInDeviation)
+                            metricValue = d.NumberDeviatingLimits / d.NumberLimits * 100;
+                        else if (d.MetricType == MetricType.PercentTimeInDeviation)
+                            metricValue = d.DurationHours / durationHours / d.NumberLimits * 100;
+                    }
+
                     stats.Add(new LevelStats
                     {
                         LevelName = d.LevelName,
                         Criticality = d.Criticality,
+                        MetricType = d.MetricType,
+                        GoodDirection = d.GoodDirection,
+                        WarningLevel = d.WarningLevel,
+                        ErrorLevel = d.ErrorLevel,
                         NumberDeviations = d.NumberDeviations,
                         DurationHours = d.DurationHours,
                         NumberLimits = d.NumberLimits,
-                        NumberDeviatingLimits = d.NumberDeviatingLimits
+                        NumberDeviatingLimits = d.NumberDeviatingLimits,
+                        MetricValue = metricValue
                     });
                 }
             }

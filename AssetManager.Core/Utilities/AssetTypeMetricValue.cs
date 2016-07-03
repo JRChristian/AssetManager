@@ -21,8 +21,8 @@ namespace AssetManager.Utilities
         public MetricType MetricType { get; set; }
         public Direction GoodDirection { get; set; }
         public int Period { get; set; }
-        public double Warning { get; set; }
-        public double Error { get; set; }
+        public double WarningLevel { get; set; }
+        public double ErrorLevel { get; set; }
         public double Value { get; set; }
         public double RecentValue { get; set; }
         public DateTime StartTimestamp { get; set; }

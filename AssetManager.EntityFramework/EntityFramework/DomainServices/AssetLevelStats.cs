@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AssetManager.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,9 +18,14 @@ namespace AssetManager.EntityFramework.DomainServices
     {
         public string LevelName { get; set; }
         public int Criticality { get; set; }
+        public MetricType MetricType { get; set; }
+        public Direction GoodDirection { get; set; }
+        public double WarningLevel { get; set; }
+        public double ErrorLevel { get; set; }
         public long NumberDeviations { get; set; }
         public double DurationHours { get; set; }
         public double NumberLimits { get; set; }
         public long NumberDeviatingLimits { get; set; }
+        public double MetricValue { get; set; }
     }
 }

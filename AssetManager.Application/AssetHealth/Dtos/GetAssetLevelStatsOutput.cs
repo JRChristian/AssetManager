@@ -13,6 +13,6 @@ namespace AssetManager.AssetHealth.Dtos
         public DateTime StartTimestamp { get; set; }
         public DateTime EndTimestamp { get; set; }
         public double DurationHours { get; set; }
-        public List<AssetLevelStats> AssetLevelStats { get; set; }
+        public List<AssetLevelStats> AssetStats { get; set; }
     }
 }

@@ -27,11 +27,11 @@
                             // Build the bullet chart information
                             vm.metrics[i].value = Math.round(100 * vm.metrics[i].value)/100.0;
                             vm.metrics[i].recentValue = Math.round(100 * vm.metrics[i].recentValue) / 100.0;
-                            var maxValue = Math.max(vm.metrics[i].error, vm.metrics[i].value, vm.metrics[i].recentValue) * 1.2;
+                            var maxValue = Math.max(vm.metrics[i].errorLevel, vm.metrics[i].value, vm.metrics[i].recentValue) * 1.2;
                             vm.metrics[i].chartData = {
                                 title: vm.metrics[i].criticality + '-' + vm.metrics[i].levelName,
                                 subtitle: '% deviation ' + vm.metrics[i].period + ' days',
-                                ranges: [vm.metrics[i].warning, vm.metrics[i].error, maxValue],
+                                ranges: [vm.metrics[i].warningLevel, vm.metrics[i].errorLevel, maxValue],
                                 measures: [vm.metrics[i].value],
                                 markers: [vm.metrics[i].recentValue]
                             };

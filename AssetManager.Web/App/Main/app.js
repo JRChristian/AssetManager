@@ -119,6 +119,12 @@
                     title: 'Asset Health Dashboard',
                     menu: 'AssetHealthDashboard'
                 })
+                .state('assethealthdashboard2', {
+                    url: '/assethealthdashboard2?AssetId&AssetTypeId&IncludeChildren',
+                    templateUrl: '/App/Main/views/assethealth/assethealthdashboard2.cshtml',
+                    title: 'Asset Health Dashboard',
+                    menu: 'AssetHealthDashboard2'
+                })
                 .state('imagelist', {
                     url: '/imagelist',
                     templateUrl: '/App/Main/views/images/imagelist.cshtml',
