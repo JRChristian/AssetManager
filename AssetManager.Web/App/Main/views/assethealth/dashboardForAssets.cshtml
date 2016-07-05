@@ -1,0 +1,84 @@
+﻿<div ng-controller="app.views.assethealth.dashboardForAssets as vm">
+    <div class="container-fluid">
+        <div class="row">
+            <h3>@L("AssetHealthTtlDashboardForAssets")</h3>
+            <small> {{vm.startDate | date:'MMMM d, yyyy' : 'UTC'}} - {{Date.now() | momentLocale}}</small>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>@L("Asset")</th>
+                                <th></th>
+                                <th ng-repeat="a in vm.overallStats.levels" class="text-center">{{a.criticality}}-{{a.levelName}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="width:55px">
+                                    <div class="btn-group btn-group-xs">
+                                        <a class="btn btn-default" ui-sref="assethealthdashboardforassets({ AssetId: vm.assetParentId, Days: vm.days })"><i class="fa fa-level-up"></i></a>
+                                        <a class="btn btn-default" ui-sref="assetlimitview({ assetId: vm.assetId })"><i class="fa fa-bar-chart"></i></a>
+                                    </div>
+                                </td>
+                                <td>{{vm.assetName}}</td>
+                                <td><span class="{{vm.label}}">&nbsp;</span></td>
+                                <td ng-repeat="c in vm.overallStats.levels" class="text-center" uib-tooltip-html="c.tooltip" tooltip-append-to-body=true>{{c.metricValue | number:1}}%</td>
+                            </tr>
+                            <tr ng-repeat="a in vm.childStats">
+                                <td style="width:55px">
+                                    <div class="btn-group btn-group-xs">
+                                        <a class="btn btn-default" ui-sref="assethealthdashboardforassets({ AssetId: a.assetId, Days: vm.days })"><i class="fa fa-level-down"></i></a>
+                                        <a class="btn btn-default" ui-sref="assetlimitview({ assetId: a.assetId })"><i class="fa fa-bar-chart"></i></a>
+                                    </div>
+                                </td>
+                                <td>{{a.assetName}}</td>
+                                <td><span class="{{a.label}}">&nbsp;</span></td>
+                                <td ng-repeat="c in a.levels" class="text-center {{c.style}}" uib-tooltip-html="c.tooltip" tooltip-append-to-body=true>{{c.metricValue | number:1}}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                @L("Asset"): <strong>{{vm.assetName}}</strong>
+                <uib-tabset>
+                    <uib-tab index="0" heading="@L("AssetHealthLblDeviatingVariables")">
+                        <dl ng-repeat="l in vm.levels">
+                            <dt>{{l.criticality}}-{{l.levelName}}</dt>
+                            <dd ng-repeat="v in vm.problemLimits | filter:{ levelName: l.levelName }">
+                                <div uib-tooltip-html="v.tooltip" tooltip-append-to-body=true>
+                                    <div class="btn-group btn-group-xs">
+                                        <a class="btn btn-default" ui-sref="iowvariablechart({ Id: v.variableId })"><i class="fa fa-line-chart"></i></a>
+                                        <a class="btn btn-default" ui-sref="iowvariabledeviations({ Id: v.variableId })"><i class="fa fa-exclamation-circle"></i></a>
+                                    </div>
+                                    {{v.variableName}}
+                                    <small>... @L("AssetHealthMsgLastViolation") {{v.lastDeviationEndTimestamp | momentFromNowBlankOngoing}}</small>
+                                </div>
+                            </dd>
+                        </dl>
+                    </uib-tab>
+                    <uib-tab index="1" heading="@L("AssetHealthLblNotes")">
+                        TBD
+                    </uib-tab>
+                </uib-tabset>
+            </div>
+        </div>
+        <div class="row">
+            <div class="btn-group btn-group-sm">
+                <button id="changeDayRange" type="button" class="btn btn-info" ng-click="vm.changeDayRange()">{{vm.viewButtonLabel}}</button>
+                <a ui-sref="assetlist" class="btn btn-default"><i class="fa fa-tags"></i> @L("AssetBtnGoToAssetList")</a>
+                <a ui-sref="assetlevelbarchart" class="btn btn-default"><i class="fa fa-area-chart"></i> @L("AssetMnuAssetLevelBarChart")</a>
+            </div>
+            <div class="btn-group btn-group-sm">
+                <a ui-sref="iowvariablelist" class="btn btn-default"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+                <a ui-sref="iowlimitstatus" class="btn btn-default"><i class="fa fa-crosshairs"></i> @L("IowTtlLimitStatus")</a>
+                <a href="#" class="btn btn-default"><i class="fa fa-envelope-o"></i> Notices</a>
+                <a ui-sref="imagelist" class="btn btn-default"><i class="fa fa-envelope-o"></i> @L("ImgTtlImageList")</a>
+            </div>
+        </div>
+    </div>
+</div>

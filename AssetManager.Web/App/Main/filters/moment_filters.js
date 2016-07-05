@@ -17,6 +17,14 @@
                 return '';
         };
     })
+    .filter('momentFromNowBlankOngoing', function () {
+        return function (input) {
+            if (input != null)
+                return moment(input).format("MMM DD HH:mm:ss");
+            else
+                return 'ongoing';
+        };
+    })
     .filter('momentLocale', function () {
         return function (input) {
             return moment(input).format("LLL");

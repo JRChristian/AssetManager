@@ -572,6 +572,40 @@ namespace AssetManager.EntityFramework.DomainServices
             return levelStats;
         }
 
+        public List<IOWLimit> GetProblematicLimitsForAsset(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality)
+        {
+            List<IOWLimit> limits = new List<IOWLimit>();
+            List<Asset> assets = new List<Asset>();
+
+            // Maximum criticality? If provided, use the value in the argument list. If not provided, get everything;
+            int maxCrit = maxCriticality.HasValue ? maxCriticality.Value : 9999;
+
+            // How far back to look? If provided, use the starting time in the argument list. If not, use midnight at yesterday.
+            DateTime startDay = startTimestamp.HasValue ? startTimestamp.Value : DateTime.Now.Date.AddDays(-1);
+            double hoursBack = (DateTime.Now - startDay).TotalHours;
+
+            // Look for one asset. If the asset in the input list isn't valid, get all assets that do not have a parent.
+            Asset asset = _assetManager.GetAsset(assetId, assetName);
+            if( asset != null )
+                assets.Add(asset);
+            else
+                assets = _assetManager.GetAssetChildren(null, null, false);
+
+            if( assets != null && assets.Count > 0 )
+            {
+                // Get list of variables for the specified asset (or assets)
+                var query = from a in assets
+                            join av in GetAssetVariableList() on a.Id equals av.AssetId
+                            orderby av.IOWVariable.Name
+                            select av.IOWVariable.Id;
+                var variableIds = query.Distinct().ToList();
+
+                // Get problematic limits for our list of variables
+                limits = _iowManager.GetProblematicLimits(variableIds, maxCrit, hoursBack);
+            }
+            return limits;
+        }
+
 
         public List<AssetTypeMetricValue> GetAssetHealthMetricValues()
         {

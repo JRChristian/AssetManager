@@ -641,7 +641,7 @@ namespace AssetManager.IOWs
                 localize.GetString("DirectionHigh")
             };
 
-            List<IOWLimit> limits = _iowManager.GetAllLimits(input.MaxCriticality, input.HoursBack);
+            List<IOWLimit> limits = _iowManager.GetProblematicLimits(input.MaxCriticality, input.HoursBack);
             // Transform into our output format
             List<VariableLimitStatusDto> output = new List<VariableLimitStatusDto>();
             foreach (IOWLimit limit in limits)

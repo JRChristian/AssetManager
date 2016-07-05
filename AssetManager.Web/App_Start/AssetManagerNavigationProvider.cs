@@ -16,6 +16,46 @@ namespace AssetManager.Web
             context.Manager.MainMenu
                 .AddItem(
                     new MenuItemDefinition(
+                        "AssetHealthTtlAssetHealth",
+                        new LocalizableString("AssetHealthTtlAssetHealth", AssetManagerConsts.LocalizationSourceName),
+                        url: "#/",
+                        icon: "fa fa-heartbeat"
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "AssetHealthDashboard",
+                            new LocalizableString("AssetHealthTtlDashboard", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/assethealthdashboard",
+                            icon: "fa fa-heartbeat"
+                            )
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "AssetHealthDashboardForAssets",
+                            new LocalizableString("AssetHealthTtlDashboardForAssets", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/assethealthdashboardforassets",
+                            icon: "fa fa-bullseye"
+                            )
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "AssetHealthDashboardForTypes",
+                            new LocalizableString("AssetHealthTtlDashboardForTypes", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/assethealthdashboardfortypes",
+                            icon: "fa fa-dot-circle-o"
+                            )
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
+                            "HealthMetricList",
+                            new LocalizableString("AssetHealthMnuHealthMetricList", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/healthmetriclist",
+                            icon: "fa fa-heartbeat"
+                            )
+                    )
+                )
+                .AddItem(
+                    new MenuItemDefinition(
                         "IOW",
                         new LocalizableString("IOWs", AssetManagerConsts.LocalizationSourceName),
                         url: "#/",
@@ -123,14 +163,6 @@ namespace AssetManager.Web
                             new LocalizableString("AssetMnuAssetVariableAssignment", AssetManagerConsts.LocalizationSourceName),
                             url: "#/assetvariableassignment",
                             icon: "fa fa-exchange"
-                            )
-                    )
-                    .AddItem(
-                        new MenuItemDefinition(
-                            "HealthMetricList",
-                            new LocalizableString("AssetHealthMnuHealthMetricList", AssetManagerConsts.LocalizationSourceName),
-                            url: "#/healthmetriclist",
-                            icon: "fa fa-heartbeat"
                             )
                     )
                 )

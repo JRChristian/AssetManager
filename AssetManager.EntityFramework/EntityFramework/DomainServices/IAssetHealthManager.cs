@@ -34,6 +34,8 @@ namespace AssetManager.EntityFramework.DomainServices
         List<AssetLevelStats> GetAssetLevelStats(List<Asset> assets, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
         List<LevelStats> GetAssetSummaryLevelStats(List<Asset> assets, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
 
+        List<IOWLimit> GetProblematicLimitsForAsset(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
+
         List<AssetTypeMetricValue> GetAssetHealthMetricValues();
     }
 }

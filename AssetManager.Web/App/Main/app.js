@@ -119,11 +119,17 @@
                     title: 'Asset Health Dashboard',
                     menu: 'AssetHealthDashboard'
                 })
-                .state('assethealthdashboard2', {
-                    url: '/assethealthdashboard2?AssetId&AssetTypeId&IncludeChildren&Days',
-                    templateUrl: '/App/Main/views/assethealth/assethealthdashboard2.cshtml',
-                    title: 'Asset Health Dashboard',
-                    menu: 'AssetHealthDashboard2'
+                .state('assethealthdashboardforassets', {
+                    url: '/assethealthdashboardforassets?AssetId&Days',
+                    templateUrl: '/App/Main/views/assethealth/dashboardforassets.cshtml',
+                    title: 'Asset Health Dashboard for Assets',
+                    menu: 'AssetHealthDashboardForAssets'
+                })
+                .state('assethealthdashboardfortypes', {
+                    url: '/assethealthdashboardfortypes?AssetTypeId&IncludeChildren&Days',
+                    templateUrl: '/App/Main/views/assethealth/dashboardfortypes.cshtml',
+                    title: 'Asset Health Dashboard for Asset Types',
+                    menu: 'AssetHealthDashboardForTypes'
                 })
                 .state('imagelist', {
                     url: '/imagelist',

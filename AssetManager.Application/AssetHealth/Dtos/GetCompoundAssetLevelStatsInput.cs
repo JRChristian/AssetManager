@@ -17,5 +17,7 @@ namespace AssetManager.AssetHealth.Dtos
         public string AssetTypeName { get; set; }
         public DateTime? StartTimestamp { get; set; }
         public DateTime? EndTimestamp { get; set; }
+        public int? MinCriticality { get; set; }
+        public int? MaxCriticality { get; set; }
     }
 }

@@ -466,24 +466,29 @@ namespace AssetManager.AssetHealth
 
         public GetCompoundAssetLevelStatsOutput GetCompoundAssetLevelStats(GetCompoundAssetLevelStatsInput input)
         {
-            int? minCriticality = null;
-            int? maxCriticality = null;
+            var localize = _localizationManager.GetSource("AssetManager");
+            string[] localizedDirectionNames = new string[4]
+            {
+                localize.GetString("DirectionNone"),
+                localize.GetString("DirectionLow"),
+                localize.GetString("DirectionFocus"),
+                localize.GetString("DirectionHigh")
+            };
+
+            int? minCriticality = input.MinCriticality;
+            int? maxCriticality = input.MaxCriticality;
 
             Asset asset = _assetManager.GetAsset(input.AssetId, input.AssetName);
             Asset assetParent = (asset != null) ? _assetManager.GetAssetParent(asset.Id, asset.Name) : null;
             //Asset assetWithChildren = _assetManager.GetAsset(input.AssetParentId, input.AssetParentName);
             AssetType assetType = (asset != null) ? _assetManager.GetAssetType(input.AssetTypeId, input.AssetTypeName) : null;
             List<Asset> assets = new List<Asset>();
-            List<AssetLevelStats> assetStats = null;
+            List<AssetLevelStats> childAssetStats = null;
 
             GetCompoundAssetLevelStatsOutput output = new GetCompoundAssetLevelStatsOutput { };
             output.StartTimestamp = _iowManager.NormalizeStartDay(input.StartTimestamp);
             output.EndTimestamp = _iowManager.NormalizeEndTimestamp(output.StartTimestamp, input.EndTimestamp);
             output.DurationHours = (output.EndTimestamp - output.StartTimestamp).TotalHours;
-            output.AssetId = (asset != null) ? asset.Id : -1;
-            output.AssetName = (asset != null) ? asset.Name : null;
-            output.AssetTypeId = (assetType != null) ? assetType.Id : -1;
-            output.AssetTypeName = (assetType != null) ? assetType.Name : null;
             output.AssetParentId = (assetParent != null) ? assetParent.Id : -1;
             output.AssetParentName = (assetParent != null) ? assetParent.Name : null;
 
@@ -492,41 +497,123 @@ namespace AssetManager.AssetHealth
             // Otherwise, return details for all top level assets that do not have a parent.
             if (asset != null && input.IncludeAssetChildren > 0)
             {
-                assetStats = _assetHealthManager.GetAssetLevelStatsForChildren(asset.Id, asset.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+                childAssetStats = _assetHealthManager.GetAssetLevelStatsForChildren(asset.Id, asset.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
                 // Need to include the parent in this query (third argument=true) in case this asset does not have children
                 assets = _assetManager.GetAssetChildren(asset.Id, asset.Name, true);
             }
             else if (asset != null && input.IncludeAssetChildren <= 0)
             {
-                assetStats = _assetHealthManager.GetAssetLevelStatsForAsset(asset.Id, asset.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+                childAssetStats = _assetHealthManager.GetAssetLevelStatsForAsset(asset.Id, asset.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
                 assets.Add(asset);
             }
             else if (assetType != null)
             {
-                assetStats = _assetHealthManager.GetAssetLevelStatsForAssetType(assetType.Id, assetType.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+                childAssetStats = _assetHealthManager.GetAssetLevelStatsForAssetType(assetType.Id, assetType.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
                 assets = _assetManager.GetAssetListForType(assetType.Id);
             }
             else if(input.IncludeAssetTypesAsChildren <= 0)
             {
-                assetStats = _assetHealthManager.GetAssetLevelStatsForTopLevel(output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+                childAssetStats = _assetHealthManager.GetAssetLevelStatsForTopLevel(output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
                 assets = _assetManager.GetAssetChildren(null, null, false);
             }
             else
             {
-                assetStats = _assetHealthManager.GetAssetLevelStatsByAssetType(output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+                childAssetStats = _assetHealthManager.GetAssetLevelStatsByAssetType(output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
                 assets = _assetManager.GetAssetList();
             }
 
             // Save the number of assets and get overall statistics for all assets together
             output.NumberAssets = (assets !=  null) ? assets.Count : 0;
-            output.OverallStats = _assetHealthManager.GetAssetSummaryLevelStats(assets, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+            output.OverallStats = new AssetLevelStats
+            {
+                AssetId = (asset != null) ? asset.Id : -1,
+                AssetName = (asset != null) ? asset.Name : null,
+                AssetTypeId = (asset != null) ? asset.AssetTypeId : -1,
+                AssetTypeName = (asset != null) ? asset.AssetType.Name : null,
+                Levels = _assetHealthManager.GetAssetSummaryLevelStats(assets, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality)
+            };
 
-            // Get the unique list of levels. The overall statistics will include all levels that are used for these assets
-            // var allLevels = output.OverallStats.Select(p => new LevelInfo { Criticality = p.Criticality, LevelName = p.LevelName }).Distinct().OrderBy(p => p.Criticality).ThenBy(p => p.LevelName).ToList();
+            // Get the unique list of levels. The overall statistics will include all levels that are used in the overall list, which includes all levels used in any of the children.
+            output.Levels = output.OverallStats.Levels.Select(p => new LevelInfo { Criticality = p.Criticality, LevelName = p.LevelName }).Distinct().OrderBy(p => p.Criticality).ThenBy(p => p.LevelName).ToList();
+
+            // Get the list of problematic limits for the specified asset (or the top level, if an asset isn't specified
+            List<IOWLimit> limits = _assetHealthManager.GetProblematicLimitsForAsset(output.OverallStats.AssetId, output.OverallStats.AssetName, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+            if( limits != null && limits.Count > 0 )
+            {
+                output.ProblemLimits = new List<VariableLimitStatusDto>();
+                foreach(IOWLimit limit in limits)
+                {
+                    string severityMessage1 = "";
+                    string severityMessage2 = "";
+                    string severityClass = "";
+                    if (limit.LastStatus == IOWStatus.OpenDeviation)
+                    {
+                        severityMessage1 = limit.Level.Name;
+                        severityMessage2 = localize.GetString("IowMsgActive");
+                        if (limit.Level.Criticality == 1)
+                            severityClass = "label label-danger";
+                        else if (limit.Level.Criticality == 2)
+                            severityClass = "label label-warning";
+                        else if (limit.Level.Criticality == 3)
+                            severityClass = "label label-default";
+                    }
+                    else if (limit.LastDeviationEndTimestamp.HasValue && (DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalHours <= 24)
+                    {
+                        severityMessage1 = limit.Level.Name;
+                        severityMessage2 = localize.GetString("IowMsgLast24Hours");
+                        if (limit.Level.Criticality == 1)
+                            severityClass = "label label-danger";
+                        else if (limit.Level.Criticality == 2)
+                            severityClass = "label label-warning";
+                    }
+                    else if (limit.LastDeviationEndTimestamp.HasValue)
+                    {
+                        double days = Math.Round((DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalDays, 0);
+                        severityMessage1 = "";
+                        severityMessage2 = String.Format(localize.GetString("IowMsgNotRecent"), days);
+                        severityClass = "";
+                    }
+
+                    output.ProblemLimits.Add(new VariableLimitStatusDto
+                    {
+                        VariableId = limit.IOWVariableId,
+                        VariableName = limit.Variable.Name,
+                        VariableDescription = limit.Variable.Description,
+                        TagId = limit.Variable.TagId,
+                        TagName = limit.Variable.Tag.Name,
+                        UOM = limit.Variable.UOM,
+                        LastTimestamp = limit.Variable.Tag.LastTimestamp,
+                        LastValue = limit.Variable.Tag.LastValue,
+                        LastQuality = limit.Variable.Tag.LastQuality,
+
+                        IOWLevelId = limit.IOWLevelId,
+                        LevelName = limit.Level.Name,
+                        LevelDescription = limit.Level.Description,
+                        Criticality = limit.Level.Criticality,
+                        ResponseGoal = limit.Level.ResponseGoal,
+                        MetricGoal = limit.Level.MetricGoal,
+
+                        LimitName = string.Format("{0}-", limit.Level.Criticality) + limit.Level.Name + "-" + localizedDirectionNames[Convert.ToInt32(limit.Direction)],
+                        Direction = limit.Direction,
+                        LimitValue = limit.Value,
+                        Cause = limit.Cause,
+                        Consequences = limit.Consequences,
+                        Action = limit.Action,
+
+                        LastStatus = limit.LastStatus,
+                        LastDeviationStartTimestamp = limit.LastDeviationStartTimestamp,
+                        LastDeviationEndTimestamp = limit.LastDeviationEndTimestamp,
+
+                        SeverityMessage1 = severityMessage1,
+                        SeverityMessage2 = severityMessage2,
+                        SeverityClass = severityClass
+                    });
+                }
+            }
 
             // Transform the asset stats we have (which includes only levels in use for that asset) to a form that includes all levels
-            output.AssetStats = new List<AssetLevelStats>();
-            foreach(AssetLevelStats inStats in assetStats)
+            output.ChildStats = new List<AssetLevelStats>();
+            foreach(AssetLevelStats inStats in childAssetStats)
             {
                 AssetLevelStats outStats = new AssetLevelStats
                 {
@@ -543,8 +630,8 @@ namespace AssetManager.AssetHealth
                 for(int i=0; inStats.Levels != null && i< inStats.Levels.Count; i++ )
                 {
                     // Add dummy records until we find a match.
-                    for(;  j < output.OverallStats.Count && CompareLevels(output.OverallStats[j].Criticality, output.OverallStats[j].LevelName, inStats.Levels[i].Criticality, inStats.Levels[i].LevelName) < 0; j++)
-                        outStats.Levels.Add(new LevelStats { LevelName = output.OverallStats[j].LevelName, Criticality = output.OverallStats[j].Criticality });
+                    for(;  j < output.OverallStats.Levels.Count && string.Compare(output.OverallStats.Levels[j].LevelName, output.OverallStats.Levels[j].LevelName) < 0; j++)
+                        outStats.Levels.Add(new LevelStats { LevelName = output.OverallStats.Levels[j].LevelName, Criticality = output.OverallStats.Levels[j].Criticality });
 
                     // Add the record from the list of levels for this asset
                     outStats.Levels.Add(new LevelStats
@@ -564,26 +651,12 @@ namespace AssetManager.AssetHealth
                     j++;
                 }
                 // We're at the end of the list of levels for this asset. Add anything remaining from the master list of levels.
-                for (;  j < output.OverallStats.Count; j++)
-                    outStats.Levels.Add(new LevelStats { LevelName = output.OverallStats[j].LevelName, Criticality = output.OverallStats[j].Criticality });
+                for (;  j < output.OverallStats.Levels.Count; j++)
+                    outStats.Levels.Add(new LevelStats { LevelName = output.OverallStats.Levels[j].LevelName, Criticality = output.OverallStats.Levels[j].Criticality });
 
-                output.AssetStats.Add(outStats);
+                output.ChildStats.Add(outStats);
             }
             return output;
-        }
-
-        private int CompareLevels(int aCriticality, string aLevelName, int bCriticality, string bLevelName)
-        {
-            if (aCriticality < bCriticality)
-                return -1;
-            else if (aCriticality > bCriticality)
-                return 1;
-            else if (string.Compare(aLevelName, bLevelName) < 0)
-                return -1;
-            else if (string.Compare(aLevelName, bLevelName) > 0)
-                return 1;
-            else
-                return 0;
         }
 
         public GetAssetLimitCurrentStatusOutput GetAssetLimitCurrentStatus(GetAssetLimitCurrentStatusInput input)

@@ -5,7 +5,7 @@
     <text name="About" value="About" />
     <text name="Help" value="Help" />
     <text name="WelcomeMessage" value="Asset Integrity" />
-    <text name="Home_ThisIsATemplate" value="Integrity Operating Windows (IOW) extend asset life" />
+    <text name="Home_IOW_message" value="Integrity Operating Windows (IOW) extend asset life" />
     <text name="Home_AspNetDescription" value="ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that enables a clean separation of concerns and that gives you full control over markup for enjoyable, agile development." />
     <text name="Home_AspNetBoilerplateDescription" value="ASP.NET Boilerplate is a framework to build web based applications with best practices and most popular tools." />
     <text name="LearnMore" value="Learn more" />
@@ -184,9 +184,18 @@
     <text name="AssetHealthTtlRecentDeviations" value="Variables with recent deviations" />
     <text name="Warning" value="Warning" />
     <text name="Error" value="Error" />
+    <text name="Overall" value="Overall" />
     <text name="AssetHealthTtlMetrics" value="Metrics" />
+    <text name="AssetHealthTtlAssetHealth" value="Asset Health" />
     <text name="AssetHealthTtlDashboard" value="Asset Health Dashboard" />
+    <text name="AssetHealthTtlDashboardForAssets" value="Asset Health Dashboard for Assets" />
+    <text name="AssetHealthTtlDashboardForTypes" value="Asset Health Dashboard for Asset Types" />
     <text name="AssetHealthTtlSpecialAttention" value="Special attention" />
+    <text name="AssetHealthBtnViewLast30Days" value="View last 30 days" />
+    <text name="AssetHealthBtnViewToday" value="View today" />
+    <text name="AssetHealthMsgLastViolation" value="last violation" />
+    <text name="AssetHealthLblDeviatingVariables" value="Deviating variables" />
+    <text name="AssetHealthLblNotes" value="Notes" />
 
     <text name="ImgTtlImageList" value="Images" />
     <text name="ImgTtlImageListEdit" value="Edit Images" />

@@ -394,6 +394,7 @@ namespace AssetManager.DomainServices
             {
                 var query = from limit in _iowLimitRespository.GetAll()
                             join variableId in variableIds on limit.IOWVariableId equals variableId
+                            orderby limit.Variable.Name, limit.Level.Criticality, limit.Level.Name
                             select limit;
                 var results = query.ToList();
                 if( results != null && results.Count > 0 )
@@ -407,7 +408,7 @@ namespace AssetManager.DomainServices
             return output;
         }
 
-        public List<IOWLimit> GetAllLimits(int maxCriticality, double hoursBack)
+        public List<IOWLimit> GetProblematicLimits(int maxCriticality, double hoursBack)
         {
             if (maxCriticality <= 0)
                 maxCriticality = 9999;
@@ -429,6 +430,37 @@ namespace AssetManager.DomainServices
                 output = new List<IOWLimit>();
                 foreach (var r in results)
                     output.Add(r);
+            }
+            return output;
+        }
+
+        public List<IOWLimit> GetProblematicLimits(List<long> variableIds, int maxCriticality, double hoursBack)
+        {
+            if (maxCriticality <= 0)
+                maxCriticality = 9999;
+            if (hoursBack <= 0)
+                hoursBack = 24;
+
+            List<IOWLimit> output = null;
+
+            // Get the list of limits of interest
+            // First part of where clause includes limits with active deviations (end time is null) and those recently ended (end time < threshold)
+            // Second part excludes limits there have never had a deviation (both start and end times are null)
+            // Third part includes just limits in the desired range of criticality.
+            var query1 = from limit in _iowLimitRespository.GetAll()
+                         join v in variableIds on limit.IOWVariableId equals v
+                         where SqlFunctions.DateDiff("hour", (limit.LastDeviationEndTimestamp ?? SqlFunctions.GetDate()), SqlFunctions.GetDate()) < hoursBack
+                            && (limit.LastDeviationStartTimestamp ?? SqlFunctions.DateAdd("day", 1, SqlFunctions.GetDate())) < SqlFunctions.GetDate()
+                            && limit.Level.Criticality <= maxCriticality
+                         orderby limit.Variable.Name, limit.Level.Criticality, limit.Level.Name
+                         select limit;
+            var limits = query1.Distinct().ToList();
+            
+            if (limits != null && limits.Count > 0)
+            {
+                output = new List<IOWLimit>();
+                foreach (var lim in limits)
+                    output.Add(lim);
             }
             return output;
         }

@@ -1,16 +1,16 @@
 ﻿<div ng-controller="app.views.home as vm">
     <h1>@L("WelcomeMessage")</h1>
-    <p class="lead">@L("Home_ThisIsATemplate")</p>
+    <p class="lead">@L("Home_IOW_message")</p>
     <div class="row">
         <div class="col-lg-12">
             <p>
-                <a ui-sref="assethealthdashboard" class="btn btn-sq-lg btn-indigo">
-                    <i class="fa fa-heartbeat fa-5x"></i><br />
-                    Asset Health
-                </a>
-                <a ui-sref="assethealthdashboard2" class="btn btn-sq-lg btn-indigo">
+                <a ui-sref="assethealthdashboardforassets" class="btn btn-sq-lg btn-indigo">
                     <i class="fa fa-bullseye fa-5x"></i><br />
-                    Asset Health (alt)
+                    Asset Health<br />by Unit
+                </a>
+                <a ui-sref="assethealthdashboardfortypes" class="btn btn-sq-lg btn-indigo">
+                    <i class="fa fa-dot-circle-o fa-5x"></i><br />
+                    Asset Health<br />by Asset Type
                 </a>
                 <a ui-sref="iowdashboard" class="btn btn-sq-lg btn-primary">
                     <i class="fa fa-bar-chart fa-5x"></i><br />
