@@ -446,9 +446,10 @@ namespace AssetManager.EntityFramework.DomainServices
                 foreach(AssetType assetType in assetTypes)
                 {
                     List<Asset> assets = _assetManager.GetAssetListForType(assetType.Id);
+                    int numberChildren = (assets != null) ? assets.Count : 0;
                     List<LevelStats> levels = GetAssetSummaryLevelStats(assets, startTimestamp, endTimestamp, minCriticality, maxCriticality);
                     if( levels != null && levels.Count > 0)
-                        output.Add(new AssetLevelStats { AssetTypeId = assetType.Id, AssetTypeName = assetType.Name, Levels = levels });
+                        output.Add(new AssetLevelStats { AssetTypeId = assetType.Id, AssetTypeName = assetType.Name, Levels = levels, NumberChildren = numberChildren });
                 }
             }
             return output;
@@ -518,13 +519,17 @@ namespace AssetManager.EntityFramework.DomainServices
                                     select l.Id).Distinct().ToList();
                     }
 
+                    // Does this asset have children?
+                    int numberChildren = _assetManager.GetAssetChildrenCount(asset.Id, asset.Name);
+
                     AssetLevelStats assetLevel = new AssetLevelStats
                     {
                         AssetId = asset.Id,
                         AssetName = asset.Name,
                         AssetTypeId = asset.AssetTypeId,
                         AssetTypeName = (asset.AssetType != null) ? asset.AssetType.Name : "",
-                        Levels = null
+                        Levels = null,
+                        NumberChildren = numberChildren
                     };
 
                     // Get the stats for these limits and add them to the output. Group statistics by level name and criticality. (This does something different only if this asset has multiple variables.)

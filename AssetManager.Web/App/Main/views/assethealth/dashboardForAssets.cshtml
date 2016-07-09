@@ -18,7 +18,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td style="width:55px">
+                                <td style="width:55px" class="text-right">
                                     <div class="btn-group btn-group-xs">
                                         <a class="btn btn-default" ui-sref="assethealthdashboardforassets({ AssetId: vm.assetParentId, Days: vm.days })" ng-hide="vm.assetId<1"><i class="fa fa-level-up"></i></a>
                                         <a class="btn btn-default" ui-sref="assetlimitview({ assetId: vm.assetId })"><i class="fa fa-bar-chart"></i></a>
@@ -29,9 +29,9 @@
                                 <td ng-repeat="c in vm.overallStats.levels" class="text-center {{c.style}}" uib-tooltip-html="c.tooltip" tooltip-append-to-body=true>{{c.metricValue | number:1}}%</td>
                             </tr>
                             <tr ng-repeat="a in vm.childStats">
-                                <td style="width:55px">
+                                <td style="width:55px" class="text-right">
                                     <div class="btn-group btn-group-xs">
-                                        <a class="btn btn-default" ui-sref="assethealthdashboardforassets({ AssetId: a.assetId, Days: vm.days })"><i class="fa fa-level-down"></i></a>
+                                        <a class="btn btn-default" ui-sref="assethealthdashboardforassets({ AssetId: a.assetId, Days: vm.days })" ng-hide="a.numberChildren<=0"><i class="fa fa-level-down"></i></a>
                                         <a class="btn btn-default" ui-sref="assetlimitview({ assetId: a.assetId })"><i class="fa fa-bar-chart"></i></a>
                                     </div>
                                 </td>

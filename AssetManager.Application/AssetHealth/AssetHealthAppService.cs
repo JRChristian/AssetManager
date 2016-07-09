@@ -555,6 +555,7 @@ namespace AssetManager.AssetHealth
                 AssetName = (asset != null) ? asset.Name : null,
                 AssetTypeId = (assetType != null) ? assetType.Id : (asset != null ? asset.AssetTypeId : 0),
                 AssetTypeName = (assetType != null) ? assetType.Name : (asset != null ? asset.AssetType.Name : null),
+                NumberChildren = childAssetStats.Count,
                 Levels = _assetHealthManager.GetAssetSummaryLevelStats(assets, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality)
             };
 
@@ -649,6 +650,7 @@ namespace AssetManager.AssetHealth
                     AssetName = inStats.AssetName,
                     AssetTypeId = inStats.AssetTypeId,
                     AssetTypeName = inStats.AssetTypeName,
+                    NumberChildren = inStats.NumberChildren,
                     Levels = new List<LevelStats>()
                 };
 

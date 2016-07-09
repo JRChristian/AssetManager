@@ -30,6 +30,7 @@ namespace AssetManager.EntityFramework.DomainServices
 
         Asset GetAssetParent(long? id, string name);
         List<Asset> GetAssetChildren(long? id, string name, bool includeParent);
+        int GetAssetChildrenCount(long? id, string name);
         List<AssetHierarchy> GetAssetHierarchy();
         bool InsertOrUpdateAssetHierarchy(long childAssetId, string parentAssetName);
         bool InsertOrUpdateAssetHierarchy(string childAssetName, string parentAssetName);

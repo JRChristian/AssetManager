@@ -265,6 +265,29 @@ namespace AssetManager.EntityFramework.DomainServices
             return children;
         }
 
+        public int GetAssetChildrenCount(long? id, string name)
+        {
+            int numberChildren = 0;
+
+            Asset asset = GetAsset(id, name);
+            if (asset != null)
+            {
+                // We have a parent asset. Find it in the hierarchy.
+                AssetHierarchy parentNode = _assetHierarchyRepository.FirstOrDefault(p => p.AssetId == asset.Id);
+                if (parentNode != null)
+                    numberChildren = _assetHierarchyRepository.Count(p => p.ParentAssetHierarchyId == parentNode.Id);
+                else
+                    // It is not in the hierarchy, and therefore does not have children
+                    numberChildren = 0;
+            }
+            else
+            {
+                // No parent asset is given. Select all assets in the hierarchy that do not have a parent.
+                numberChildren = _assetHierarchyRepository.Count(p => !p.ParentAssetHierarchyId.HasValue);
+            }
+            return numberChildren;
+        }
+
         public bool InsertOrUpdateAssetHierarchy(Asset childAsset, Asset parentAsset)
         {
             /* The input includes a parent and child. The child exists; the parent might not.

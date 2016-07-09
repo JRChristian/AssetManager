@@ -13,6 +13,7 @@ namespace AssetManager.EntityFramework.DomainServices
         public string AssetName { get; set; }
         public long AssetTypeId { get; set; }
         public string AssetTypeName { get; set; }
+        public int NumberChildren { get; set; }
         public List<LevelStats> Levels { get; set; }
     }
 
