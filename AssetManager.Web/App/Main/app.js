@@ -120,13 +120,13 @@
                     menu: 'AssetHealthDashboard'
                 })
                 .state('assethealthdashboardforassets', {
-                    url: '/assethealthdashboardforassets?AssetId&Days',
+                    url: '/assethealthdashboardforassets?AssetId&Days&IncludeChildren',
                     templateUrl: '/App/Main/views/assethealth/dashboardforassets.cshtml',
                     title: 'Asset Health Dashboard for Assets',
                     menu: 'AssetHealthDashboardForAssets'
                 })
                 .state('assethealthdashboardfortypes', {
-                    url: '/assethealthdashboardfortypes?AssetTypeId&IncludeChildren&Days',
+                    url: '/assethealthdashboardfortypes?AssetTypeId&Days&IncludeChildren',
                     templateUrl: '/App/Main/views/assethealth/dashboardfortypes.cshtml',
                     title: 'Asset Health Dashboard for Asset Types',
                     menu: 'AssetHealthDashboardForTypes'

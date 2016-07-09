@@ -464,8 +464,11 @@ namespace AssetManager.AssetHealth
             return output;
         }
 
+        private enum WhichChildren { None, Assets, Types };
+
         public GetCompoundAssetLevelStatsOutput GetCompoundAssetLevelStats(GetCompoundAssetLevelStatsInput input)
         {
+
             var localize = _localizationManager.GetSource("AssetManager");
             string[] localizedDirectionNames = new string[4]
             {
@@ -480,10 +483,28 @@ namespace AssetManager.AssetHealth
 
             Asset asset = _assetManager.GetAsset(input.AssetId, input.AssetName);
             Asset assetParent = (asset != null) ? _assetManager.GetAssetParent(asset.Id, asset.Name) : null;
-            //Asset assetWithChildren = _assetManager.GetAsset(input.AssetParentId, input.AssetParentName);
-            AssetType assetType = (asset != null) ? _assetManager.GetAssetType(input.AssetTypeId, input.AssetTypeName) : null;
+            AssetType assetType = (asset == null) ? _assetManager.GetAssetType(input.AssetTypeId, input.AssetTypeName) : null;
             List<Asset> assets = new List<Asset>();
             List<AssetLevelStats> childAssetStats = null;
+
+            // Which children to include?
+            // If an asset or asset type is specified, then the flag is either present or absent. Treat "none" as absent.
+            // If neither an asset nor an asset type are specified, then the flag determines whether to return
+            // all top level assets OR all asset types.
+            string children = !string.IsNullOrEmpty(input.IncludeChildren) ? input.IncludeChildren.ToLower().Substring(0,1) : "n";
+            WhichChildren includeChildren = WhichChildren.None;
+            // Case 1: string is empty or contains "none" (first letter only) ==> no children 
+            if (String.Compare(children,"n") == 0)
+                includeChildren = WhichChildren.None;
+            // Case 2: either an asset or an asset type are specified and the string isn't empty ==> include children (and they will be assets)
+            else if (asset != null || assetType != null) // "asset"
+                includeChildren = WhichChildren.Assets;
+            // Case 3: neither asset nor type are specified and the string looks like "type" ==> return overall metrics and children are asset types
+            else if ( string.Compare(children,"t") == 0) // "type"
+                includeChildren = WhichChildren.Types;
+            // Case 4: neither asset nor type are specified and the string looks like anything else ==> return overall metrics and children are assets
+            else
+                includeChildren = WhichChildren.Assets;
 
             GetCompoundAssetLevelStatsOutput output = new GetCompoundAssetLevelStatsOutput { };
             output.StartTimestamp = _iowManager.NormalizeStartDay(input.StartTimestamp);
@@ -492,34 +513,38 @@ namespace AssetManager.AssetHealth
             output.AssetParentId = (assetParent != null) ? assetParent.Id : -1;
             output.AssetParentName = (assetParent != null) ? assetParent.Name : null;
 
-            // If a valid asset was specified in the input, return stats for that asset.
-            // Otherwise, if a valid asset type was specified, return details for all assets of that type.
-            // Otherwise, return details for all top level assets that do not have a parent.
-            if (asset != null && input.IncludeAssetChildren > 0)
+            // Case A: Asset was specified with children 
+            if (asset != null && includeChildren != WhichChildren.None)
             {
                 childAssetStats = _assetHealthManager.GetAssetLevelStatsForChildren(asset.Id, asset.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
                 // Need to include the parent in this query (third argument=true) in case this asset does not have children
                 assets = _assetManager.GetAssetChildren(asset.Id, asset.Name, true);
             }
-            else if (asset != null && input.IncludeAssetChildren <= 0)
+            else if (asset != null && includeChildren == WhichChildren.None)
             {
                 childAssetStats = _assetHealthManager.GetAssetLevelStatsForAsset(asset.Id, asset.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
                 assets.Add(asset);
             }
-            else if (assetType != null)
+            else if (assetType != null && includeChildren != WhichChildren.None)
             {
                 childAssetStats = _assetHealthManager.GetAssetLevelStatsForAssetType(assetType.Id, assetType.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
                 assets = _assetManager.GetAssetListForType(assetType.Id);
             }
-            else if(input.IncludeAssetTypesAsChildren <= 0)
+            else if (assetType != null && includeChildren != WhichChildren.None)
             {
-                childAssetStats = _assetHealthManager.GetAssetLevelStatsForTopLevel(output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
-                assets = _assetManager.GetAssetChildren(null, null, false);
+                //TODO: This isn't implemented
+                childAssetStats = _assetHealthManager.GetAssetLevelStatsForAssetType(assetType.Id, assetType.Name, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+                assets = _assetManager.GetAssetListForType(assetType.Id);
             }
-            else
+            else if (includeChildren == WhichChildren.Types)  //Both asset and assettype are null AND we want children AND the children are specified as asset types
             {
                 childAssetStats = _assetHealthManager.GetAssetLevelStatsByAssetType(output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
                 assets = _assetManager.GetAssetList();
+            }
+            else // Basically, if nothing is specified, return top level assets
+            {
+                childAssetStats = _assetHealthManager.GetAssetLevelStatsForTopLevel(output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
+                assets = _assetManager.GetAssetChildren(null, null, false);
             }
 
             // Save the number of assets and get overall statistics for all assets together
@@ -528,13 +553,16 @@ namespace AssetManager.AssetHealth
             {
                 AssetId = (asset != null) ? asset.Id : -1,
                 AssetName = (asset != null) ? asset.Name : null,
-                AssetTypeId = (asset != null) ? asset.AssetTypeId : -1,
-                AssetTypeName = (asset != null) ? asset.AssetType.Name : null,
+                AssetTypeId = (assetType != null) ? assetType.Id : (asset != null ? asset.AssetTypeId : 0),
+                AssetTypeName = (assetType != null) ? assetType.Name : (asset != null ? asset.AssetType.Name : null),
                 Levels = _assetHealthManager.GetAssetSummaryLevelStats(assets, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality)
             };
 
             // Get the unique list of levels. The overall statistics will include all levels that are used in the overall list, which includes all levels used in any of the children.
-            output.Levels = output.OverallStats.Levels.Select(p => new LevelInfo { Criticality = p.Criticality, LevelName = p.LevelName }).Distinct().OrderBy(p => p.Criticality).ThenBy(p => p.LevelName).ToList();
+            if (output.OverallStats.Levels != null && output.OverallStats.Levels.Count > 0)
+                output.Levels = output.OverallStats.Levels.Select(p => new LevelInfo { Criticality = p.Criticality, LevelName = p.LevelName }).Distinct().OrderBy(p => p.Criticality).ThenBy(p => p.LevelName).ToList();
+            else
+                output.Levels = null;
 
             // Get the list of problematic limits for the specified asset (or the top level, if an asset isn't specified
             List<IOWLimit> limits = _assetHealthManager.GetProblematicLimitsForAsset(output.OverallStats.AssetId, output.OverallStats.AssetName, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality);
@@ -630,8 +658,8 @@ namespace AssetManager.AssetHealth
                 for(int i=0; inStats.Levels != null && i< inStats.Levels.Count; i++ )
                 {
                     // Add dummy records until we find a match.
-                    for(;  j < output.OverallStats.Levels.Count && string.Compare(output.OverallStats.Levels[j].LevelName, output.OverallStats.Levels[j].LevelName) < 0; j++)
-                        outStats.Levels.Add(new LevelStats { LevelName = output.OverallStats.Levels[j].LevelName, Criticality = output.OverallStats.Levels[j].Criticality });
+                    for(;  output.Levels != null && j < output.Levels.Count && string.Compare(output.Levels[j].LevelName, output.Levels[j].LevelName) < 0; j++)
+                        outStats.Levels.Add(new LevelStats { LevelName = output.Levels[j].LevelName, Criticality = output.Levels[j].Criticality });
 
                     // Add the record from the list of levels for this asset
                     outStats.Levels.Add(new LevelStats
@@ -651,8 +679,8 @@ namespace AssetManager.AssetHealth
                     j++;
                 }
                 // We're at the end of the list of levels for this asset. Add anything remaining from the master list of levels.
-                for (;  j < output.OverallStats.Levels.Count; j++)
-                    outStats.Levels.Add(new LevelStats { LevelName = output.OverallStats.Levels[j].LevelName, Criticality = output.OverallStats.Levels[j].Criticality });
+                for (; output.Levels != null && j < output.Levels.Count; j++)
+                    outStats.Levels.Add(new LevelStats { LevelName = output.Levels[j].LevelName, Criticality = output.Levels[j].Criticality });
 
                 output.ChildStats.Add(outStats);
             }

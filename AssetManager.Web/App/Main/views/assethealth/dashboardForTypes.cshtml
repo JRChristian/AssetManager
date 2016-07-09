@@ -1,7 +1,7 @@
-﻿<div ng-controller="app.views.assethealth.dashboardForAssets as vm">
+﻿<div ng-controller="app.views.assethealth.dashboardForTypes as vm">
     <div class="container-fluid">
         <div class="row">
-            <h3>@L("AssetHealthTtlDashboardForAssets")</h3>
+            <h3>@L("AssetHealthTtlDashboardForTypes")</h3>
             <small> {{vm.startDate | date:'MMMM d, yyyy' : 'UTC'}} - {{Date.now() | momentLocale}}</small>
         </div>
         <div class="row">
@@ -11,7 +11,7 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>@L("Asset")</th>
+                                <th>@L("AssetType")</th>
                                 <th></th>
                                 <th ng-repeat="a in vm.overallStats.levels" class="text-center">{{a.criticality}}-{{a.levelName}}</th>
                             </tr>
@@ -20,22 +20,21 @@
                             <tr>
                                 <td style="width:55px">
                                     <div class="btn-group btn-group-xs">
-                                        <a class="btn btn-default" ui-sref="assethealthdashboardforassets({ AssetId: vm.assetParentId, Days: vm.days })" ng-hide="vm.assetId<1"><i class="fa fa-level-up"></i></a>
-                                        <a class="btn btn-default" ui-sref="assetlimitview({ assetId: vm.assetId })"><i class="fa fa-bar-chart"></i></a>
+                                        <a class="btn btn-default" ui-sref="assethealthdashboardfortypes({ AssetTypeId: 0, IncludeChildren: 'types', Days: vm.days })" ng-hide="vm.overallStats.assetId<=0 && vm.overallStats.assetTypeId<=0"><i class="fa fa-level-up"></i></a>
                                     </div>
                                 </td>
-                                <td>{{vm.assetName}}</td>
+                                <td>{{vm.assetTypeName}}</td>
                                 <td><span class="{{vm.label}}">&nbsp;</span></td>
                                 <td ng-repeat="c in vm.overallStats.levels" class="text-center {{c.style}}" uib-tooltip-html="c.tooltip" tooltip-append-to-body=true>{{c.metricValue | number:1}}%</td>
                             </tr>
                             <tr ng-repeat="a in vm.childStats">
                                 <td style="width:55px">
                                     <div class="btn-group btn-group-xs">
-                                        <a class="btn btn-default" ui-sref="assethealthdashboardforassets({ AssetId: a.assetId, Days: vm.days })"><i class="fa fa-level-down"></i></a>
-                                        <a class="btn btn-default" ui-sref="assetlimitview({ assetId: a.assetId })"><i class="fa fa-bar-chart"></i></a>
+                                        <a class="btn btn-default" ui-sref="assethealthdashboardfortypes({ AssetTypeId: a.assetTypeId, IncludeChildren: 'asset', Days: vm.days })" ng-hide="a.assetId > 0"><i class="fa fa-level-down"></i></a>
+                                        <a class="btn btn-default" ui-sref="assetlimitview({ assetId: a.assetId })" ng-hide="a.assetId<=0"><i class="fa fa-bar-chart"></i></a>
                                     </div>
                                 </td>
-                                <td>{{a.assetName}}</td>
+                                <td>{{a.assetId > 0 ? a.assetName : a.assetTypeName}}</td>
                                 <td><span class="{{a.label}}">&nbsp;</span></td>
                                 <td ng-repeat="c in a.levels" class="text-center {{c.style}}" uib-tooltip-html="c.tooltip" tooltip-append-to-body=true>{{c.metricValue | number:1}}%</td>
                             </tr>
@@ -44,9 +43,9 @@
                 </div>
             </div>
             <div class="col-md-6">
-                @L("Asset"): <strong>{{vm.assetName}}</strong>
+                @L("Asset"): <strong>{{vm.assetTypeName}}</strong>
                 <uib-tabset>
-                    <uib-tab index="0" heading="@L("AssetHealthLblDeviatingVariables")">
+                    <uib-tab index="0" heading='@L("AssetHealthLblDeviatingVariables")''>
                         <dl ng-repeat="l in vm.levels">
                             <dt>{{l.criticality}}-{{l.levelName}}</dt>
                             <dd ng-repeat="v in vm.problemLimits | filter:{ levelName: l.levelName }">
@@ -61,7 +60,7 @@
                             </dd>
                         </dl>
                     </uib-tab>
-                    <uib-tab index="1" heading="@L("AssetHealthLblNotes")">
+                    <uib-tab index="1" heading='@L("AssetHealthLblNotes")'>
                         TBD
                     </uib-tab>
                 </uib-tabset>

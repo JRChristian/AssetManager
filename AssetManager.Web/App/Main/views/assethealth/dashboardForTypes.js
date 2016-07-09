@@ -1,7 +1,7 @@
 ﻿(function () {
     var app = angular.module('app');
 
-    var controllerId = 'app.views.assethealth.dashboardForAssets';
+    var controllerId = 'app.views.assethealth.dashboardForTypes';
     app.controller(controllerId, [
         '$scope', '$log', '$location', '$stateParams', '$sce', 'abp.services.app.assetHealth',
         function ($scope, $log, $location, $stateParams, $sce, assetHealthService) {
@@ -10,9 +10,9 @@
             vm.localize = abp.localization.getSource('AssetManager');
 
             // Arguments
-            vm.assetId = $stateParams.AssetId > 0 ? $stateParams.AssetId : null;
-            vm.assetTypeId = -1;
-            vm.includeChildren = $stateParams.IncludeChildren !== undefined ? vm.includeChildren : 'assets';
+            vm.assetId = -1;
+            vm.assetTypeId = $stateParams.AssetTypeId > 0 ? $stateParams.AssetTypeId : null;
+            vm.includeChildren = $stateParams.IncludeChildren !== undefined ? $stateParams.IncludeChildren : 'types';
             vm.days = $stateParams.Days > 0 ? $stateParams.Days : 1;
             vm.days = vm.days <= 60 ? vm.days : 60;
 
@@ -23,6 +23,7 @@
             vm.startDate.setDate(today.getDate() - vm.days);
             vm.assetParentId = null;
             vm.assetName = vm.localize('Overall');
+            vm.assetTypeName = vm.localize('Overall');
             vm.viewButtonLabel = vm.days <= 1 ? vm.localize('AssetHealthBtnViewLast30Days') : vm.localize('AssetHealthBtnViewToday');
             vm.showOverall = true;
             vm.overallStats = { assetId: vm.assetId };
@@ -43,7 +44,7 @@
                 vm.startDate.setDate(today.getDate() - vm.days);
                 abp.ui.setBusy(
                     null,
-                    assetHealthService.getCompoundAssetLevelStats({ AssetId: vm.assetId, IncludeChildren: vm.includeChildren, StartTimestamp: vm.startDate, MaxCriticality: vm.maxCriticality })
+                    assetHealthService.getCompoundAssetLevelStats({ AssetTypeId: vm.assetTypeId, IncludeChildren: vm.includeChildren, StartTimestamp: vm.startDate, MaxCriticality: vm.maxCriticality })
                         .success(function (data) {
                             vm.startDate = data.startTimestamp;
                             vm.overallStats = data.overallStats;
@@ -51,8 +52,9 @@
                             vm.problemLimits = data.problemLimits;
                             vm.levels = data.levels;
                             vm.assetId = data.overallStats.assetId;
+                            vm.assetTypeId = data.overallStats.assetTypeId;
                             vm.assetParentId = data.assetParentId;
-                            vm.assetName = data.overallStats.assetId > 0 && data.overallStats.assetName !== null ? data.overallStats.assetName : vm.localize('Overall');
+                            vm.assetTypeName = data.overallStats.assetTypeId > 0 && data.overallStats.assetTypeName !== null ? data.overallStats.assetTypeName : vm.localize('Overall');
 
                             // If there is just one asset then we want to suppress the overall record
                             if (data.numberAssets > 1 && data.overallStats.assetId !== data.childStats[0].assetId)
@@ -108,17 +110,17 @@
 
             vm.bootstrapStyleRow = function (criticality, errorLevel, warningLevel, value) {
                 if (criticality <= 1) {
-                    if( value > errorLevel )
+                    if (value > errorLevel)
                         style = 'label label-danger';
-                    else if (value > warningLevel )
+                    else if (value > warningLevel)
                         style = 'label label-warning';
                     else
                         style = '';
                 }
                 else if (criticality <= 2) {
-                    if( value > errorLevel )
+                    if (value > errorLevel)
                         style = 'label label-warning';
-                    else if (value > warningLevel )
+                    else if (value > warningLevel)
                         style = 'label label-default';
                     else
                         style = '';
@@ -162,7 +164,7 @@
                 return style;
             };
 
-            vm.tooltipHtml = function(stats) {
+            vm.tooltipHtml = function (stats) {
                 if (stats === null)
                     thetooltip = '';
                 else

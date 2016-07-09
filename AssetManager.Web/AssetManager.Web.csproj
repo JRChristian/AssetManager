@@ -290,6 +290,7 @@
     <Content Include="App\Main\views\assethealth\assetvariableassignment.js" />
     <Content Include="App\Main\views\assethealth\assetvariablelist.js" />
     <Content Include="App\Main\views\assethealth\assethealthdashboard.js" />
+    <Content Include="App\Main\views\assethealth\dashboardForTypes.js" />
     <Content Include="App\Main\views\assethealth\healthmetriclist.js" />
     <Content Include="App\Main\views\asset\assethierarchy.js" />
     <Content Include="App\Main\views\asset\assetlist.js" />
@@ -482,6 +483,7 @@
     <Content Include="LICENSE.md" />
     <Content Include="Content\nv.d3.min.css.map" />
     <Content Include="App\Main\views\assethealth\dashboardForAssets.cshtml" />
+    <Content Include="App\Main\views\assethealth\dashboardForTypes.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
