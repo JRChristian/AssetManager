@@ -216,7 +216,7 @@ namespace AssetManager.IOWs
                             type = "stackedColumn",
                             legendText = limit.Criticality.ToString() + " - " + limit.LevelName,
                             showInLegend = true,
-                            color = ChartColors.Criticality(limit.Criticality),
+                            color = ChartColors.CriticalForeground(limit.Criticality),
                             dataPoints = new List<CanvasJSBarDataPoints>()
                         };
 

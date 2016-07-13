@@ -1,0 +1,4 @@
+﻿/* Bootstrap borderless tables. See http://stackoverflow.com/questions/18075794/bootstrap-table-without-stripe-borders/24830641#24830641 */
+.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
+    border: none;
+}

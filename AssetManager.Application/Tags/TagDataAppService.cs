@@ -221,5 +221,69 @@ namespace AssetManager.Tags
             output.Successes = (int)_tagManager.InsertOrUpdateAllDataByName(input.TagDataName);
             return output;
         }
+
+        public GetTagDataOutput GetTagData(GetTagDataInput input)
+        {
+            GetTagDataOutput output = new GetTagDataOutput { TagData = new List<TagDataDto>() };
+
+            // Input timestamp - if not specified, use "now"
+            DateTime timestamp = input.Timestamp.HasValue ? input.Timestamp.Value : DateTime.Now;
+
+            // Validate each tag in the input list. Could probably do this in one query....
+            /*
+            List<long> tagIds = new List<long>();
+            Tag tag = null;
+            if( input.Tags != null && input.Tags.Count > 0 )
+            {
+                foreach(TagNameDto t in input.Tags)
+                {
+                    if (t.Id > 0)
+                        tag = _tagManager.FirstOrDefaultTag(t.Id);
+                    else if (!string.IsNullOrEmpty(t.Name))
+                        tag = _tagManager.FirstOrDefaultTag(t.Name);
+                    if (tag != null)
+                        tagIds.Add(tag.Id);
+                }
+            }
+             */
+
+            // Alternate approach to validate all tags in the input list in one query.
+            var query = (from a in _tagManager.GetAllListTag()
+                         join b in input.Tags on a.Id equals b.Id
+                         where b.Id > 0
+                         select a)
+                        .Union
+                        (from a in _tagManager.GetAllListTag()
+                         join b in input.Tags on a.Name equals b.Name
+                         where b.Id <= 0 && !String.IsNullOrEmpty(b.Name)
+                         select a);
+            var allTags = query.Distinct().OrderBy(t => t.Name).ToList();
+            List<long> tagIds = allTags.Select(t => t.Id).ToList();
+
+            // Get the data (at or before the specified time) and build the output
+            if( tagIds != null && tagIds.Count > 0 )
+            {
+                List<TagDataRaw> rawData = _tagManager.GetTagDataAtTime(tagIds, timestamp);
+                if( rawData != null && rawData.Count > 0 )
+                {
+                    foreach(TagDataRaw raw in rawData)
+                    {
+                        output.TagData.Add(new TagDataDto
+                        {
+                            Id = raw.TagId,
+                            Name = raw.Tag.Name,
+                            Description = raw.Tag.Description,
+                            UOM = raw.Tag.UOM,
+                            Precision = raw.Tag.Precision,
+                            Type = raw.Tag.Type,
+                            Timestamp = raw.Timestamp,
+                            Value = raw.Value,
+                            Quality = raw.Quality
+                        });
+                    }
+                }
+            }
+            return output;
+        }
     }
 }

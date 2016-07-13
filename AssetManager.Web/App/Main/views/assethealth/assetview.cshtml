@@ -1,0 +1,135 @@
+﻿<div ng-controller="app.views.assethealth.assetview as vm">
+    <div class="container">
+        <div class="row">
+            <h3>{{vm.asset.name}} <small>{{vm.asset.description}}</small></h3>
+            <small>{{vm.startDate | date:'MMMM d, yyyy' : 'UTC'}} - {{Date.now() | momentLocale}}</small>
+        </div>
+        <div class="row">
+            <uib-tabset>
+                <uib-tab>
+                    <uib-tab-heading>
+                        @L("Metrics")<span class="badge">{{vm.levels.length}}</span>
+                    </uib-tab-heading>
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>@L("IOWLevel")</th>
+                                        <th class="text-right">@L("Metric")</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="l in vm.levels" uib-tooltip-html="l.tooltip" tooltip-append-to-body=true>
+                                        <td>{{l.criticality}}-{{l.levelName}}</td>
+                                        <td class="text-right">{{l.metricValue | number:1}}%</td>
+                                        <td><span class="{{l.label}}">&nbsp;</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="table-responsive">
+                            <table class="table table-condensed table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>@L("IOWLevel")</th>
+                                        <th>@L("Variable")</th>
+                                        <th class="text-right">@L("Metric")</th>
+                                        <th class="text-right">@L("Limit")</th>
+                                        <th class="text-right">@L("Current")</th>
+                                        <th>@L("UOM")</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="v in vm.allLimits | orderBy : 'criticality'" uib-tooltip-html="v.tooltip" tooltip-append-to-body=true>
+                                        <td>{{v.criticality}}-{{v.levelName}}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-xs">
+                                                <a class="btn btn-default" ui-sref="iowvariablechart({ Id: v.variableId })"><i class="fa fa-line-chart"></i></a>
+                                                <a class="btn btn-default" ui-sref="iowvariabledeviations({ Id: v.variableId })"><i class="fa fa-exclamation-circle"></i></a>
+                                            </div>
+                                            {{v.variableName}}
+                                        </td>
+                                        <td class="text-right {{v.textClass}}">{{v.metricValue | number:1}}%</td>
+                                        <td class="text-right">{{v.limitValue}} <i class="fa fa-caret-down" ng-show="v.direction==1"></i><i class="fa fa-caret-up" ng-show="v.direction==3"></i></td>
+                                        <td class="text-right {{v.textClassCurrent}}">{{v.actualValue}}</td>
+                                        <td>{{v.uom}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </uib-tab>
+                <uib-tab>
+                    <uib-tab-heading>
+                        @L("IOWVariables")<span class="badge">{{vm.allLimits.length}}</span>
+                    </uib-tab-heading>
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-borderless">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th class="text-right">@L("Metric")</th>
+                                    <th class="text-right">@L("DurationHours")</th>
+                                    <th class="text-right">@L("DeviationCount")</th>
+                                    <th class="text-right">@L("Limit")</th>
+                                    <th class="text-right">@L("Current")</th>
+                                    <th>@L("UOM")</th>
+                                </tr>
+                            </thead>
+                            <tbody ng-repeat="l in vm.levels">
+                                <tr>
+                                    <td><strong>{{l.criticality}}-{{l.levelName}}</strong></td>
+                                    <td><span class="{{l.label}}">&nbsp;</span></td>
+                                    <td class="text-right {{l.textClass}}">{{l.metricValue | number:1}}%</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr ng-repeat="v in vm.allLimits | filter:{ levelName: l.levelName }" uib-tooltip-html="v.tooltip" tooltip-append-to-body=true>
+                                    <td>
+                                        <div class="btn-group btn-group-xs">
+                                            <a class="btn btn-default" ui-sref="iowvariablechart({ Id: v.variableId })"><i class="fa fa-line-chart"></i></a>
+                                            <a class="btn btn-default" ui-sref="iowvariabledeviations({ Id: v.variableId })"><i class="fa fa-exclamation-circle"></i></a>
+                                        </div>
+                                        {{v.variableName}}
+                                    </td>
+                                    <td></td>
+                                    <td class="text-right {{v.textClass}}">{{v.metricValue | number:1}}%</td>
+                                    <td class="text-right">{{v.durationHours | number:1}}</td>
+                                    <td class="text-right">{{v.numberDeviations}}</td>
+                                    <td class="text-right">{{v.limitValue}} <i class="fa fa-caret-down" ng-show="v.direction==1"></i><i class="fa fa-caret-up" ng-show="v.direction==3"></i></td>
+                                    <td class="text-right {{v.textClassCurrent}}">{{v.actualValue}}</td>
+                                    <td>{{v.uom}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </uib-tab>
+                <uib-tab select="vm.chart()">
+                    <uib-tab-heading>
+                        @L("Chart")
+                    </uib-tab-heading>
+                    <div id="chartContainer" style="width:100%; height:300px;"></div>
+                </uib-tab>
+                <uib-tab heading="Notes">
+                    tbd
+                </uib-tab>
+            </uib-tabset>
+        </div>
+        <div class="row">
+            <div class="btn-group btn-group-sm">
+                <button id="changeDayRange" type="button" class="btn btn-info" ng-click="vm.changeDayRange()">{{vm.viewButtonLabel}}</button>
+                <a class="btn btn-info btn-sm" ui-sref="assetedit({ assetId: vm.asset.id })"><i class="fa fa-pencil-square-o"></i> @L("Edit")</a>
+            </div>
+        </div>
+    </div>
+</div>

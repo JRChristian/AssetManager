@@ -425,9 +425,9 @@ namespace AssetManager.DomainServices
                          && t.Level.Criticality <= maxCriticality)
                 select limit;
             var results = query.ToList();
+            output = new List<IOWLimit>();
             if (results != null && results.Count > 0)
             {
-                output = new List<IOWLimit>();
                 foreach (var r in results)
                     output.Add(r);
             }
@@ -1128,47 +1128,151 @@ namespace AssetManager.DomainServices
 
             DateTime startDay = NormalizeStartDay(startTimestamp);
             DateTime endDay = NormalizeEndDay(startDay, endTimestamp);
+            double totalHours = (endDay - startDay).TotalHours;
+
+            // Calculate the total duration possible for deviations, which is from the starting time to the earlier of the specified end time and now.
+            double durationHours = totalHours;
+            if (endDay > DateTime.Now)
+                durationHours = (DateTime.Now - startDay).TotalHours;
 
             // Get the unique set of limits
+            /*
             var query0 = from lim in _iowLimitRespository.GetAllList()
                          join l in limitIds on lim.Id equals l
                          orderby l
-                         select new { LimitId = lim.Id, LevelName = lim.Level.Name, Criticality = lim.Level.Criticality, Direction = lim.Direction };
-            var allLimits = query0.ToList();
-
-            // This query joins the limits to the stats table, fills in zeros whenever the stats table lacks a record, and sums across all days
-            var query2 = from all in allLimits
-                         join s in _iowStatsByDayRepository.GetAllList(p => p.Day >= startDay && p.Day <= endDay)
-                         on new { LimitId = all.LimitId } equals new { LimitId = s.IOWLimitId } into joinedStats
-                         from t in joinedStats.DefaultIfEmpty(new IOWStatsByDay { NumberDeviations = 0, DurationHours = 0 })
-                         group joinedStats by new
-                         {
-                             LimitId = all.LimitId,
-                             LevelName = all.LevelName,
-                             Criticality = all.Criticality
-                         } into g
-                         orderby g.Key.LimitId, g.Key.LevelName, g.Key.Criticality
                          select new
                          {
+                             VariableId = lim.IOWVariableId,
+                             VariableName = lim.Variable.Name,
+                             UOM = lim.Variable.UOM,
+                             LimitId = lim.Id,
+                             LevelName = lim.Level.Name,
+                             Criticality = lim.Level.Criticality,
+                             MetricType = lim.Level.MetricType,
+                             GoodDirection = lim.Level.GoodDirection,
+                             LimitValue = lim.Value,
+                             WarningLevel = lim.Level.WarningLevel,
+                             ErrorLevel = lim.Level.ErrorLevel,
+                             Direction = lim.Direction
+                         };
+            var allLimits = query0.Distinct().ToList();
+             */
+            var allLimits = (from lim in _iowLimitRespository.GetAllList()
+                             join l in limitIds on lim.Id equals l
+                             orderby l
+                             select lim).Distinct().ToList();
+
+            // Add statistics to these limits
+            var query2 = from lim in allLimits
+                         join s in _iowStatsByDayRepository.GetAllList(p => p.Day >= startDay && p.Day <= endDay)
+                         on lim.Id equals s.IOWLimitId into joined
+                         from s in joined.DefaultIfEmpty()
+                         select new
+                         {
+                             VariableId = lim.IOWVariableId,
+                             VariableName = lim.Variable.Name,
+                             UOM = lim.Variable.UOM,
+                             TagId = lim.Variable.TagId,
+                             LimitId = lim.Id,
+                             LevelName = lim.Level.Name,
+                             Criticality = lim.Level.Criticality,
+                             MetricType = lim.Level.MetricType,
+                             GoodDirection = lim.Level.GoodDirection,
+                             LimitValue = lim.Value,
+                             WarningLevel = lim.Level.WarningLevel,
+                             ErrorLevel = lim.Level.ErrorLevel,
+                             Direction = lim.Direction,
+                             Day = (s != null) ? s.Day : startDay,
+                             NumberDeviations = (s != null) ? s.NumberDeviations : 0,
+                             DurationHours = (s != null) ? s.DurationHours : 0
+                         };
+            var allLimitsWithStats = query2.ToList();
+
+            // This query groups by limit and sums across all days
+            var query3 = from lim in allLimitsWithStats
+                         group lim by new
+                         {
+                             VariableId = lim.VariableId,
+                             VariableName = lim.VariableName,
+                             UOM = lim.UOM,
+                             TagId = lim.TagId,
+                             LimitId = lim.LimitId,
+                             LevelName = lim.LevelName,
+                             Criticality = lim.Criticality,
+                             MetricType = lim.MetricType,
+                             GoodDirection = lim.GoodDirection,
+                             LimitValue = lim.LimitValue,
+                             WarningLevel = lim.WarningLevel,
+                             ErrorLevel = lim.ErrorLevel,
+                             Direction = lim.Direction
+                         } into g
+                         orderby g.Key.VariableName, g.Key.Criticality, g.Key.LevelName
+                         select new
+                         {
+                             VariableId = g.Key.VariableId,
+                             VariableName = g.Key.VariableName,
+                             UOM = g.Key.UOM,
+                             TagId = g.Key.TagId,
                              LimitId = g.Key.LimitId,
                              LevelName = g.Key.LevelName,
                              Criticality = g.Key.Criticality,
-                             NumberDeviations = g.Sum(x => x.Sum(y => y.NumberDeviations)),
-                             DurationHours = g.Sum(x => x.Sum(y => y.DurationHours))
+                             MetricType = g.Key.MetricType,
+                             GoodDirection = g.Key.GoodDirection,
+                             LimitValue = g.Key.LimitValue,
+                             WarningLevel = g.Key.WarningLevel,
+                             ErrorLevel = g.Key.ErrorLevel,
+                             Direction = g.Key.Direction,
+                             NumberDeviations = g.Sum(x => x.NumberDeviations),
+                             DurationHours = g.Sum(x => x.DurationHours)
                          };
-            var results = query2.ToList();
+            var results = query3.ToList();
+
 
             if (results != null && results.Count > 0 )
             {
+                // Look for the latest tag data for our list of limits
+                List<long> tagIds = results.Select(x => x.TagId).Distinct().ToList();
+                List<TagDataRaw> tagData = _tagManager.GetTagDataAtTime(tagIds, endDay);
+
                 foreach (var d in results)
                 {
+                    // Calculate the metric values
+                    double metricValue = d.GoodDirection == Direction.High ? 100.0 : 0.0;
+                    int numberDeviatingLimits = d.NumberDeviations > 0 ? 1 : 0;
+                    if (d.MetricType == MetricType.PercentLimitsInDeviation)
+                        metricValue = numberDeviatingLimits * 100;
+                    else if (d.MetricType == MetricType.PercentTimeInDeviation)
+                        metricValue = d.DurationHours / durationHours * 100;
+
+                    // Get the actual tag data for this limit and merge it in
+                    double actualValue = 0;
+                    if( tagData != null )
+                    {
+                        List<double> values = tagData.Where(x => x.TagId == d.TagId).Select(x => x.Value).ToList();
+                        if (values != null && values.Count > 0)
+                            actualValue = values[0];
+                    }
+
                     stats.Add( new LimitStats
                     {
+                        VariableId = d.VariableId,
+                        VariableName = d.VariableName,
+                        UOM = d.UOM,
                         LimitId = d.LimitId,
                         LevelName = d.LevelName,
                         Criticality = d.Criticality,
+                        Direction = d.Direction,
+                        MetricType = d.MetricType,
+                        GoodDirection = d.GoodDirection,
+                        LimitValue = d.LimitValue,
+                        WarningLevel = d.WarningLevel,
+                        ErrorLevel = d.ErrorLevel,
                         NumberDeviations = d.NumberDeviations,
-                        DurationHours = d.DurationHours
+                        DurationHours = d.DurationHours,
+                        NumberLimits = 1,
+                        NumberDeviatingLimits = numberDeviatingLimits,
+                        MetricValue = metricValue,
+                        ActualValue = actualValue
                     });
                 }
             }
@@ -1205,7 +1309,7 @@ namespace AssetManager.DomainServices
                              ErrorLevel = lim.Level.ErrorLevel,
                              Direction = lim.Direction
                          };
-            var allLimits = query1.ToList();
+            var allLimits = query1.Distinct().ToList();
 
             // Add statistics to these limits
             var query2 = from lim in allLimits
@@ -1238,7 +1342,8 @@ namespace AssetManager.DomainServices
                              MetricType = lim.MetricType,
                              GoodDirection = lim.GoodDirection,
                              WarningLevel = lim.WarningLevel,
-                             ErrorLevel = lim.ErrorLevel
+                             ErrorLevel = lim.ErrorLevel,
+                             Direction = lim.Direction
                          } into g
                          select new
                          {
@@ -1249,6 +1354,7 @@ namespace AssetManager.DomainServices
                              GoodDirection = g.Key.GoodDirection,
                              WarningLevel = g.Key.WarningLevel,
                              ErrorLevel = g.Key.ErrorLevel,
+                             Direction = g.Key.Direction,
                              NumberDeviations = g.Sum(x => x.NumberDeviations),
                              DurationHours = g.Sum(x => x.DurationHours)
                          };

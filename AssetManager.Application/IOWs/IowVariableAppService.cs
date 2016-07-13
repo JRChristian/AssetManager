@@ -401,7 +401,7 @@ namespace AssetManager.IOWs
                 
 
                 TagType tagType = variable.Tag.Type.HasValue ? variable.Tag.Type.Value : TagType.Continuous;
-                string hi = ChartColors.Criticality(0);
+                string hi = ChartColors.CriticalForeground(0);
 
                 output.CanvasJS.title.text = output.Name;
                 output.CanvasJS.axisX.gridThickness = 0;
@@ -414,10 +414,10 @@ namespace AssetManager.IOWs
                     type = tagType == TagType.Continuous ? "line" : "scatter",
                     lineDashType = "solid",
                     lineThickness = tagType == TagType.Continuous ? 2 : 0,
-                    markerColor = ChartColors.Criticality(0),
+                    markerColor = ChartColors.CriticalForeground(0),
                     markerType = tagType == TagType.Continuous ? "none" : "circle",
                     xValueType = "dateTime",
-                    color = ChartColors.Criticality(0),
+                    color = ChartColors.CriticalForeground(0),
                     showInLegend = true,
                     legendText = variable.Tag.Name,
                     dataPoints = new List<CanvasJSDataPoints>()
@@ -492,10 +492,10 @@ namespace AssetManager.IOWs
                         type = (isFirst && limit.Direction == Direction.Low) ?  "area" : "rangeArea",
                         lineDashType = "solid",
                         lineThickness = 0,
-                        markerColor = ChartColors.Criticality(limit.Level.Criticality),
+                        markerColor = ChartColors.CriticalBackground(limit.Level.Criticality),
                         markerType = "none",
                         xValueType = "dateTime",
-                        color = ChartColors.Criticality(limit.Level.Criticality),
+                        color = ChartColors.CriticalBackground(limit.Level.Criticality),
                         showInLegend = true,
                         legendText = string.Format("{0}-", limit.Level.Criticality) + limit.Level.Name + "-" 
                             + localize.GetString(limit.Direction == Direction.Low ? "DirectionLow" : "DirectionHigh"),

@@ -284,6 +284,7 @@
     <Content Include="App\Main\services\appSession.js" />
     <Content Include="App\Main\views\admin\useredit.js" />
     <Content Include="App\Main\views\admin\userlist.js" />
+    <Content Include="App\Main\views\assethealth\assetview.js" />
     <Content Include="App\Main\views\assethealth\dashboardForAssets.js" />
     <Content Include="App\Main\views\assethealth\assetlevelbarchart.js" />
     <Content Include="App\Main\views\assethealth\assetlimitview.js" />
@@ -300,6 +301,7 @@
     <Content Include="App\Main\views\asset\new.js" />
     <Content Include="App\Main\views\home\Bootstrap-custom-buttons.css" />
     <Content Include="App\Main\views\home\Bootstrap-square-buttons.css" />
+    <Content Include="App\Main\views\home\Bootstrap-table-borderless.css" />
     <Content Include="App\Main\views\home\ui-grid-customizations.css" />
     <Content Include="App\Main\views\images\imagelistedit.js" />
     <Content Include="App\Main\views\images\imagelist.js" />
@@ -484,6 +486,7 @@
     <Content Include="Content\nv.d3.min.css.map" />
     <Content Include="App\Main\views\assethealth\dashboardForAssets.cshtml" />
     <Content Include="App\Main\views\assethealth\dashboardForTypes.cshtml" />
+    <Content Include="App\Main\views\assethealth\assetview.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />

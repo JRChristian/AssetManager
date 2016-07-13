@@ -16,5 +16,6 @@ namespace AssetManager.Tags
         //Task<GetTagDataRawOutput> GetTagDataRawListAsync(GetTagDataRawInput input);
         TagDataRawDto AddTagDataRaw(AddTagDataRawInput input);
         PostTagDataBulkOutput PostTagDataBulk(PostTagDataBulkInput input);
+        GetTagDataOutput GetTagData(GetTagDataInput input);
     }
 }

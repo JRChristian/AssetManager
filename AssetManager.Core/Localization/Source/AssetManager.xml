@@ -196,6 +196,8 @@
     <text name="AssetHealthMsgLastViolation" value="last violation" />
     <text name="AssetHealthLblDeviatingVariables" value="Deviating variables" />
     <text name="AssetHealthLblNotes" value="Notes" />
+    <text name="Metric" value="Metric" />
+    <text name="Metrics" value="Metrics" />
 
     <text name="ImgTtlImageList" value="Images" />
     <text name="ImgTtlImageListEdit" value="Edit Images" />

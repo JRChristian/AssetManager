@@ -120,6 +120,8 @@
     <Compile Include="AssetHealth\Dtos\GetAssetLimitChartByDayOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLimitCurrentStatusInput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLimitCurrentStatusOutput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLimitStatsInput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLimitStatsOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetCompoundAssetLevelStatsInput.cs" />
     <Compile Include="AssetHealth\Dtos\GetCompoundAssetLevelStatsOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetHealthMetricInput.cs" />
@@ -138,6 +140,10 @@
     <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayOutput.cs" />
     <Compile Include="IOWs\Dtos\GetRecentlyDeviatingLimitsInput.cs" />
     <Compile Include="IOWs\Dtos\GetRecentlyDeviatingLimitsOutput.cs" />
+    <Compile Include="Tags\Dtos\GetTagDataInput.cs" />
+    <Compile Include="Tags\Dtos\GetTagDataOutput.cs" />
+    <Compile Include="Tags\Dtos\TagDataDto.cs" />
+    <Compile Include="Tags\Dtos\TagNameDto.cs" />
     <Compile Include="Utilities\CanvasJSBar.cs" />
     <Compile Include="AssetHealth\Dtos\DeleteAssetVariableListInput.cs" />
     <Compile Include="AssetHealth\Dtos\DeleteAssetVariableListOutput.cs" />

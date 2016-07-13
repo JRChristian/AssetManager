@@ -44,7 +44,8 @@ namespace AssetManager.Tags
 
             return new GetTagOutput
             {
-                Tags = tags.MapTo<List<TagDto>>()
+                Tags = Mapper.Map<List<TagDto>>(tags)
+                //Tags = tags.MapTo<List<TagDto>>()
             };
         }
 

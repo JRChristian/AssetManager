@@ -205,6 +205,72 @@ namespace AssetManager.DomainServices
             return output;
         }
 
+        public TagDataRaw GetTagDataAtTime(long tagId, DateTime timestamp)
+        {
+            TagDataRaw output = null;
+
+            List<TagDataRaw> tagData = GetTagDataForTimeRange(tagId, timestamp, timestamp);
+            if (tagData != null && tagData.Count > 0)
+                output = tagData[0];
+            return output;
+        }
+
+        public List<TagDataRaw> GetTagDataForTimeRange(long tagId, DateTime startTimestamp, DateTime endTimestamp)
+        {
+            List<TagDataRaw> output = new List<TagDataRaw>();
+            TagDataRaw data = null;
+
+            if( startTimestamp < endTimestamp )
+            {
+                output = _tagDataRawRepository.GetAll().Where(t => t.TagId == tagId && t.Timestamp >= startTimestamp && t.Timestamp <= endTimestamp).OrderBy(t => t.Timestamp).ToList();
+            }
+            else
+            {
+                data = _tagDataRawRepository.GetAll().Where(t => t.TagId == tagId && t.Timestamp <= endTimestamp).OrderByDescending(t => t.Timestamp).FirstOrDefault();
+                if( data != null )
+                    output.Add(data);
+            }
+
+            return output;
+        }
+
+        public List<TagDataRaw> GetTagDataAtTime(List<long> tagIds, DateTime timestamp)
+        {
+            return GetTagDataForTimeRange(tagIds, timestamp, timestamp);
+        }
+
+        public List<TagDataRaw> GetTagDataForTimeRange(List<long> tagIds, DateTime startTimestamp, DateTime endTimestamp)
+        {
+            List<TagDataRaw> output = new List<TagDataRaw>();
+
+            if (startTimestamp < endTimestamp)
+            {
+                //TODO: This query gets only data in the time range. Ideally it should add one record before the start of the period.
+                var query = from d in _tagDataRawRepository.GetAll()
+                            join t in tagIds on d.TagId equals t
+                            where d.Timestamp >= startTimestamp && d.Timestamp <= endTimestamp
+                            orderby d.Tag.Name, d.Timestamp
+                            select d;
+                output = query.ToList();
+            }
+            else
+            {
+                // Only one time is specified. Look for the latest timestamp for each tag that is the same or earlier than the specified time.
+                var query = from d in _tagDataRawRepository.GetAll()
+                            join t in tagIds on d.TagId equals t
+                            where d.Timestamp <= endTimestamp
+                            // The next four lines group by tag name, find the latest time for each tag, and select the record for each tag that has the latest time
+                            group d by d.Tag.Name into g
+                            let latestTimestamp = g.Max(k => k.Timestamp)
+                            from p in g
+                            where p.Timestamp == latestTimestamp
+                            orderby p.Tag.Name
+                            select p;
+                output = query.ToList();
+            }
+            return output;
+        }
+
         public List<TagDataRaw> GetAllListData(string tagName, DateTime? startTimestamp, DateTime? endTimestamp)
         {
             List<TagDataRaw> output = null;

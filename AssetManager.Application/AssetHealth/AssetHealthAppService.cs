@@ -319,7 +319,7 @@ namespace AssetManager.AssetHealth
                         type = "stackedColumn",
                         legendText = limit.Criticality.ToString() + " - " + limit.LevelName,
                         showInLegend = true,
-                        color = ChartColors.Criticality(limit.Criticality),
+                        color = ChartColors.CriticalForeground(limit.Criticality),
                         dataPoints = new List<CanvasJSBarDataPoints>()
                     };
 
@@ -400,7 +400,7 @@ namespace AssetManager.AssetHealth
                     type = "stackedBar",
                     legendText = level.Criticality.ToString() + " - " + level.LevelName,
                     showInLegend = true,
-                    color = ChartColors.Criticality(level.Criticality),
+                    color = ChartColors.CriticalForeground(level.Criticality),
                     dataPoints = new List<CanvasJSBarDataPoints>()
                 };
 
@@ -460,6 +460,29 @@ namespace AssetManager.AssetHealth
                 output.AssetStats = _assetHealthManager.GetAssetLevelStatsForAssetType(assetType.Id, assetType.Name, output.StartTimestamp, output.EndTimestamp, null, null);
             else
                 output.AssetStats = _assetHealthManager.GetAssetLevelStatsForTopLevel(output.StartTimestamp, output.EndTimestamp, null, null);
+
+            return output;
+        }
+
+        public GetAssetLimitStatsOutput GetAssetLimitStats(GetAssetLimitStatsInput input)
+        {
+            GetAssetLimitStatsOutput output = new GetAssetLimitStatsOutput { };
+            output.StartTimestamp = _iowManager.NormalizeStartDay(input.StartTimestamp);
+            output.EndTimestamp = _iowManager.NormalizeEndTimestamp(output.StartTimestamp, input.EndTimestamp);
+            output.DurationHours = (output.EndTimestamp - output.StartTimestamp).TotalHours;
+
+            Asset asset = _assetManager.GetAsset(input.AssetId, input.AssetName);
+            AssetType assetType = _assetManager.GetAssetType(input.AssetTypeId, input.AssetTypeName);
+
+            // If a valid asset was specified in the input, return stats for that asset.
+            // Otherwise, if a valid asset type was specified, return details for all assets of that type.
+            // Otherwise, return details for all top level assets that do not have a parent.
+            if (asset != null)
+                output.AssetStats = _assetHealthManager.GetAssetLimitStatsForAsset(asset.Id, asset.Name, output.StartTimestamp, output.EndTimestamp, null, null);
+            else if (assetType != null)
+                output.AssetStats = _assetHealthManager.GetAssetLimitStatsForAssetType(assetType.Id, assetType.Name, output.StartTimestamp, output.EndTimestamp, null, null);
+            else
+                output.AssetStats = _assetHealthManager.GetAssetLimitStatsForTopLevel(output.StartTimestamp, output.EndTimestamp, null, null);
 
             return output;
         }
@@ -556,7 +579,7 @@ namespace AssetManager.AssetHealth
                 AssetTypeId = (assetType != null) ? assetType.Id : (asset != null ? asset.AssetTypeId : 0),
                 AssetTypeName = (assetType != null) ? assetType.Name : (asset != null ? asset.AssetType.Name : null),
                 NumberChildren = childAssetStats.Count,
-                Levels = _assetHealthManager.GetAssetSummaryLevelStats(assets, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality)
+                Levels = _assetHealthManager.GetLevelStatsForAssets(assets, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality)
             };
 
             // Get the unique list of levels. The overall statistics will include all levels that are used in the overall list, which includes all levels used in any of the children.

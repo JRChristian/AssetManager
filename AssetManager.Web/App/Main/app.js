@@ -95,6 +95,12 @@
                     title: 'Edit Asset Type',
                     menu: 'AssetTypeEdit' //Matches to name of 'Assets' menu in AssetManagerNavigationProvider
                 })
+                .state('assethealthassetview', {
+                    url: '/assethealthassetview?AssetId&Days',
+                    templateUrl: '/App/Main/views/assethealth/assetview.cshtml',
+                    title: 'Asset View',
+                    menu: 'AssetHealthAssetView' //Matches to name of 'Assets' menu in AssetManagerNavigationProvider
+                })
                 .state('assetvariableassignment', {
                     url: '/assetvariableassignment',
                     templateUrl: '/App/Main/views/assethealth/assetvariableassignment.cshtml',

@@ -32,8 +32,12 @@ namespace AssetManager.EntityFramework.DomainServices
         List<AssetLevelStats> GetAssetLevelStatsForChildren(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
         List<AssetLevelStats> GetAssetLevelStats(long? assetId, string assetName, bool includeAsset, bool includeChildren, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
         List<AssetLevelStats> GetAssetLevelStats(List<Asset> assets, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
-        List<LevelStats> GetAssetSummaryLevelStats(List<Asset> assets, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
-
+        List<LevelStats> GetLevelStatsForAssets(List<Asset> assets, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
+        List<AssetLimitStats> GetAssetLimitStatsForAsset(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
+        List<AssetLimitStats> GetAssetLimitStatsForAssetType(long? assetTypeId, string assetTypeName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
+        List<AssetLimitStats> GetAssetLimitStats(List<Asset> assets, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
+        List<AssetLimitStats> GetAssetLimitStatsForTopLevel(DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
+        List<LimitStats> GetLimitStatsForAssets(List<Asset> assets, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
         List<IOWLimit> GetProblematicLimitsForAsset(long? assetId, string assetName, DateTime? startTimestamp, DateTime? endTimestamp, int? minCriticality, int? maxCriticality);
 
         List<AssetTypeMetricValue> GetAssetHealthMetricValues();

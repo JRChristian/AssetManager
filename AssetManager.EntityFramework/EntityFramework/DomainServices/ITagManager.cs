@@ -31,6 +31,10 @@ namespace AssetManager.DomainServices
         List<TagDataRaw> GetAllListData(Expression<Func<TagDataRaw, bool>> predicate);
         List<TagDataRaw> GetAllListData(long tagId, DateTime? startTimestamp, DateTime? endTimestamp);
         List<TagDataRaw> GetAllListData(string tagName, DateTime? startTimestamp, DateTime? endTimestamp);
+        TagDataRaw GetTagDataAtTime(long tagId, DateTime timestamp);
+        List<TagDataRaw> GetTagDataForTimeRange(long tagId, DateTime startTimestamp, DateTime endTimestamp);
+        List<TagDataRaw> GetTagDataAtTime(List<long> tagIds, DateTime timestamp);
+        List<TagDataRaw> GetTagDataForTimeRange(List<long> tagIds, DateTime startTimestamp, DateTime endTimestamp);
         void DeleteData(Expression<Func<TagDataRaw, bool>> predicate);
         TagDataRaw InsertOrUpdateDataByName(TagDataName input);
         long InsertOrUpdateAllDataByName(List<TagDataName> input);

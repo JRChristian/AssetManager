@@ -21,7 +21,7 @@
                             // Add a member that will be useful in filtering the table
                             vm.metrics[i].hasLimits = vm.metrics[i].numberLimits > 0 ? true : false;
                             vm.metrics[i].name = vm.metrics[i].applyToEachAsset ? vm.metrics[i].assetName : vm.metrics[i].assetTypeName;
-                            vm.metrics[i].repeated = (i > 0 && vm.metrics[i].hasLimits && vm.metrics[i].name == lastName);
+                            vm.metrics[i].repeated = i > 0 && vm.metrics[i].hasLimits && vm.metrics[i].name === lastName;
                             lastName = vm.metrics[i].hasLimits ? vm.metrics[i].name : lastName;
 
                             // Build the bullet chart information

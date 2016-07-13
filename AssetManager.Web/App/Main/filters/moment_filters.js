@@ -4,6 +4,14 @@
             return moment(input).fromNow();
         };
     })
+    .filter('momentFromNowBlank', function () {
+        return function (input, alternate) {
+            if (input !== null)
+                return moment(input).fromNow();
+            else
+                return alternate;
+        };
+    })
     .filter('momentFromNow2', function () {
         return function (input) {
             return moment(input).format("MMM DD HH:mm:ss");
@@ -11,7 +19,7 @@
     })
     .filter('momentFromNowBlankNull', function () {
         return function (input) {
-            if (input != null)
+            if (input !== null)
                 return moment(input).format("MMM DD HH:mm:ss");
             else
                 return '';
@@ -19,7 +27,7 @@
     })
     .filter('momentFromNowBlankOngoing', function () {
         return function (input) {
-            if (input != null)
+            if (input !== null)
                 return moment(input).format("MMM DD HH:mm:ss");
             else
                 return 'ongoing';

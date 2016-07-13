@@ -32,6 +32,8 @@
 
             vm.changeDayRange = function () {
                 vm.days = vm.days <= 1 ? 30 : 1;
+                vm.startDate = new Date();
+                vm.startDate.setDate(today.getDate() - vm.days);
                 vm.viewButtonLabel = vm.days <= 1 ? vm.localize('AssetHealthBtnViewLast30Days') : vm.localize('AssetHealthBtnViewToday');
                 vm.refresh();
             };
@@ -39,8 +41,7 @@
             vm.refresh = function () {
                 vm.overallStats = { assetId: vm.assetId };
                 vm.childStats = [];
-                vm.startDate = new Date();
-                vm.startDate.setDate(today.getDate() - vm.days);
+                vm.startDate = new Date().setDate(new Date().getDate() - vm.days);
                 abp.ui.setBusy(
                     null,
                     assetHealthService.getCompoundAssetLevelStats({ AssetId: vm.assetId, IncludeChildren: vm.includeChildren, StartTimestamp: vm.startDate, MaxCriticality: vm.maxCriticality })
