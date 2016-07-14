@@ -177,21 +177,21 @@
             };
 
             vm.bootstrapTextForValue = function (criticality, level, direction, value) {
-                // Bootstrap textformating. Usage: <p class="{{...}}">...</p>
+                // Bootstrap text formating. Usage: <p class="{{...}}">...</p>
                 if (criticality <= 1) {
-                    if ((direction <= 1 && value < level) || (direction >= 3 && value > level))
+                    if (direction <= 1 && value < level || direction >= 3 && value > level)
                         style = 'text-danger';
                     else
                         style = '';
                 }
                 else if (criticality <= 2) {
-                    if ((direction <= 1 && value < level) || (direction >= 3 && value > level))
+                    if (direction <= 1 && value < level || direction >= 3 && value > level)
                         style = 'text-warning';
                     else
                         style = '';
                 }
                 else {
-                    if ((direction <= 1 && value < level) || (direction >= 3 && value > level))
+                    if (direction <= 1 && value < level || direction >= 3 && value > level)
                         style = 'text-info';
                     else
                         style = '';

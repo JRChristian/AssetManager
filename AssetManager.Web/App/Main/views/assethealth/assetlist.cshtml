@@ -1,0 +1,45 @@
+﻿<div ng-controller="app.views.assethealth.assetlist as vm">
+    <div class="container">
+        <div class="row">
+            <h3>{{vm.assetType.name}}</h3>
+            <small>{{vm.startDate | date:'MMMM d, yyyy' : 'UTC'}} - {{Date.now() | momentLocale}}</small>
+        </div>
+        <div class="row">
+            <div class="btn-group" uib-dropdown keyboard-nav outsideClick>
+                <button id="btn-select-asset-type" type="button" class="btn btn-default btn-sm" uib-dropdown-toggle>
+                    Select asset type <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labeledby="btn-select-asset-type">
+                    <li role="menuitem" ng-repeat="x in vm.assetTypes"><a ui-sref="assethealthassetlist({ AssetTypeId: x.id, Days: vm.days })">{{x.name}}</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            @* The "ui-grid-exporter" and "ui-grid-selection" options allow data to be exported from the grid. *@
+            <div id="grid1" ui-grid="vm.gridOptions" ui-grid-exporter ui-grid-selection class="grid"></div>
+        </div>
+        @*<div class="row">
+            <div class="form-group">
+                <label class="col-sm-2" control-label for="AssetType">@L("AssetType")</label>
+                <div class="col-sm-2">
+                    <select id="AssetType" class="form-control" ng-model="vm.assetType" ng-options="x.name for x in vm.assetTypes track by x.id"></select>
+                </div>
+            </div>
+        </div>*@
+        <div class="row">
+            <div class="btn-group btn-group-sm">
+                <button id="changeDayRange" type="button" class="btn btn-info" ng-click="vm.changeDayRange()">{{vm.viewButtonLabel}}</button>
+                <a ui-sref="assethealthdashboardfortypes({Days: vm.days})" class="btn btn-default"><i class="fa fa-dot-circle-o"></i> @L("AssetHealthBtnDashboardForTypes")</a>
+                <a ui-sref="assetlist" class="btn btn-default"><i class="fa fa-tags"></i> @L("AssetBtnGoToAssetList")</a>
+                <a ui-sref="assetlevelbarchart" class="btn btn-default"><i class="fa fa-area-chart"></i> @L("AssetMnuAssetLevelBarChart")</a>
+            </div>
+            <div class="btn-group btn-group-sm">
+                <a ui-sref="iowvariablelist" class="btn btn-default"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+                <a ui-sref="iowlimitstatus" class="btn btn-default"><i class="fa fa-crosshairs"></i> @L("IowTtlLimitStatus")</a>
+                <a href="#" class="btn btn-default"><i class="fa fa-envelope-o"></i> Notices</a>
+                <a ui-sref="imagelist" class="btn btn-default"><i class="fa fa-envelope-o"></i> @L("ImgTtlImageList")</a>
+            </div>
+        </div>
+
+    </div>
+</div>

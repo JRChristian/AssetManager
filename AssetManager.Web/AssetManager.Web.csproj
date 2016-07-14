@@ -284,6 +284,7 @@
     <Content Include="App\Main\services\appSession.js" />
     <Content Include="App\Main\views\admin\useredit.js" />
     <Content Include="App\Main\views\admin\userlist.js" />
+    <Content Include="App\Main\views\assethealth\assetlist.js" />
     <Content Include="App\Main\views\assethealth\assetview.js" />
     <Content Include="App\Main\views\assethealth\dashboardForAssets.js" />
     <Content Include="App\Main\views\assethealth\assetlevelbarchart.js" />
@@ -487,6 +488,7 @@
     <Content Include="App\Main\views\assethealth\dashboardForAssets.cshtml" />
     <Content Include="App\Main\views\assethealth\dashboardForTypes.cshtml" />
     <Content Include="App\Main\views\assethealth\assetview.cshtml" />
+    <Content Include="App\Main\views\assethealth\assetlist.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
@@ -1300,6 +1302,8 @@
     <Content Include="Scripts\others\respond.src.js" />
     <Content Include="Scripts\others\spinjs\jquery.spin.js" />
     <Content Include="Scripts\others\spinjs\spin.js" />
+    <Content Include="Scripts\pdfmake\pdfmake.min.js" />
+    <Content Include="Scripts\pdfmake\vfs_fonts.js" />
     <Content Include="Scripts\showErrors.js" />
     <Content Include="Scripts\sweetalert\ie9.css" />
     <Content Include="Scripts\sweetalert\sweet-alert.css" />

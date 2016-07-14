@@ -12,6 +12,7 @@
         'ui.grid.edit',
         'ui.grid.rowEdit',
         'ui.grid.cellNav',
+        'ui.grid.exporter',     // Needed to export data in ui-grid to CSV or PDF
         'ui.grid.selection',
         'ui.grid.treeView',
         'ui.bootstrap.showErrors',  // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
@@ -94,6 +95,12 @@
                     templateUrl: '/App/Main/views/asset/assettypeedit.cshtml',
                     title: 'Edit Asset Type',
                     menu: 'AssetTypeEdit' //Matches to name of 'Assets' menu in AssetManagerNavigationProvider
+                })
+                .state('assethealthassetlist', {
+                    url: '/assethealthassetlist?AssetTypeId&Days',
+                    templateUrl: '/App/Main/views/assethealth/assetlist.cshtml',
+                    title: 'Asset Health for Asset Type',
+                    menu: 'AssetHealthAssetList' //Matches to AssetManagerNavigationProvider
                 })
                 .state('assethealthassetview', {
                     url: '/assethealthassetview?AssetId&Days',

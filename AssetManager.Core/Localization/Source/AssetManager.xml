@@ -190,6 +190,7 @@
     <text name="AssetHealthTtlDashboard" value="Asset Health Dashboard" />
     <text name="AssetHealthTtlDashboardForAssets" value="Asset Health Dashboard for Assets" />
     <text name="AssetHealthTtlDashboardForTypes" value="Asset Health Dashboard for Asset Types" />
+    <text name="AssetHealthBtnDashboardForTypes" value="Dashboard for asset types" />
     <text name="AssetHealthTtlSpecialAttention" value="Special attention" />
     <text name="AssetHealthBtnViewLast30Days" value="View last 30 days" />
     <text name="AssetHealthBtnViewToday" value="View today" />

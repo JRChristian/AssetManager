@@ -526,6 +526,7 @@ namespace AssetManager.EntityFramework.DomainServices
                     {
                         AssetId = asset.Id,
                         AssetName = asset.Name,
+                        AssetDescription = asset.Description,
                         AssetTypeId = asset.AssetTypeId,
                         AssetTypeName = (asset.AssetType != null) ? asset.AssetType.Name : "",
                         Levels = null,
@@ -642,6 +643,7 @@ namespace AssetManager.EntityFramework.DomainServices
                     {
                         AssetId = asset.Id,
                         AssetName = asset.Name,
+                        AssetDescription = asset.Description,
                         AssetTypeId = asset.AssetTypeId,
                         AssetTypeName = (asset.AssetType != null) ? asset.AssetType.Name : "",
                         Limits = null,

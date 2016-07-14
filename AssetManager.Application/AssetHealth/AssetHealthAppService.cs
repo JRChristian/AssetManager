@@ -464,6 +464,105 @@ namespace AssetManager.AssetHealth
             return output;
         }
 
+        public GetAssetLevelStatsforTypeOutput GetAssetLevelStatsForType(GetAssetLevelStatsForTypeInput input)
+        {
+            GetAssetLevelStatsforTypeOutput output = new GetAssetLevelStatsforTypeOutput { };
+            output.StartTimestamp = _iowManager.NormalizeStartDay(input.StartTimestamp);
+            output.EndTimestamp = _iowManager.NormalizeEndTimestamp(output.StartTimestamp, input.EndTimestamp);
+            output.DurationHours = (output.EndTimestamp - output.StartTimestamp).TotalHours;
+
+            AssetType assetType = _assetManager.GetAssetType(input.AssetTypeId, input.AssetTypeName);
+
+            // If a valid asset was specified in the input, return stats for that asset.
+            // Otherwise, if a valid asset type was specified, return details for all assets of that type.
+            // Otherwise, return details for all top level assets that do not have a parent.
+            if (assetType != null)
+            {
+                output.AssetTypeId = assetType.Id;
+                output.AssetTypeName = assetType.Name;
+                List<AssetLevelStats> stats =_assetHealthManager.GetAssetLevelStatsForAssetType(assetType.Id, assetType.Name, output.StartTimestamp, output.EndTimestamp, null, null);
+
+                if( stats != null && stats.Count > 0 )
+                {
+                    // Get all unique levels in the output
+                    var query = from a in stats
+                                // Next two lines handle the case that the child list ("Levels") is null
+                                let subList = a.Levels ?? new List<LevelStats>()
+                                from b in subList.DefaultIfEmpty(new LevelStats { LevelName="",Criticality=-1, MetricType=MetricType.None, GoodDirection=Direction.None, WarningLevel=0, ErrorLevel=0, MetricValue=0 })
+                                where b.Criticality > 0
+                                group b.MetricValue by new { b.LevelName, b.Criticality, b.MetricType, b.GoodDirection, b.WarningLevel, b.ErrorLevel } into g
+                                select new { LevelName = g.Key.LevelName, Criticality = g.Key.Criticality, MetricType = g.Key.MetricType, GoodDirection = g.Key.GoodDirection, WarningLevel = g.Key.WarningLevel, ErrorLevel = g.Key.ErrorLevel };
+                    var allLevels = query.Distinct().OrderBy(t => t.Criticality).ThenBy(t => t.LevelName).ToList();
+                    if( allLevels != null && allLevels.Count > 0 )
+                    {
+                        // Transform the asset stats we have (which includes only levels in use for that asset) to a form that includes all levels
+                        output.AssetStats = new List<AssetLevelStats>();
+                        foreach (AssetLevelStats a in stats)
+                        {
+                            AssetLevelStats assetStat = new AssetLevelStats
+                            {
+                                AssetId = a.AssetId,
+                                AssetName = a.AssetName,
+                                AssetDescription = a.AssetDescription,
+                                AssetTypeId = a.AssetTypeId,
+                                AssetTypeName = a.AssetTypeName,
+                                NumberChildren = a.NumberChildren,
+                                Levels = new List<LevelStats>()
+                            };
+
+                            // j = index into the complete list of levels (allLevels)
+                            // i = index into the list of levels for this asset (a.Levels)
+                            int j = 0;
+                            for (int i = 0; a.Levels != null && i < a.Levels.Count; i++)
+                            {
+                                // Add dummy records until we find a match.
+                                for (; allLevels != null && j < allLevels.Count && CompareLevels(allLevels[j].Criticality, allLevels[j].LevelName, a.Levels[i].Criticality, a.Levels[i].LevelName) < 0; j++)
+                                    assetStat.Levels.Add(new LevelStats
+                                    {
+                                        LevelName = allLevels[j].LevelName,
+                                        Criticality = allLevels[j].Criticality,
+                                        MetricType = allLevels[j].MetricType,
+                                        GoodDirection = allLevels[j].GoodDirection,
+                                        WarningLevel = allLevels[j].WarningLevel,
+                                        ErrorLevel = allLevels[j].ErrorLevel
+                                    });
+
+                                // Add the record from the list of levels for this asset
+                                assetStat.Levels.Add(new LevelStats
+                                {
+                                    LevelName = a.Levels[i].LevelName,
+                                    Criticality = a.Levels[i].Criticality,
+                                    MetricType = a.Levels[i].MetricType,
+                                    GoodDirection = a.Levels[i].GoodDirection,
+                                    WarningLevel = a.Levels[i].WarningLevel,
+                                    ErrorLevel = a.Levels[i].ErrorLevel,
+                                    NumberDeviations = a.Levels[i].NumberDeviations,
+                                    DurationHours = a.Levels[i].DurationHours,
+                                    NumberLimits = a.Levels[i].NumberLimits,
+                                    NumberDeviatingLimits = a.Levels[i].NumberDeviatingLimits,
+                                    MetricValue = a.Levels[i].MetricValue
+                                });
+                                j++;
+                            }
+                            // We're at the end of the list of levels for this asset. Add anything remaining from the master list of levels.
+                            for (; allLevels != null && j < allLevels.Count; j++)
+                                assetStat.Levels.Add(new LevelStats
+                                {
+                                    LevelName = allLevels[j].LevelName,
+                                    Criticality = allLevels[j].Criticality,
+                                    MetricType = allLevels[j].MetricType,
+                                    GoodDirection = allLevels[j].GoodDirection,
+                                    WarningLevel = allLevels[j].WarningLevel,
+                                    ErrorLevel = allLevels[j].ErrorLevel
+                                });
+                            output.AssetStats.Add(assetStat);
+                        }
+                    }
+                }
+            }
+            return output;
+        }
+
         public GetAssetLimitStatsOutput GetAssetLimitStats(GetAssetLimitStatsInput input)
         {
             GetAssetLimitStatsOutput output = new GetAssetLimitStatsOutput { };
@@ -576,6 +675,7 @@ namespace AssetManager.AssetHealth
             {
                 AssetId = (asset != null) ? asset.Id : -1,
                 AssetName = (asset != null) ? asset.Name : null,
+                AssetDescription = (asset != null) ? asset.Description : null,
                 AssetTypeId = (assetType != null) ? assetType.Id : (asset != null ? asset.AssetTypeId : 0),
                 AssetTypeName = (assetType != null) ? assetType.Name : (asset != null ? asset.AssetType.Name : null),
                 NumberChildren = childAssetStats.Count,
@@ -665,49 +765,50 @@ namespace AssetManager.AssetHealth
 
             // Transform the asset stats we have (which includes only levels in use for that asset) to a form that includes all levels
             output.ChildStats = new List<AssetLevelStats>();
-            foreach(AssetLevelStats inStats in childAssetStats)
+            foreach(AssetLevelStats a in childAssetStats)
             {
-                AssetLevelStats outStats = new AssetLevelStats
+                AssetLevelStats assetStat = new AssetLevelStats
                 {
-                    AssetId = inStats.AssetId,
-                    AssetName = inStats.AssetName,
-                    AssetTypeId = inStats.AssetTypeId,
-                    AssetTypeName = inStats.AssetTypeName,
-                    NumberChildren = inStats.NumberChildren,
+                    AssetId = a.AssetId,
+                    AssetName = a.AssetName,
+                    AssetDescription = a.AssetDescription,
+                    AssetTypeId = a.AssetTypeId,
+                    AssetTypeName = a.AssetTypeName,
+                    NumberChildren = a.NumberChildren,
                     Levels = new List<LevelStats>()
                 };
 
                 // j = index into the complete list of levels (output.AllLevels)
                 // i = index into the list of levels for this asset (inStats.Levels)
                 int j = 0;
-                for(int i=0; inStats.Levels != null && i< inStats.Levels.Count; i++ )
+                for(int i=0; a.Levels != null && i< a.Levels.Count; i++ )
                 {
                     // Add dummy records until we find a match.
-                    for(;  output.Levels != null && j < output.Levels.Count && string.Compare(output.Levels[j].LevelName, output.Levels[j].LevelName) < 0; j++)
-                        outStats.Levels.Add(new LevelStats { LevelName = output.Levels[j].LevelName, Criticality = output.Levels[j].Criticality });
+                    for(;  output.Levels != null && j < output.Levels.Count && CompareLevels(output.Levels[j].Criticality, output.Levels[j].LevelName, a.Levels[i].Criticality, a.Levels[i].LevelName) < 0; j++)
+                        assetStat.Levels.Add(new LevelStats { LevelName = output.Levels[j].LevelName, Criticality = output.Levels[j].Criticality });
 
                     // Add the record from the list of levels for this asset
-                    outStats.Levels.Add(new LevelStats
+                    assetStat.Levels.Add(new LevelStats
                     {
-                        LevelName = inStats.Levels[i].LevelName,
-                        Criticality = inStats.Levels[i].Criticality,
-                        MetricType = inStats.Levels[i].MetricType,
-                        GoodDirection = inStats.Levels[i].GoodDirection,
-                        WarningLevel = inStats.Levels[i].WarningLevel,
-                        ErrorLevel = inStats.Levels[i].ErrorLevel,
-                        NumberDeviations = inStats.Levels[i].NumberDeviations,
-                        DurationHours = inStats.Levels[i].DurationHours,
-                        NumberLimits = inStats.Levels[i].NumberLimits,
-                        NumberDeviatingLimits = inStats.Levels[i].NumberDeviatingLimits,
-                        MetricValue = inStats.Levels[i].MetricValue
+                        LevelName = a.Levels[i].LevelName,
+                        Criticality = a.Levels[i].Criticality,
+                        MetricType = a.Levels[i].MetricType,
+                        GoodDirection = a.Levels[i].GoodDirection,
+                        WarningLevel = a.Levels[i].WarningLevel,
+                        ErrorLevel = a.Levels[i].ErrorLevel,
+                        NumberDeviations = a.Levels[i].NumberDeviations,
+                        DurationHours = a.Levels[i].DurationHours,
+                        NumberLimits = a.Levels[i].NumberLimits,
+                        NumberDeviatingLimits = a.Levels[i].NumberDeviatingLimits,
+                        MetricValue = a.Levels[i].MetricValue
                     });
                     j++;
                 }
                 // We're at the end of the list of levels for this asset. Add anything remaining from the master list of levels.
                 for (; output.Levels != null && j < output.Levels.Count; j++)
-                    outStats.Levels.Add(new LevelStats { LevelName = output.Levels[j].LevelName, Criticality = output.Levels[j].Criticality });
+                    assetStat.Levels.Add(new LevelStats { LevelName = output.Levels[j].LevelName, Criticality = output.Levels[j].Criticality });
 
-                output.ChildStats.Add(outStats);
+                output.ChildStats.Add(assetStat);
             }
             return output;
         }
@@ -812,6 +913,20 @@ namespace AssetManager.AssetHealth
             {
                 Metrics = _assetHealthManager.GetAssetHealthMetricValues()
             };
+        }
+
+        private int CompareLevels(int leftCriticality, string leftName, int rightCriticality, string rightName )
+        {
+            if (leftCriticality < rightCriticality)
+                return -1;
+            else if (leftCriticality > rightCriticality)
+                return 1;
+            else if (string.Compare(leftName, rightName) < 0)
+                return -1;
+            else if (string.Compare(leftName, rightName) > 0)
+                return 1;
+            else
+                return 0;
         }
     }
 }

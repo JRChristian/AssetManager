@@ -11,6 +11,7 @@ namespace AssetManager.EntityFramework.DomainServices
     {
         public long AssetId { get; set; }
         public string AssetName { get; set; }
+        public string AssetDescription { get; set; }
         public long AssetTypeId { get; set; }
         public string AssetTypeName { get; set; }
         public int NumberChildren { get; set; }

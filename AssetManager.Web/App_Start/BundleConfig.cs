@@ -72,6 +72,9 @@ namespace AssetManager.Web
                         "~/scripts/nv.d3.min.js",
                         "~/Scripts/angular-nvd3.min.js",        // Charting with nvd3 and d3 -- see http://krispo.github.io/angular-nvd3
 
+                        "~/Scripts/pdfmake/pdfmake.min.js",     // PDFMake -- see http://pdfmake.org/
+                        "~/Scripts/pdfmake/vfs_fonts.js",
+
                         "~/Abp/Framework/scripts/abp.js",
                         "~/Abp/Framework/scripts/libs/abp.jquery.js",
                         "~/Abp/Framework/scripts/libs/abp.toastr.js",

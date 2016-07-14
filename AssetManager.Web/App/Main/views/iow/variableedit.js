@@ -112,7 +112,7 @@
                     null,
                     variableService.deleteVariable({ Id: vm.variable.id })
                         .success(function (data) {
-                            if (data.success == true)
+                            if (data.success === true)
                                 abp.notify.success(abp.utils.formatString(vm.localize("VariableDeletedOk"), data.name));
                             else
                                 abp.notify.error(abp.utils.formatString(vm.localize("VariableNotDeleted"), data.name));

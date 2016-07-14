@@ -114,6 +114,8 @@
     <Compile Include="AssetHealth\Dtos\DeleteHealthMetricInput.cs" />
     <Compile Include="AssetHealth\Dtos\DeleteHealthMetricOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetHealthMetricValuesOutput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLevelStatsForTypeInput.cs" />
+    <Compile Include="AssetHealth\Dtos\GetAssetLevelStatsforTypeOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLevelStatsInput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLevelStatsOutput.cs" />
     <Compile Include="AssetHealth\Dtos\GetAssetLimitChartByDayInput.cs" />

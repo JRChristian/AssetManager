@@ -21,6 +21,7 @@
                                 <td style="width:55px" class="text-right">
                                     <div class="btn-group btn-group-xs">
                                         <a class="btn btn-default" ui-sref="assethealthdashboardfortypes({ AssetTypeId: 0, IncludeChildren: 'types', Days: vm.days })" ng-hide="vm.overallStats.assetId<=0 && vm.overallStats.assetTypeId<=0"><i class="fa fa-level-up"></i></a>
+                                        <a class="btn btn-default" ui-sref="assethealthassetlist({ AssetTypeId: a.assetTypeId, Days: vm.days })" ng-show="a.assetTypeId>0"><i class="fa fa-th-list"></i></a>
                                     </div>
                                 </td>
                                 <td>{{vm.assetTypeName}}</td>
@@ -30,8 +31,9 @@
                             <tr ng-repeat="a in vm.childStats">
                                 <td style="width:55px" class="text-right">
                                     <div class="btn-group btn-group-xs">
-                                        <a class="btn btn-default" ui-sref="assethealthdashboardfortypes({ AssetTypeId: a.assetTypeId, IncludeChildren: 'asset', Days: vm.days })" ng-hide="a.assetId > 0"><i class="fa fa-level-down"></i></a>
-                                        <a class="btn btn-default" ui-sref="assetlimitview({ assetId: a.assetId })" ng-hide="a.assetId<=0"><i class="fa fa-bar-chart"></i></a>
+                                        <a class="btn btn-default" ui-sref="assethealthdashboardfortypes({ AssetTypeId: a.assetTypeId, IncludeChildren: 'asset', Days: vm.days })" ng-show="a.assetId<1"><i class="fa fa-level-down"></i></a>
+                                        <a class="btn btn-default" ui-sref="assethealthassetlist({ AssetTypeId: a.assetTypeId, Days: vm.days })" ng-show="a.assetId<1"><i class="fa fa-th-list"></i></a>
+                                        <a class="btn btn-default" ui-sref="assethealthassetview({ AssetId: a.assetId, Days: vm.days })" ng-show="a.assetId>0"><i class="fa fa-bar-chart"></i></a>
                                     </div>
                                 </td>
                                 <td>{{a.assetId > 0 ? a.assetName : a.assetTypeName}}</td>
