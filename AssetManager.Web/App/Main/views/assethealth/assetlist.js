@@ -78,7 +78,7 @@
                         exporterSuppressExport: true,
                         cellTemplate: '<div class="ui-grid-cell-contents"><div class="btn-group btn-group-xs">'
                                     + '<a class="btn btn-default" ui-sref="assetedit({ assetId: row.entity.assetId })"><i class="fa fa-pencil-square-o"></i></a> '
-                                    + '<a class="btn btn-default" ui-sref="assethealthassetview({ AssetId: row.entity.assetId, Days: vm.days })"><i class="fa fa-bar-chart"></i></a>'
+                                    + '<a class="btn btn-default" ui-sref="assethealthassetview({ AssetId: row.entity.assetId, Days: ' + vm.days + '})"><i class="fa fa-bar-chart"></i></a>'
                                     + '</div></div>'
                     },
                     { name: 'assetName', displayName: vm.localize('Name'), width: '15%' },

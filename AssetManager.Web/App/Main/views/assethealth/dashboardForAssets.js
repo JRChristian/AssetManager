@@ -3,10 +3,9 @@
 
     var controllerId = 'app.views.assethealth.dashboardForAssets';
     app.controller(controllerId, [
-        '$scope', '$log', '$location', '$stateParams', '$sce', 'abp.services.app.assetHealth',
-        function ($scope, $log, $location, $stateParams, $sce, assetHealthService) {
+        '$scope', '$state', '$location', '$stateParams', '$sce', 'abp.services.app.assetHealth',
+        function ($scope, $state, $location, $stateParams, $sce, assetHealthService) {
             var vm = this;
-            vm.$log = $log;
             vm.localize = abp.localization.getSource('AssetManager');
 
             // Arguments
@@ -31,17 +30,18 @@
             vm.levels = [];
 
             vm.changeDayRange = function () {
+                //Or just put this behavior directly on the button
                 vm.days = vm.days <= 1 ? 30 : 1;
-                vm.startDate = new Date();
-                vm.startDate.setDate(today.getDate() - vm.days);
-                vm.viewButtonLabel = vm.days <= 1 ? vm.localize('AssetHealthBtnViewLast30Days') : vm.localize('AssetHealthBtnViewToday');
-                vm.refresh();
+                $state.go('assethealthdashboardforassets', { AssetId: vm.assetId, IncludeChildren: $stateParams.IncludeChildren, Days: vm.days });
+                //vm.startDate = new Date();
+                //vm.startDate.setDate(today.getDate() - vm.days);
+                //vm.viewButtonLabel = vm.days <= 1 ? vm.localize('AssetHealthBtnViewLast30Days') : vm.localize('AssetHealthBtnViewToday');
+                //vm.refresh();
             };
 
             vm.refresh = function () {
                 vm.overallStats = { assetId: vm.assetId };
                 vm.childStats = [];
-                vm.startDate = new Date().setDate(new Date().getDate() - vm.days);
                 abp.ui.setBusy(
                     null,
                     assetHealthService.getCompoundAssetLevelStats({ AssetId: vm.assetId, IncludeChildren: vm.includeChildren, StartTimestamp: vm.startDate, MaxCriticality: vm.maxCriticality })

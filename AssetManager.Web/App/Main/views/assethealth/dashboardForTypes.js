@@ -3,10 +3,9 @@
 
     var controllerId = 'app.views.assethealth.dashboardForTypes';
     app.controller(controllerId, [
-        '$scope', '$log', '$location', '$stateParams', '$sce', 'abp.services.app.assetHealth',
-        function ($scope, $log, $location, $stateParams, $sce, assetHealthService) {
+        '$scope', '$state', '$location', '$stateParams', '$sce', 'abp.services.app.assetHealth',
+        function ($scope, $state, $location, $stateParams, $sce, assetHealthService) {
             var vm = this;
-            vm.$log = $log;
             vm.localize = abp.localization.getSource('AssetManager');
 
             // Arguments
@@ -32,11 +31,13 @@
             vm.levels = [];
 
             vm.changeDayRange = function () {
+                //Or just put this behavior directly on the button
                 vm.days = vm.days <= 1 ? 30 : 1;
-                vm.startDate = new Date();
-                vm.startDate.setDate(today.getDate() - vm.days);
-                vm.viewButtonLabel = vm.days <= 1 ? vm.localize('AssetHealthBtnViewLast30Days') : vm.localize('AssetHealthBtnViewToday');
-                vm.refresh();
+                $state.go('assethealthdashboardfortypes', { AssetTypeId: vm.assetTypeId, IncludeChildren: $stateParams.IncludeChildren, Days: vm.days });
+                //vm.startDate = new Date();
+                //vm.startDate.setDate(today.getDate() - vm.days);
+                //vm.viewButtonLabel = vm.days <= 1 ? vm.localize('AssetHealthBtnViewLast30Days') : vm.localize('AssetHealthBtnViewToday');
+                //vm.refresh();
             };
 
             vm.refresh = function () {
