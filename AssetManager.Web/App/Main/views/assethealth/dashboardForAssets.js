@@ -8,6 +8,9 @@
             var vm = this;
             vm.localize = abp.localization.getSource('AssetManager');
 
+            //vm.bulletData = "5,35,75,50,25";
+            vm.bulletOptions = '{ "type": "bullet", "targetColor": "#0000ff", "performanceColor": "#191919", "width": "100px" }'; // *MUST* wrap JSON tokens in " characters
+
             // Arguments
             vm.assetId = $stateParams.AssetId > 0 ? $stateParams.AssetId : null;
             vm.assetTypeId = -1;
@@ -81,6 +84,10 @@
                                 if (vm.childStats[i].levels !== null) {
                                     for (var j = 0; j < vm.childStats[i].levels.length; j++) {
                                         var a = vm.childStats[i].levels[j];
+
+                                        var highValue = Math.round(10 * 1.2 * Math.max(a.metricValue, Math.max(2, a.errorLevel)))/10;
+                                        var bulletData = '"0,' + Math.round(a.metricValue*10)/10 + ',' + highValue + ',' + a.errorLevel + ',' + a.warningLevel + '"';
+                                        vm.childStats[i].levels[j].bulletData = bulletData;
                                         // Style the row
                                         if (label === '' && a.metricType > 0 && a.numberLimits > 0) {
                                             label = vm.bootstrapStyleRow(a.criticality, a.errorLevel, a.warningLevel, a.metricValue);

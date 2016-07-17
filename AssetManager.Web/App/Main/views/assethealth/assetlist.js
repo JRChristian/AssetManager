@@ -3,8 +3,8 @@
 
     var controllerId = 'app.views.assethealth.assetlist';
     app.controller(controllerId, [
-        '$scope', '$location', '$stateParams', 'abp.services.app.asset', 'abp.services.app.assetHealth',
-        function ($scope, $location, $stateParams, assetService, assetHealthService) {
+        '$scope', '$location', '$state', '$stateParams', 'abp.services.app.asset', 'abp.services.app.assetHealth',
+        function ($scope, $location, $state, $stateParams, assetService, assetHealthService) {
             var vm = this;
             vm.localize = abp.localization.getSource('AssetManager');
 
@@ -21,6 +21,10 @@
             vm.startDate.setDate(today.getDate() - vm.days);
             vm.viewButtonLabel = vm.days <= 1 ? vm.localize('AssetHealthBtnViewLast30Days') : vm.localize('AssetHealthBtnViewToday');
 
+            vm.gotoAssetView = function (assetId) {
+                $state.go('assethealthassetview', { AssetId: assetId, Days: vm.days });
+            };
+
             // Get list of asset types
             vm.assetTypes = [];
             abp.ui.setBusy(
@@ -36,15 +40,16 @@
             // Toggle between yesterday and 30 days ago
             vm.changeDayRange = function () {
                 vm.days = vm.days <= 1 ? 30 : 1;
-                vm.startDate = new Date();
-                vm.startDate.setDate(today.getDate() - vm.days);
-                vm.viewButtonLabel = vm.days <= 1 ? vm.localize('AssetHealthBtnViewLast30Days') : vm.localize('AssetHealthBtnViewToday');
-                vm.refresh();
-                vm.chart();
+                $state.go('assethealthassetlist', { AssetTypeId: vm.assetType.id, Days: vm.days });
+                //vm.startDate = new Date();
+                //vm.startDate.setDate(today.getDate() - vm.days);
+                //vm.viewButtonLabel = vm.days <= 1 ? vm.localize('AssetHealthBtnViewLast30Days') : vm.localize('AssetHealthBtnViewToday');
+                //vm.refresh();
             };
 
             vm.gridOptions = {
                 data: [],
+                appScopeProvider: vm, // Needed to allow calling functions from within the grid
                 onRegisterApi: registerGridApi,
                 enableSorting: true,
                 enableFiltering: true,
@@ -74,12 +79,14 @@
                 },
                 columnDefs: [
                     {
-                        name: 'assetId', displayName: '', width: 60, minWidth: 35, enableSorting: false, enableFiltering: false, enableColumnMenus: false,
-                        exporterSuppressExport: true,
-                        cellTemplate: '<div class="ui-grid-cell-contents"><div class="btn-group btn-group-xs">'
+                        name: 'assetId', displayName: '', width: 60, minWidth: 35, enableSorting: false, enableFiltering: false, enableColumnMenus: false, exporterSuppressExport: true,
+                        cellTemplate: '<div class="ui-grid-cell-contents">'
+                                    + '<div class="btn-group btn-group-xs">'
                                     + '<a class="btn btn-default" ui-sref="assetedit({ assetId: row.entity.assetId })"><i class="fa fa-pencil-square-o"></i></a> '
-                                    + '<a class="btn btn-default" ui-sref="assethealthassetview({ AssetId: row.entity.assetId, Days: ' + vm.days + '})"><i class="fa fa-bar-chart"></i></a>'
-                                    + '</div></div>'
+                                    + '<button class="btn btn-default" type="submit" ng-click="grid.appScope.gotoAssetView(row.entity.assetId)"><i class="fa fa-bar-chart"></i></a>'
+                                    //+ '<a class="btn btn-default" ui-sref="assethealthassetview({ AssetId: row.entity.assetId, Days: 1})"><i class="fa fa-bar-chart"></i></a>'
+                                    + '</div>'
+                                    + '</div>'
                     },
                     { name: 'assetName', displayName: vm.localize('Name'), width: '15%' },
                     { name: 'assetDescription', displayName: vm.localize('Description'), width: '30%' }
@@ -92,11 +99,12 @@
                     null,
                     assetHealthService.getAssetLevelStatsForType({ AssetTypeId: vm.assetType.id, StartTimestamp: vm.startDate })
                         .success(function (data) {
+
                             vm.gridOptions.data = data.assetStats;
                             vm.gridOptions.exporterPdfHeader.text = data.assetTypeName;
                             var j = vm.gridOptions.columnDefs.length; // Number of columns present
                             // Add columns for each level in the data set
-                            for (var i = 0; vm.gridOptions.data.length > 0 && i < vm.gridOptions.data[0].levels.length; i++) {
+                            for (var i = 0; vm.gridOptions.data !== null && vm.gridOptions.data.length > 0 && i < vm.gridOptions.data[0].levels.length; i++) {
                                 // Add a column named "n-Level-Metric" for each level, containing the metric value (a percentage)
                                 vm.gridOptions.columnDefs[j++] = {
                                     name: 'levels[' + i.toString() + '].metricValue',
