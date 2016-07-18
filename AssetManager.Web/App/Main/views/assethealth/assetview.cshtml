@@ -12,7 +12,8 @@
                     </uib-tab-heading>
                     <div class="col-md-3">
                         <div class="table-responsive">
-                            <table class="table table-condensed">
+                            <h5>@L("Metrics")</h5>
+                            <table class="table table-condensed table-borderless">
                                 <thead>
                                     <tr>
                                         <th>@L("IOWLevel")</th>
@@ -34,6 +35,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="table-responsive">
+                            <h5>@L("AssetHealthLblDeviatingVariables")</h5>
                             <table class="table table-condensed table-borderless">
                                 <thead>
                                     <tr>
@@ -46,7 +48,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="v in vm.allLimits | orderBy : 'criticality'" uib-tooltip-html="v.tooltip" tooltip-append-to-body=true>
+                                    <tr ng-repeat="v in vm.allLimits | filter:'text' | orderBy : 'criticality'" uib-tooltip-html="v.tooltip" tooltip-append-to-body=true>
                                         <td>{{v.criticality}}-{{v.levelName}}</td>
                                         <td>
                                             <div class="btn-group btn-group-xs">
@@ -119,6 +121,9 @@
                         @L("Chart")
                     </uib-tab-heading>
                     <div id="chartContainer" style="width:100%; height:300px;"></div>
+                </uib-tab>
+                <uib-tab heading="Damage mechanisms">
+                    TO BE PROVIDED: List of damage mechanisms associated with this asset and the variables monitored for this asset, with an indication of which damage mechanisms are at risk due to deviations.
                 </uib-tab>
                 <uib-tab heading="Notes">
                     tbd

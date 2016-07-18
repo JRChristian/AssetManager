@@ -75,7 +75,9 @@ namespace AssetManager.Web
                         "~/Scripts/pdfmake/pdfmake.min.js",     // PDFMake -- see http://pdfmake.org/
                         "~/Scripts/pdfmake/vfs_fonts.js",
 
-                        "~/Scripts/jquery.sparkline.min.js",    // jQuery Sparklines version 2.1.2 -- see http://omnipotent.net/jquery.sparkline/ 
+                        "~/Scripts/jquery.sparkline.min.js",    // jQuery Sparklines version 2.1.2 -- see http://omnipotent.net/jquery.sparkline/
+
+                        "~/Scripts/angular-hashtagify.min.js",  // Angular-hashtagify -- see https://github.com/rossmartin/angular-hashtagify
 
                         "~/Abp/Framework/scripts/abp.js",
                         "~/Abp/Framework/scripts/libs/abp.jquery.js",

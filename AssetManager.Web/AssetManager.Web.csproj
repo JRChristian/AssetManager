@@ -401,6 +401,8 @@
     <Content Include="Scripts\angular-cookies.min.js" />
     <Content Include="Scripts\angular-csp.css" />
     <Content Include="Scripts\angular-flot.js" />
+    <Content Include="Scripts\angular-hashtagify.js" />
+    <Content Include="Scripts\angular-hashtagify.min.js" />
     <Content Include="Scripts\angular-loader.js" />
     <Content Include="Scripts\angular-loader.min.js" />
     <Content Include="Scripts\angular-message-format.js" />

@@ -6,7 +6,7 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <table class="table table-condensed">
+                <table class="table table-condensed table-borderless">
                     <thead>
                         <tr>
                             <th></th>
@@ -41,10 +41,10 @@
                     </tbody>
                 </table>
                 @*Sparkline starts...
-                <div style="width:200px;">
-                    <div jq-sparkline ng-model="vm.bulletData" opts="{{vm.bulletOptions}}"></div>
-                </div>
-                ...and ends*@
+                    <div style="width:200px;">
+                        <div jq-sparkline ng-model="vm.bulletData" opts="{{vm.bulletOptions}}"></div>
+                    </div>
+                    ...and ends*@
             </div>
             <div class="col-md-6">
                 @L("Asset"): <strong>{{vm.assetName}}</strong>
@@ -64,7 +64,10 @@
                             </dd>
                         </dl>
                     </uib-tab>
-                    <uib-tab index="1" heading="@L("AssetHealthLblNotes")">
+                    <uib-tab index="1" heading="Damage mechanisms">
+                        TBD
+                    </uib-tab>
+                    <uib-tab index="2" heading="@L("AssetHealthLblNotes")">
                         TBD
                     </uib-tab>
                 </uib-tabset>
