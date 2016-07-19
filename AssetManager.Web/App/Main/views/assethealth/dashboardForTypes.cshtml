@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col-md-6">
                 <div>
-                    <table class="table table-condensed">
+                    <table class="table table-condensed table-borderless">
                         <thead>
                             <tr>
                                 <th></th>
@@ -47,7 +47,7 @@
             <div class="col-md-6">
                 @L("Asset"): <strong>{{vm.assetTypeName}}</strong>
                 <uib-tabset>
-                    <uib-tab index="0" heading='@L("AssetHealthLblDeviatingVariables")''>
+                    <uib-tab index="0" heading='@L("AssetHealthLblDeviatingVariables")' '>
                         <dl ng-repeat="l in vm.levels">
                             <dt>{{l.criticality}}-{{l.levelName}}</dt>
                             <dd ng-repeat="v in vm.problemLimits | filter:{ levelName: l.levelName }">
@@ -62,7 +62,13 @@
                             </dd>
                         </dl>
                     </uib-tab>
-                    <uib-tab index="1" heading='@L("AssetHealthLblNotes")'>
+                    <uib-tab index="1" heading="Damage mechanisms">
+                        TO BE PROVIDED: List of damage mechanisms associated with this asset and the variables monitored for this asset, with an indication of which damage mechanisms are at risk due to deviations.
+                    </uib-tab>
+                    <uib-tab index="2" heading="Work orders">
+                        TBD
+                    </uib-tab>
+                    <uib-tab index="3" heading='@L("AssetHealthLblNotes")'>
                         TBD
                     </uib-tab>
                 </uib-tabset>
