@@ -17,6 +17,7 @@
         'ui.grid.treeView',
         'ui.bootstrap.showErrors',  // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
 
+        'ui.tree',      // Angular-ui-tree -- see https://github.com/angular-ui-tree/angular-ui-tree
         'angular-flot', // Flot helper library -- see https://docs.omniref.com/js/npm/angular-flot/0.0.6 
         'nvd3',         // see http://krispo.github.io/angular-nvd3
         'hashtagify',   // Angular-hashtagify -- see https://github.com/rossmartin/angular-hashtagify
@@ -90,6 +91,12 @@
                     templateUrl: '/App/Main/views/asset/new.cshtml',
                     title: 'New Asset',
                     menu: 'AssetNew' //Matches to name of 'NewAsset' menu in AssetManagerNavigationProvider
+                })
+                .state('assettree', {
+                    url: '/assettree',
+                    templateUrl: '/App/Main/views/asset/assettree.cshtml',
+                    title: 'Asset Tree',
+                    menu: 'AssetTree'
                 })
                 .state('assettypeedit', {
                     url: '/assettypeedit',

@@ -213,6 +213,49 @@ namespace AssetManager.Assets
             }
         }
 
+        public GetAssetTreeOutput GetAssetTree(GetAssetTreeInput input)
+        {
+            // Output array
+            List<AssetTreeDto> tree = new List<AssetTreeDto>();
+
+            // Get all nodes
+            List<AssetHierarchy> assetHierarchy = _assetManager.GetAssetHierarchy();
+
+            return new GetAssetTreeOutput
+            {
+                AssetTree = AngularUITreeBuilder(assetHierarchy, 0, null, null)
+            };
+        }
+
+        private List<AssetTreeDto> AngularUITreeBuilder(List<AssetHierarchy> assetHierarchy, int level, long? parentAssetHierarchyId, long? parentAssetTreeDtoId )
+        {
+            List<AssetTreeDto> output = new List<AssetTreeDto>();
+
+            var oneLevel = from assets in assetHierarchy
+                           where assets.ParentAssetHierarchyId == parentAssetHierarchyId
+                           orderby assets.Asset.Name ascending
+                           select assets;
+
+            if (oneLevel != null && oneLevel.Count() > 0)
+            {
+                foreach (var oneItem in oneLevel)
+                {
+                    AssetTreeDto node = new AssetTreeDto
+                    {
+                        Id = oneItem.AssetId,
+                        Title = oneItem.Asset.Name,
+                        Description = oneItem.Asset.Description,
+                        Level = level,
+                        ParentAssetTreeDtoId = parentAssetTreeDtoId,
+                        Nodes = AngularUITreeBuilder(assetHierarchy, level + 1, oneItem.Id, oneItem.AssetId)
+                    };
+
+                    output.Add(node);
+                }
+            }
+            return output;
+        }
+
 
         public UpdateAssetHierarchyOutput UpdateAssetHierarchy(UpdateAssetHierarchyInput input)
         {

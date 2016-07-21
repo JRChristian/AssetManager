@@ -143,6 +143,14 @@ namespace AssetManager.Web
                     )
                     .AddItem(
                         new MenuItemDefinition(
+                            "AssetTree",
+                            new LocalizableString("AssetMnuAssetHierarchy", AssetManagerConsts.LocalizationSourceName),
+                            url: "#/assettree",
+                            icon: "fa fa-list-alt"
+                            )
+                    )
+                    .AddItem(
+                        new MenuItemDefinition(
                             "AssetLevelBarChart",
                             new LocalizableString("AssetMnuAssetLevelBarChart", AssetManagerConsts.LocalizationSourceName),
                             url: "#/assetlevelbarchart",

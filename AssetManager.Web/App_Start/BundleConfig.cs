@@ -26,6 +26,7 @@ namespace AssetManager.Web
                     .Include("~/Content/ui-grid.min.css", new CssRewriteUrlTransform())     // Angular UI Grid
                     .Include("~/Content/showErrors.css", new CssRewriteUrlTransform())      // Bootstrap form validation -- see http://blog.yodersolutions.com/bootstrap-form-validation-done-right-in-angularjs/
                     .Include("~/Content/nv.d3.min.css", new CssRewriteUrlTransform())       // Charting with nvd3 and d3 -- see http://cmaurer.github.io/angularjs-nvd3-directives
+                    .Include("~/Content/angular-ui-tree.min.css", new CssRewriteUrlTransform())     // Angular-ui-tree -- see https://github.com/angular-ui-tree/angular-ui-tree
                 );
 
             //~/Bundles/App/vendor/js
@@ -78,6 +79,8 @@ namespace AssetManager.Web
                         "~/Scripts/jquery.sparkline.min.js",    // jQuery Sparklines version 2.1.2 -- see http://omnipotent.net/jquery.sparkline/
 
                         "~/Scripts/angular-hashtagify.min.js",  // Angular-hashtagify -- see https://github.com/rossmartin/angular-hashtagify
+
+                        "~/Scripts/angular-ui-tree.min.js",     // Angular-ui-tree -- see https://github.com/angular-ui-tree/angular-ui-tree
 
                         "~/Abp/Framework/scripts/abp.js",
                         "~/Abp/Framework/scripts/libs/abp.jquery.js",

@@ -31,6 +31,7 @@ namespace AssetManager.Assets
         DeleteAssetTypesOutput DeleteAssetTypes(DeleteAssetTypesInput input);
 
         GetAssetHierarchyAsListOutput GetAssetHierarchyAsList(GetAssetHierarchyAsListInput input);
+        GetAssetTreeOutput GetAssetTree(GetAssetTreeInput input);
         UpdateAssetHierarchyOutput UpdateAssetHierarchy(UpdateAssetHierarchyInput input);
         GetAssetRelativesOutput GetAssetRelatives(GetAssetRelativesInput input);
     }

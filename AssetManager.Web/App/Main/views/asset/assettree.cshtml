@@ -1,0 +1,49 @@
+﻿<div ng-controller="app.views.asset.assettree as vm">
+    <!-- Nested node template -->
+    <script type="text/ng-template" id="nodes_renderer.html">
+        <div ui-tree-handle class="tree-node tree-node-content">
+            <a class="btn btn-dimgray btn-xs" ng-if="node.nodes && node.nodes.length > 0" data-nodrag ng-click="vm.toggle(this)">
+                <span class="glyphicon" ng-class="{'glyphicon-minus': collapsed, 'glyphicon-plus': !collapsed }"></span>
+            </a>
+            <a class="btn btn-dimgray btn-xs" ng-if="!(node.nodes && node.nodes.length > 0)">&nbsp;&nbsp;&nbsp;</a> 
+            {{node.title}}
+        </div>
+        <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+            <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'" ng-show="vm.visible(node)">
+            </li>
+        </ol>
+    </script>
+
+    <div class="container">
+        <div class="row">
+            <h3>@L("AssetTtlAssetHierarchy")</h3>
+        </div>
+        <div class="row">
+            <button id="expandAll" ng-click="vm.expandAll()" type="button" class="btn btn-primary btn-sm">@L("AssetBtnExpandHierarchy")</button>
+            <button id="collapseAll" ng-click="vm.collapseAll()" type="button" class="btn btn-primary btn-sm">@L("AssetBtnCollapseHierarchy")</button>
+               <p>Search: <input ng-model="query" ng-change="vm.findNodes()"></p>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div ui-tree="vm.treeOptions" id="tree-root">
+                    <ol ui-tree-nodes ng-model="vm.treeData">
+                        <li ng-repeat="node in vm.treeData" ui-tree-node ng-include="'nodes_renderer.html'" ng-show="vm.visible(node)"></li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="info">
+                    {{info}}
+                </div>
+                <pre class="code">@*{{ vm.treeData | json }}*@{{ vm.assetUpdates | json }}</pre>
+            </div>
+        </div>
+        <div class="row">
+                <a ui-sref="assetlist" class="btn btn-info btn-sm"><i class="fa fa-tags"></i> @L("AssetBtnGoToAssetList")</a>
+                <a ui-sref="assettypeedit" class="btn btn-info btn-sm"><i class="fa fa-tag"></i> @L("AssetBtnGoToAssetTypes")</a>
+                <button ng-click="vm.cancel()" ng-disabled="vm.assetUpdates.count<=0" type="submit" class="btn btn-warning btn-sm">@L("Cancel")</button>
+                <button ng-click="vm.save()" ng-disabled="vm.assetUpdates.count<=0" type="submit" class="btn btn-success btn-sm">@L("UpdateTheHierarchy")</button>
+        </div>
+    </div>
+</div>

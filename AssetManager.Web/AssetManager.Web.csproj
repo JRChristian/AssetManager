@@ -296,6 +296,7 @@
     <Content Include="App\Main\views\assethealth\healthmetriclist.js" />
     <Content Include="App\Main\views\asset\assethierarchy.js" />
     <Content Include="App\Main\views\asset\assetlist.js" />
+    <Content Include="App\Main\views\asset\assettree.js" />
     <Content Include="App\Main\views\asset\assettypeedit.js" />
     <Content Include="App\Main\views\asset\edit.js" />
     <Content Include="App\Main\views\asset\list.js" />
@@ -311,6 +312,8 @@
     <Content Include="App\Main\views\iow\variabledeviations.js" />
     <Content Include="App\Main\views\iow\limitsummary.js" />
     <Content Include="App\Main\views\iow\limitstatus.js" />
+    <Content Include="Content\angular-ui-tree.css" />
+    <Content Include="Content\angular-ui-tree.min.css" />
     <Content Include="Content\bootstrap-cerulean.min.css" />
     <Content Include="Content\bootstrap-simplex.min.css" />
     <Content Include="Content\nv.d3.css" />
@@ -425,6 +428,8 @@
     <Content Include="Scripts\angular-touch.min.js" />
     <Content Include="Scripts\angular-ui-router.js" />
     <Content Include="Scripts\angular-ui-router.min.js" />
+    <Content Include="Scripts\angular-ui-tree.js" />
+    <Content Include="Scripts\angular-ui-tree.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.js" />
@@ -491,6 +496,7 @@
     <Content Include="App\Main\views\assethealth\dashboardForTypes.cshtml" />
     <Content Include="App\Main\views\assethealth\assetview.cshtml" />
     <Content Include="App\Main\views\assethealth\assetlist.cshtml" />
+    <Content Include="App\Main\views\asset\assettree.cshtml" />
     <None Include="Properties\PublishProfiles\AssetManager86 - Web Deploy.pubxml" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />

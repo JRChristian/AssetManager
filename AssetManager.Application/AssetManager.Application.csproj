@@ -136,8 +136,11 @@
     <Compile Include="AssetHealth\Dtos\AssetTypeMetricsDto.cs" />
     <Compile Include="AssetHealth\Dtos\UpdateHealthMetricInput.cs" />
     <Compile Include="AssetHealth\Dtos\UpdateHealthMetricOutput.cs" />
+    <Compile Include="Assets\Dtos\AssetTreeDto.cs" />
     <Compile Include="Assets\Dtos\GetAssetRelativesInput.cs" />
     <Compile Include="Assets\Dtos\GetAssetRelativesOutput.cs" />
+    <Compile Include="Assets\Dtos\GetAssetTreeInput.cs" />
+    <Compile Include="Assets\Dtos\GetAssetTreeOutput.cs" />
     <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayInput.cs" />
     <Compile Include="IOWs\Dtos\GetLimitStatsChartByDayOutput.cs" />
     <Compile Include="IOWs\Dtos\GetRecentlyDeviatingLimitsInput.cs" />
