@@ -79,6 +79,7 @@
     <text name="NumberOfVariablesVisible" value="Number of filtered variables:" />
     <text name="Causes" value="Causes" />
     <text name="Consequences" value="Consequences" />
+    <text name="Limits" value="Limits" />
     <text name="Limit" value="Limit" />
     <text name="Level" value="Level" />
     <text name="Direction" value="Direction" />

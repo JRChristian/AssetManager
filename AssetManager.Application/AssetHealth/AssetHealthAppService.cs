@@ -47,7 +47,17 @@ namespace AssetManager.AssetHealth
                 output.AssetVariables = new List<AssetVariableDto>();
                 foreach (AssetVariable av in assetVariables)
                 {
-                    output.AssetVariables.Add(new AssetVariableDto { Id = av.Id, AssetId = av.AssetId, AssetName = av.Asset.Name, VariableId = av.IOWVariableId, VariableName = av.IOWVariable.Name });
+                    output.AssetVariables.Add(new AssetVariableDto
+                    {
+                        Id = av.Id,
+                        AssetId = av.AssetId,
+                        AssetName = av.Asset.Name,
+                        AssetDescription = av.Asset.Description,
+                        AssetTypeName = av.Asset.AssetType.Name,
+                        AssetMaterials = av.Asset.Materials,
+                        VariableId = av.IOWVariableId,
+                        VariableName = av.IOWVariable.Name
+                    });
                 }
             }
             return output;

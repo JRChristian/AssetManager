@@ -29,14 +29,18 @@
                     vm.assettypes = data.assetTypes;
                 }));
 
-            vm.saveAsset = function () {
+            vm.save = function () {
                 abp.ui.setBusy(
                     null,
                     assetService.updateAsset( vm.asset )
                         .success(function () {
                             abp.notify.info(abp.utils.formatString(localize("AssetUpdatedOk"), vm.asset.name));
-                            $location.path('/assetlist');
+                            $state.go('^');//Go to parent state. $location.path('/assetlist');
                     }));
+            };
+
+            vm.cancel = function () {
+                $state.go('^');//Go to parent state. $location.path('/assetlist');
             };
         }
     ]);

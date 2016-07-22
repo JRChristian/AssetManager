@@ -27,7 +27,7 @@
                     null,
                     assetService.createAsset(vm.asset).success(function () {
                         abp.notify.info(abp.utils.formatString(localize("AssetCreatedOk"), vm.asset.name));
-                        $state.go('^');//$location.path('/');
+                        $state.go('^');//Go to parent state. $location.path('/');
                     })
                 );
             };
