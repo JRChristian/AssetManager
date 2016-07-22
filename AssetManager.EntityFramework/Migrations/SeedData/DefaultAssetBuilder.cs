@@ -23,18 +23,19 @@ namespace AssetManager.Migrations.SeedData
         {
             // Asset types
             bool r;
+            r = AddAssetType(_context, "Corrosion Circuit");
             r = AddAssetType(_context, "Facility");
             r = AddAssetType(_context, "Fixed");
             r = AddAssetType(_context, "Logical");
             r = AddAssetType(_context, "Other");
             r = AddAssetType(_context, "Structural");
             r = AddAssetType(_context, "Temporary");
-            r = AddAssetType(_context, "Unit Ops");
+            r = AddAssetType(_context, "Unit");
 
             r = AddAsset(_context, "Westlake Refinery", "Westlake Refinery", "Facility");
-            r = AddAsset(_context, "CDU", "Crude Distillation Unit", "Unit Ops");
-            r = AddAsset(_context, "Reformer", "Catalytic Reforming Unit", "Unit Ops");
-            r = AddAsset(_context, "FCCU", "Fluid Catalytic Cracking Unit", "Unit Ops");
+            r = AddAsset(_context, "CDU", "Crude Distillation Unit", "Unit");
+            r = AddAsset(_context, "Reformer", "Catalytic Reforming Unit", "Unit");
+            r = AddAsset(_context, "FCCU", "Fluid Catalytic Cracking Unit", "Unit");
         }
 
         // Helper function to add or update an Asset record. All records are assigned to the default tenant
@@ -43,7 +44,7 @@ namespace AssetManager.Migrations.SeedData
             long AssetTypeId = context.AssetTypes.Where(x => x.Name == AssetTypeName).SingleOrDefault().Id;
             if (AssetTypeId != 0)
             {
-                context.Assets.AddOrUpdate(x => x.Name, new Asset { Name = AssetName, Description = AssetDesc, AssetTypeId = AssetTypeId, TenantId = 1 });
+                context.Assets.AddOrUpdate(x => x.Name, new Asset { Name = AssetName, Description = AssetDesc, AssetTypeId = AssetTypeId, Materials = null, TenantId = 1 });
                 context.SaveChanges();
                 return true;
             }

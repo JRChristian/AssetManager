@@ -18,5 +18,6 @@ namespace AssetManager.Assets.Dtos
         public string Description { get; set; }
         public long? AssetTypeId { get; set; }
         public string AssetTypeName { get; set; }
+        public string Materials { get; set; }
     }
 }

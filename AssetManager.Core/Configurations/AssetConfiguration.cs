@@ -15,6 +15,7 @@ namespace AssetManager.Configurations
             Property(x => x.Name).IsRequired().HasMaxLength(40);
             Property(x => x.Description).IsRequired().HasMaxLength(255);
             Property(x => x.AssetTypeId).IsOptional();
+            Property(x => x.Materials).IsOptional().HasMaxLength(255);
             Property(x => x.TenantId).IsRequired();
         }
     }

@@ -12,9 +12,12 @@
             <div class="form-group">
                 <label class="col-sm-2" control-label for="AssetType">@L("AssetType")</label>
                 <div class="col-sm-10">
-                    <select id="AssetType" class="form-control" ng-model="vm.asset.assetTypeId" ng-options="x.id as x.name for x in vm.assettypes">
-                    </select>
+                    <select id="AssetType" class="form-control" ng-model="vm.asset.assetTypeId" ng-options="x.id as x.name for x in vm.assettypes"></select>
                 </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2" control-label for="AssetMaterials">@L("AssetMaterials")</label>
+                <div class="col-sm-10"><textarea id="AssetMaterials" ng-model="vm.asset.materials" class="form-control" rows="3"></textarea></div>
             </div>
             <button ng-click="vm.saveAsset()" ng-disabled="EditAssetForm.$invalid" type="submit" class="btn btn-success">@L("UpdateTheAsset")</button>
         </form>

@@ -529,6 +529,7 @@ namespace AssetManager.EntityFramework.DomainServices
                         AssetDescription = asset.Description,
                         AssetTypeId = asset.AssetTypeId,
                         AssetTypeName = (asset.AssetType != null) ? asset.AssetType.Name : "",
+                        AssetMaterials = asset.Materials,
                         Levels = null,
                         NumberChildren = numberChildren
                     };
@@ -646,6 +647,7 @@ namespace AssetManager.EntityFramework.DomainServices
                         AssetDescription = asset.Description,
                         AssetTypeId = asset.AssetTypeId,
                         AssetTypeName = (asset.AssetType != null) ? asset.AssetType.Name : "",
+                        AssetMaterials = asset.Materials,
                         Limits = null,
                         NumberChildren = numberChildren
                     };

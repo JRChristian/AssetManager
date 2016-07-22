@@ -18,7 +18,7 @@ namespace AssetManager.EntityFramework.DomainServices
         IQueryable<Asset> GetAssets();
         List<Asset> GetAssetList();
         List<Asset> GetAssetListForType(long id);
-        Asset InsertOrUpdateAsset(long? id, string name, string description, long? assetTypeId, string assetTypeName, int tenantId);
+        Asset InsertOrUpdateAsset(long? id, string name, string description, long? assetTypeId, string assetTypeName, string materials, int tenantId);
 
         AssetType GetAssetType(long id);
         AssetType GetAssetType(string name);

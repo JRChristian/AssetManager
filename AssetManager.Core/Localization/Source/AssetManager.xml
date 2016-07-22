@@ -141,6 +141,7 @@
     <text name="AssetBtnCollapseHierarchy" value="Collapse all" />
     <text name="AssetBtnParent" value="Parent" />
     <text name="AssetBtnChildren" value="Children" />
+    <text name="AssetMaterials" value="Materials" />
 
     <text name="AssetMnuAssetVariableAssignment" value="Variable assignment" />
     <text name="AssetMnuAssetVariableList" value="Variable assignment (alt)" />
@@ -245,6 +246,7 @@
     <text name="PrecisionIsNotInRange" value="Precision must be between {0} and {1}" />
     <text name="Actual" value="Actual" />
     <text name="Current" value="Current" />
+    <text name="Cancel" value="Cancel" />
 
     <text name="QualityGood" value="OK" />
     <text name="QualityUncertain" value="?" />

@@ -13,6 +13,7 @@ namespace AssetManager.AssetHealth.Dtos
         public string Name { get; set; }
         public string Description { get; set; }
         public string AssetTypeName { get; set; }
+        public string Materials { get; set; }
         public string ParentAssetName { get; set; }
         public int Level { get; set; }
         public List<VariableArrayDto> Variables { get; set; }

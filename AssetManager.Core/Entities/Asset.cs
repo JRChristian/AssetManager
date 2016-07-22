@@ -18,6 +18,7 @@ namespace AssetManager.Entities
 
         public long AssetTypeId { get; set; }
         public virtual AssetType AssetType { get; set; }
+        public string Materials { get; set; }
 
         public int TenantId { get; set; }
         public virtual Tenant Tenants { get; set; }

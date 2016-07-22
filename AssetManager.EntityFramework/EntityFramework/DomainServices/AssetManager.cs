@@ -73,7 +73,7 @@ namespace AssetManager.EntityFramework.DomainServices
                 .ToList();
         }
 
-        public Asset InsertOrUpdateAsset(long? id, string name, string description, long? assetTypeId, string assetTypeName, int tenantId)
+        public Asset InsertOrUpdateAsset(long? id, string name, string description, long? assetTypeId, string assetTypeName, string materials, int tenantId)
         {
             long assetId = -1;
 
@@ -87,8 +87,12 @@ namespace AssetManager.EntityFramework.DomainServices
             {
                 // Asset exists - update
                 asset.Name = name;
-                asset.Description = description;
-                asset.AssetTypeId = assetType != null ? assetType.Id : -1;
+                if( !string.IsNullOrEmpty(description) )
+                    asset.Description = description;
+                if( assetType != null )
+                    asset.AssetTypeId = assetType.Id;
+                if( !string.IsNullOrEmpty(materials) )
+                    asset.Materials = materials;
                 assetId = asset.Id;
             }
             else if( !string.IsNullOrEmpty(name) )
@@ -99,6 +103,7 @@ namespace AssetManager.EntityFramework.DomainServices
                     Name = name,
                     Description = !string.IsNullOrEmpty(description) ? description : name,
                     AssetTypeId = assetType != null ? assetType.Id : -1,
+                    Materials = materials,
                     TenantId = tenantId
                 };
                 assetId = _assetRepository.InsertOrUpdateAndGetId(asset);

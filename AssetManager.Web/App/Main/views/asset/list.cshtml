@@ -33,7 +33,8 @@
                     <td>{{asset.name}}</td>
                     <td>{{asset.description}}</td>
                     <td>{{asset.assetTypeName}}</td>
-                    <td>{{asset.creationTime | momentFromNow}}</td>
+                    <td>{{asset.materials}}</td>
+                   <td>{{asset.creationTime | momentFromNow}}</td>
                     <td>
                         <a ui-sref="assetedit({ assetId: asset.id})"><i class="fa fa-pencil-square-o"></i></a>
                         <i class="fa fa-trash"></i>

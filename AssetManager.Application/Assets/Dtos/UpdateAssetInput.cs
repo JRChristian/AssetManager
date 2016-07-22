@@ -22,6 +22,7 @@ namespace AssetManager.Assets.Dtos
         public string Name { get; set; }
         public string Description { get; set; }
         public long? AssetTypeId { get; set; }
+        public string Materials { get; set; }
 
         //Custom validation method. It's called by ABP after data annotation validations.
         public void AddValidationErrors(List<ValidationResult> results)

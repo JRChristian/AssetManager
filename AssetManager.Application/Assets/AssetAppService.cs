@@ -75,7 +75,7 @@ namespace AssetManager.Assets
             // All assets belong to a tenant. If not specified, put them in the default tenant.
             int tenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
 
-            _assetManager.InsertOrUpdateAsset(input.Id, input.Name, input.Description, input.AssetTypeId, "", tenantId);
+            _assetManager.InsertOrUpdateAsset(input.Id, input.Name, input.Description, input.AssetTypeId, "", input.Materials, tenantId);
 
             //We even do not call Update method of the repository.
             //Because an application service method is a 'unit of work' scope as default.
@@ -91,7 +91,7 @@ namespace AssetManager.Assets
             int tenantId = (AbpSession.TenantId != null) ? (int)AbpSession.TenantId : 1;
 
             //Creating a new Asset entity with given input's properties
-            _assetManager.InsertOrUpdateAsset(null, input.Name, input.Description, input.AssetTypeId, input.AssetTypeName, tenantId);
+            _assetManager.InsertOrUpdateAsset(null, input.Name, input.Description, input.AssetTypeId, input.AssetTypeName, input.Materials, tenantId);
         }
 
         public UpdateAssetsOutput UpdateAssets(UpdateAssetsInput input)
@@ -105,7 +105,7 @@ namespace AssetManager.Assets
             {
                 foreach(AssetDto asset in input.Assets)
                 {
-                    _assetManager.InsertOrUpdateAsset(null, asset.Name, asset.Description, asset.AssetTypeId, asset.AssetTypeName, tenantId);
+                    _assetManager.InsertOrUpdateAsset(null, asset.Name, asset.Description, asset.AssetTypeId, asset.AssetTypeName, asset.Materials, tenantId);
                     output.SuccessfulUpdates++;
                 }
             }
@@ -273,7 +273,7 @@ namespace AssetManager.Assets
                 else
                     parentAssetName = "";
                 
-                Asset childAsset = _assetManager.InsertOrUpdateAsset(null, asset.Name, asset.Description, null, asset.AssetTypeName, tenantId);
+                Asset childAsset = _assetManager.InsertOrUpdateAsset(null, asset.Name, asset.Description, null, asset.AssetTypeName, asset.Materials, tenantId);
                 Asset parentAsset = _assetManager.GetAsset(parentAssetName);
                 success = _assetManager.InsertOrUpdateAssetHierarchy(childAsset, parentAsset);
 

@@ -86,6 +86,7 @@ namespace AssetManager.AssetHealth
                         Name = oneItem.Asset.Name,
                         Description = oneItem.Asset.Description,
                         AssetTypeName = oneItem.Asset.AssetType.Name,
+                        Materials = oneItem.Asset.Materials,
                         ParentAssetName = parentAssetName,
                         Level = level,
                         Variables = new List<VariableArrayDto>()
@@ -506,6 +507,7 @@ namespace AssetManager.AssetHealth
                                 AssetDescription = a.AssetDescription,
                                 AssetTypeId = a.AssetTypeId,
                                 AssetTypeName = a.AssetTypeName,
+                                AssetMaterials = a.AssetMaterials,
                                 NumberChildren = a.NumberChildren,
                                 Levels = new List<LevelStats>()
                             };
@@ -678,6 +680,7 @@ namespace AssetManager.AssetHealth
                 AssetDescription = (asset != null) ? asset.Description : null,
                 AssetTypeId = (assetType != null) ? assetType.Id : (asset != null ? asset.AssetTypeId : 0),
                 AssetTypeName = (assetType != null) ? assetType.Name : (asset != null ? asset.AssetType.Name : null),
+                AssetMaterials = (asset != null) ? asset.Materials : null,
                 NumberChildren = childAssetStats.Count,
                 Levels = _assetHealthManager.GetLevelStatsForAssets(assets, output.StartTimestamp, output.EndTimestamp, minCriticality, maxCriticality)
             };
@@ -774,6 +777,7 @@ namespace AssetManager.AssetHealth
                     AssetDescription = a.AssetDescription,
                     AssetTypeId = a.AssetTypeId,
                     AssetTypeName = a.AssetTypeName,
+                    AssetMaterials = a.AssetMaterials,
                     NumberChildren = a.NumberChildren,
                     Levels = new List<LevelStats>()
                 };

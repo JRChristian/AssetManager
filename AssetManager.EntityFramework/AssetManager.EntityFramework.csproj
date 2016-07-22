@@ -258,6 +258,10 @@
     <Compile Include="Migrations\201606292242127_AddMetricsToLevelTable.Designer.cs">
       <DependentUpon>201606292242127_AddMetricsToLevelTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607220307193_AddMaterialsToAssetTable.cs" />
+    <Compile Include="Migrations\201607220307193_AddMaterialsToAssetTable.Designer.cs">
+      <DependentUpon>201607220307193_AddMaterialsToAssetTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="AssetManagerDataModule.cs" />
     <Compile Include="Migrations\SeedData\DefaultAssetBuilder.cs" />
@@ -359,6 +363,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606292242127_AddMetricsToLevelTable.resx">
       <DependentUpon>201606292242127_AddMetricsToLevelTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607220307193_AddMaterialsToAssetTable.resx">
+      <DependentUpon>201607220307193_AddMaterialsToAssetTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
