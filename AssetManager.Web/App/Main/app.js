@@ -213,7 +213,7 @@
                     menu: 'IOWVariables' //Matches to name in AssetManagerNavigationProvider
                 })
                 .state('iowvariabledeviations', {
-                    url: '/iowvariabledeviations?Id',
+                    url: '/iowvariabledeviations?Id&Days',
                     templateUrl: '/App/Main/views/iow/variabledeviations.cshtml',
                     title: 'Variable Deviations',
                     menu: 'IOWVariableDeviations' //Matches to name in AssetManagerNavigationProvider

@@ -17,10 +17,10 @@
                 minRowsToShow: 8,
                 columnDefs: [
                     {
-                        name: 'id', displayName: vm.localize('Action'), width: '10%', minWidth: 40, enableSorting: false, enableFiltering: false, enableColumnMenus: false, enableCellEdit: false,
-                        cellTemplate: '<div class="ui-grid-cell-contents"><div class="btn-group btn-group-xs"><button ng-click="grid.appScope.deleteRow(row)" type="submit" class="btn btn-primary"><i class="fa fa-trash"></i></button></div></div>'
+                        name: 'id', displayName: vm.localize('Action'), width: 40, minWidth: 40, enableSorting: false, enableFiltering: false, enableColumnMenus: false, enableCellEdit: false,
+                        cellTemplate: '<div class="ui-grid-cell-contents"><div class="btn-group btn-group-xs"><button ng-click="grid.appScope.deleteRow(row)" type="submit" class="btn btn-info"><i class="fa fa-trash"></i></button></div></div>'
                     },
-                    { name: 'name', width: '90%', displayName: vm.localize('Name'), enableCellEdit: true }
+                    { name: 'name', displayName: vm.localize('Name'), enableCellEdit: true }
                 ],
                 rowEditWaitInterval: -1
             };

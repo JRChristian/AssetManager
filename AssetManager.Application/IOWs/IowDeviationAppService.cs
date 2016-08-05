@@ -38,11 +38,17 @@ namespace AssetManager.IOWs
         {
             GetVariableDeviationsOutput output = null;
 
-            // Set the earliest time. If the argument is 0, use a default of 720 hours (30 days). Round back to a whole hour.
-            int hoursBack = (input.hoursBack.HasValue && input.hoursBack.Value > 0) ? input.hoursBack.Value : 720;
-            DateTime earliestTimestamp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0).AddHours(-hoursBack);
+            DateTime startTimestamp = DateTime.Now.Date;  // Default to midnight today
+            if( input.StartTimestamp.HasValue )
+                startTimestamp = _iowManager.NormalizeStartDay(input.StartTimestamp.Value);
+            else if( input.hoursBack.HasValue )
+            {
+                // Set the earliest time. If the argument is 0, use a default of 720 hours (30 days). Round back to a whole hour.
+                int hoursBack = input.hoursBack.Value > 0 ? input.hoursBack.Value.Clamp(0, 1440) : 720;
+                startTimestamp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0).AddHours(-hoursBack);
+            }
 
-            // Make sure we a variable in the input
+            // Make sure we have a variable in the input
             IOWVariable variable = _iowManager.FirstOrDefaultVariable(input.Id, input.VariableName);
             if( variable != null )
             {
@@ -54,7 +60,7 @@ namespace AssetManager.IOWs
                     UOM = variable.UOM,
                     TagId = variable.TagId,
                     TagName = variable.Tag.Name,
-                    EarliestTimestamp = earliestTimestamp,
+                    EarliestTimestamp = startTimestamp,
                     Limits = new List<LimitDeviationDto>()
                 };
 
@@ -80,7 +86,7 @@ namespace AssetManager.IOWs
                     // Get the array index of the limit we just added
                     int i = output.Limits.Count - 1;
                     var someDeviations = from one in limit.IOWDeviations
-                                         where !one.EndTimestamp.HasValue || one.EndTimestamp.Value >= earliestTimestamp
+                                         where !one.EndTimestamp.HasValue || one.EndTimestamp.Value >= startTimestamp
                                          select one;
                
                     foreach (var one in someDeviations)

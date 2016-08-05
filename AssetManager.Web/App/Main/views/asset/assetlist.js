@@ -1,4 +1,4 @@
-﻿(function () {
+﻿        (function () {
     var app = angular.module('app');
 
     var controllerId = 'app.views.asset.assetlist';

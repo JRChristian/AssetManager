@@ -35,7 +35,10 @@
     })
     .filter('momentLocale', function () {
         return function (input) {
-            return moment(input).format("LLL");
+            if (input !== null)
+                return moment(input).format("LLL");
+            else
+                return 'ongoing';
         };
     })
     .filter('moment', [

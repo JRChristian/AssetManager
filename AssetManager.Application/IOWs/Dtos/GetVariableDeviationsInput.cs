@@ -12,5 +12,6 @@ namespace AssetManager.IOWs.Dtos
         public long? Id { get; set; }
         public string VariableName { get; set; }
         public int? hoursBack { get; set; }
+        public DateTime? StartTimestamp { get; set; }
     }
 }
