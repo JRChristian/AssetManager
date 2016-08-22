@@ -140,6 +140,12 @@
                     title: 'Asset Health Dashboard',
                     menu: 'AssetHealthDashboard'
                 })
+                .state('assethealthaction', {
+                    url: '/assethealthaction?AssetId',
+                    templateUrl: '/App/Main/views/assethealth/dashboardforaction.cshtml',
+                    title: 'Asset Health Action',
+                    menu: 'AssetHealthAction'
+                })
                 .state('assethealthdashboardforassets', {
                     url: '/assethealthdashboardforassets?AssetId&Days&IncludeChildren',
                     templateUrl: '/App/Main/views/assethealth/dashboardforassets.cshtml',

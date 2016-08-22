@@ -17,10 +17,11 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="width:55px" class="text-right">
+                            <td style="width:80px" class="text-right">
                                 <div class="btn-group btn-group-xs">
                                     <a class="btn btn-default" ui-sref="assethealthdashboardforassets({ AssetId: vm.assetParentId, Days: vm.days })" ng-hide="vm.assetId<1"><i class="fa fa-level-up"></i></a>
                                     <a class="btn btn-default" ui-sref="assethealthassetview({ AssetId: vm.assetId, Days: vm.days })"><i class="fa fa-bar-chart"></i></a>
+                                    <a class="btn btn-default" ui-sref="assethealthaction({ AssetId: a.assetId })"><i class="fa fa-magic"></i></a>
                                 </div>
                             </td>
                             <td>{{vm.assetName}}</td>
@@ -28,10 +29,11 @@
                             <td ng-repeat="c in vm.overallStats.levels" class="text-center {{c.style}}" uib-tooltip-html="c.tooltip" tooltip-append-to-body=true>{{c.metricValue | number:1}}%</td>
                         </tr>
                         <tr ng-repeat="a in vm.childStats">
-                            <td style="width:55px" class="text-right">
+                            <td style="width:80px" class="text-right">
                                 <div class="btn-group btn-group-xs">
                                     <a class="btn btn-default" ui-sref="assethealthdashboardforassets({ AssetId: a.assetId, Days: vm.days })" ng-hide="a.numberChildren<=0"><i class="fa fa-level-down"></i></a>
                                     <a class="btn btn-default" ui-sref="assethealthassetview({ AssetId: a.assetId, Days: vm.days })"><i class="fa fa-bar-chart"></i></a>
+                                    <a class="btn btn-default" ui-sref="assethealthaction({ AssetId: a.assetId })"><i class="fa fa-magic"></i></a>
                                 </div>
                             </td>
                             <td>{{a.assetName}}</td>
@@ -57,7 +59,7 @@
                                     <div class="btn-group btn-group-xs">
                                         <a class="btn btn-default" ui-sref="iowvariablechart({ Id: v.variableId })"><i class="fa fa-line-chart"></i></a>
                                         <a class="btn btn-default" ui-sref="iowvariabledeviations({ Id: v.variableId })"><i class="fa fa-exclamation-circle"></i></a>
-                                    </div>
+                                   </div>
                                     {{v.variableName}}
                                     <small>... @L("AssetHealthMsgLastViolation") {{v.lastDeviationEndTimestamp | momentFromNowBlankOngoing}}</small>
                                 </div>

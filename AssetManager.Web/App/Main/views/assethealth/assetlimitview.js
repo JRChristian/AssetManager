@@ -66,8 +66,8 @@
                 null,
                 assetService.getAssetRelatives({ id: vm.asset.id })
                     .success(function (data) {
-                        vm.parentId = data.parent != null ? data.parent.id : -1;
-                        vm.parentName = data.parent != null ? data.parent.name : "";
+                        vm.parentId = data.parent !== null ? data.parent.id : -1;
+                        vm.parentName = data.parent !== null ? data.parent.name : "";
                         vm.hasParent = vm.parentId > 0 ? true : false;
                         vm.children = data.children;
                         vm.numberChildren = data.children.length;
@@ -78,7 +78,7 @@
                 null,
                 assetHealthService.getAssetVariableList({ assetId: vm.asset.id })
                     .success(function (data) {
-                        if (data.assetVariables != null && data.assetVariables.length > 0)
+                        if (data.assetVariables !== null && data.assetVariables.length > 0)
                             vm.variables = data.assetVariables;
                         else
                             vm.variables = [];
@@ -89,7 +89,7 @@
                 null,
                 assetHealthService.getAssetLimitCurrentStatus({ assetId: vm.asset.id })
                     .success(function (data) {
-                        vm.gridOptions.data = data.variablelimits;
+                        vm.gridOptions.data = data.variableLimits;
                     })
                 );
 

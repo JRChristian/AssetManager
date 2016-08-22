@@ -1,9 +1,44 @@
-﻿<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-    </head>
-    <body>
-
-    </body>
-</html>
+﻿<div ng-controller="app.views.assethealth.action as vm">
+    <div class="container-fluid">
+        <div class="row">
+            <h3>@L("AssetHealthTtlAssetAction")</h3>
+            {{vm.asset.name}} <small>{{vm.asset.description}}</small>
+            <p>{{vm.startDay | momentLocale}} - {{vm.endDay | momentLocale}}</p>
+        </div>
+        <div class="row" ng-repeat="l in vm.levelsUsed" style="border-top: 1px solid; border-color: gray">
+            <div class="col-sm-5">
+                <strong>{{l.criticality}}-{{l.name}}</strong>
+            </div>
+            <div class="col-sm-7">
+                <i>{{l.description}} @L("ResponseGoal"): {{l.responseGoal}}</i>
+            </div>
+            <div ng-repeat="v in vm.variableLimits | filter:{ levelName: l.name }">
+                <div class="col-sm-5">
+                    <span class="{{v.severityClass}}">{{v.severityMessage2}}</span> &nbsp;
+                    {{v.variableName}}<br />
+                    <div class="btn-group btn-group-xs">
+                        <a class="btn btn-default" ui-sref="iowvariablechart({ Id: v.variableId })"><i class="fa fa-line-chart"></i></a>
+                        <a class="btn btn-default" ui-sref="iowvariabledeviations({ Id: v.variableId })"><i class="fa fa-exclamation-circle"></i></a>
+                        <a class="btn btn-default" ui-sref="iowvariableview({ Id: v.variableId })"><i class="fa fa-binoculars"></i></a>
+                    </div>
+                    @L("Limit"): {{v.limitValue}} <i class="fa fa-caret-down" ng-show="v.direction==1"></i><i class="fa fa-caret-up" ng-show="v.direction==3"></i> &nbsp;
+                    @L("Current"): {{v.lastValue}} &nbsp;
+                    {{v.uom}}
+                </div>
+                <div class="col-sm-7" style="border-top: 1px solid; border-color: lightgray">
+                    <i>@L("Causes"):</i> {{v.cause}}<br />
+                    <i>@L("Consequences"):</i> {{v.consequences}}<br />
+                    <i>@L("Actions"):</i> {{v.action}}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <a ui-sref="assethealthdashboardforassets({ AssetId: vm.asset.id })" class="btn btn-info btn-sm"><i class="fa fa-bullseye"></i> @L("Dashboard")</a>
+            <a ui-sref="assethealthassetview({ AssetId: vm.asset.id })" class="btn btn-info btn-sm"><i class="fa fa-bar-chart"></i> @L("AssetHealthBtnAssetView")</a>
+            <a ui-sref="iowvariablelist" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("IOWVariables")</a>
+            <a ui-sref="assethierarchy" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("AssetBtnGoToAssetHierarchy")</a>
+            <a ui-sref="assetlist" class="btn btn-info btn-sm"><i class="fa fa-tags"></i> @L("AssetBtnGoToAssetList")</a>
+            <a ui-sref="iowlimitstatus" class="btn btn-info btn-sm"><i class="fa fa-sitemap"></i> @L("IowTtlLimitStatus")</a>
+        </div>
+    </div>
+</div>

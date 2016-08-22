@@ -42,6 +42,7 @@ namespace AssetManager.IOWs.Dtos
         public IOWStatus LastStatus { get; set; }
         public DateTime? LastDeviationStartTimestamp { get; set; }
         public DateTime? LastDeviationEndTimestamp { get; set; }
+        public double HoursinceLastDeviation { get; set; }
 
         // Help the UI
         // SeverityMessage: "Active", "within 24 hours", "none", etc.

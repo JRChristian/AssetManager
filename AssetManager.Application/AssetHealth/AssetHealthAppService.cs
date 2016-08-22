@@ -3,6 +3,7 @@ using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using Abp.Localization;
 using AssetManager.AssetHealth.Dtos;
+using AssetManager.Assets.Dtos;
 using AssetManager.DomainServices;
 using AssetManager.Entities;
 using AssetManager.EntityFramework.DomainServices;
@@ -835,28 +836,41 @@ namespace AssetManager.AssetHealth
                 localize.GetString("DirectionNone"),
                 localize.GetString("DirectionLow"),
                 localize.GetString("DirectionFocus"),
-                localize.GetString("DirectionHigh") };
+                localize.GetString("DirectionHigh")
+            };
+
+            // Initialize output
+            Asset asset = _assetManager.GetAsset(input.AssetId, input.AssetName);
+            GetAssetLimitCurrentStatusOutput output = new GetAssetLimitCurrentStatusOutput
+            {
+                Asset = (asset != null) ? asset.MapTo<AssetDto>() : new AssetDto { },
+                LevelsUsed = new List<LevelDto>(),
+                VariableLimits = new List<VariableLimitStatusDto>()
+            };
 
             // Get all the variable/limit combinations that match the input
             List<AssetVariable> assetVariables = _assetHealthManager.GetAssetVariableList(input.AssetId, input.AssetName, null, null);
             if( assetVariables == null || assetVariables.Count <= 0 )
-                return new GetAssetLimitCurrentStatusOutput { variablelimits = null };
+                return output;
 
-            List<long> variableIds = new List<long>();
+            /*List<long> variableIds = new List<long>();
             foreach (AssetVariable av in assetVariables)
-                variableIds.Add(av.IOWVariableId);
+                variableIds.Add(av.IOWVariableId);*/
+
+            List<long> variableIds = assetVariables.Select(x => x.IOWVariableId).Distinct().ToList();
 
             List<IOWLimit> limits = _iowManager.GetAllLimits(variableIds);
 
             // Transform into our output format
-            List<VariableLimitStatusDto> output = new List<VariableLimitStatusDto>();
             foreach (IOWLimit limit in limits)
             {
+                double hoursSinceLastDeviation = -1;
                 string severityMessage1 = "";
                 string severityMessage2 = "";
                 string severityClass = "";
                 if (limit.LastStatus == IOWStatus.OpenDeviation)
                 {
+                    hoursSinceLastDeviation = 0;
                     severityMessage1 = limit.Level.Name;
                     severityMessage2 = localize.GetString("IowMsgActive");
                     if (limit.Level.Criticality == 1)
@@ -868,6 +882,7 @@ namespace AssetManager.AssetHealth
                 }
                 else if (limit.LastDeviationEndTimestamp.HasValue && (DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalHours <= 24)
                 {
+                    hoursSinceLastDeviation = (DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalHours;
                     severityMessage1 = limit.Level.Name;
                     severityMessage2 = localize.GetString("IowMsgLast24Hours");
                     if (limit.Level.Criticality == 1)
@@ -877,48 +892,60 @@ namespace AssetManager.AssetHealth
                 }
                 else if (limit.LastDeviationEndTimestamp.HasValue)
                 {
+                    hoursSinceLastDeviation = (DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalHours;
                     double days = Math.Round((DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalDays, 0);
                     severityMessage1 = "";
                     severityMessage2 = String.Format(localize.GetString("IowMsgNotRecent"), days);
                     severityClass = "";
                 }
 
-                output.Add(new VariableLimitStatusDto
-                {
-                    VariableId = limit.Variable.Id,
-                    VariableName = limit.Variable.Name,
-                    VariableDescription = limit.Variable.Description,
-                    TagId = limit.Variable.TagId,
-                    TagName = limit.Variable.Tag.Name,
-                    UOM = limit.Variable.UOM,
-                    LastTimestamp = limit.Variable.Tag.LastTimestamp,
-                    LastValue = limit.Variable.Tag.LastValue,
-                    LastQuality = limit.Variable.Tag.LastQuality,
+                // Include this limit IF the caller wants all limits OR the most recent deviation for this limit is within the threshold
+                if ( input.MaximumHoursSinceLastDeviation < 0 || (hoursSinceLastDeviation >= 0 && hoursSinceLastDeviation <= input.MaximumHoursSinceLastDeviation ) )
+                    output.VariableLimits.Add(new VariableLimitStatusDto
+                    {
+                        VariableId = limit.Variable.Id,
+                        VariableName = limit.Variable.Name,
+                        VariableDescription = limit.Variable.Description,
+                        TagId = limit.Variable.TagId,
+                        TagName = limit.Variable.Tag.Name,
+                        UOM = limit.Variable.UOM,
+                        LastTimestamp = limit.Variable.Tag.LastTimestamp,
+                        LastValue = limit.Variable.Tag.LastValue,
+                        LastQuality = limit.Variable.Tag.LastQuality,
 
-                    IOWLevelId = limit.IOWLevelId,
-                    LevelName = limit.Level.Name,
-                    LevelDescription = limit.Level.Description,
-                    Criticality = limit.Level.Criticality,
-                    ResponseGoal = limit.Level.ResponseGoal,
-                    MetricGoal = limit.Level.MetricGoal,
+                        IOWLevelId = limit.IOWLevelId,
+                        LevelName = limit.Level.Name,
+                        LevelDescription = limit.Level.Description,
+                        Criticality = limit.Level.Criticality,
+                        ResponseGoal = limit.Level.ResponseGoal,
+                        MetricGoal = limit.Level.MetricGoal,
 
-                    LimitName = string.Format("{0}-", limit.Level.Criticality) + limit.Level.Name + "-" + localizedDirectionNames[Convert.ToInt32(limit.Direction)],
-                    Direction = limit.Direction,
-                    LimitValue = limit.Value,
-                    Cause = limit.Cause,
-                    Consequences = limit.Consequences,
-                    Action = limit.Action,
+                        LimitName = string.Format("{0}-", limit.Level.Criticality) + limit.Level.Name + "-" + localizedDirectionNames[Convert.ToInt32(limit.Direction)],
+                        Direction = limit.Direction,
+                        LimitValue = limit.Value,
+                        Cause = limit.Cause,
+                        Consequences = limit.Consequences,
+                        Action = limit.Action,
 
-                    LastStatus = limit.LastStatus,
-                    LastDeviationStartTimestamp = limit.LastDeviationStartTimestamp,
-                    LastDeviationEndTimestamp = limit.LastDeviationEndTimestamp,
+                        LastStatus = limit.LastStatus,
+                        LastDeviationStartTimestamp = limit.LastDeviationStartTimestamp,
+                        LastDeviationEndTimestamp = limit.LastDeviationEndTimestamp,
+                        HoursinceLastDeviation = hoursSinceLastDeviation,
 
-                    SeverityMessage1 = severityMessage1,
-                    SeverityMessage2 = severityMessage2,
-                    SeverityClass = severityClass
-                });
+                        SeverityMessage1 = severityMessage1,
+                        SeverityMessage2 = severityMessage2,
+                        SeverityClass = severityClass
+                    });
             }
-            return new GetAssetLimitCurrentStatusOutput { variablelimits = output };
+
+            // Get unique set of limit names
+            var query = from allLevels in _iowManager.GetAllLevels()
+                        join levelsInUse in output.VariableLimits on allLevels.Name equals levelsInUse.LevelName
+                        orderby allLevels.Criticality, allLevels.Name
+                        select allLevels;
+            output.LevelsUsed = query.Distinct().ToList().MapTo<List<LevelDto>>();
+
+            return output;
         }
 
         public GetAssetHealthMetricValuesOutput GetAssetHealthMetricValues()

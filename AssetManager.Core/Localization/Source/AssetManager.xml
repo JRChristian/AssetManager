@@ -161,6 +161,7 @@
     <text name="AssetHealthTblVariableIsUsed" value="In use?" />
     <text name="AssetHealthTtlLevelBarChart" value="Asset Integrity" />
     <text name="AssetHealthTtlLimitView" value="Asset Health:" />
+    <text name="AssetHealthTtlAssetAction" value="Assset Action" />
     <text name="AssetHealthMsgAssetHasNLimits" value="limits for" />
     <text name="AssetHealthMnuHealthMetricList" value="Metric Definitions" />
     <text name="AssetHealthLblMetricTypeNone" value="No metric" />
@@ -190,6 +191,8 @@
     <text name="AssetHealthTtlMetrics" value="Metrics" />
     <text name="AssetHealthTtlAssetHealth" value="Asset Health" />
     <text name="AssetHealthTtlDashboard" value="Asset Health Dashboard" />
+    <text name="AssetHealthTtlAction" value="Asset Health Actions" />
+    <text name="AssetHealthBtnAssetView" value="Asset View" />
     <text name="AssetHealthTtlDashboardForAssets" value="Asset Health Dashboard for Assets" />
     <text name="AssetHealthTtlDashboardForTypes" value="Asset Health Dashboard for Asset Types" />
     <text name="AssetHealthBtnDashboardForTypes" value="Dashboard for asset types" />
@@ -201,6 +204,7 @@
     <text name="AssetHealthLblNotes" value="Notes" />
     <text name="Metric" value="Metric" />
     <text name="Metrics" value="Metrics" />
+    <text name="Dashboard" value="Dashboard" />
 
     <text name="ImgTtlImageList" value="Images" />
     <text name="ImgTtlImageListEdit" value="Edit Images" />

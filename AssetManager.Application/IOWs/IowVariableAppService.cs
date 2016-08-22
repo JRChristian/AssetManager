@@ -561,11 +561,13 @@ namespace AssetManager.IOWs
             List<VariableLimitStatusDto> output = new List<VariableLimitStatusDto>();
             foreach( IOWLimit limit in limits )
             {
+                double hoursSinceLastDeviation = -1;
                 string severityMessage1 = "";
                 string severityMessage2 = "";
                 string severityClass = "";
                 if (limit.LastStatus == IOWStatus.OpenDeviation)
                 {
+                    hoursSinceLastDeviation = 0;
                     severityMessage1 = limit.Level.Name;
                     severityMessage2 = localize.GetString("IowMsgActive");
                     if (limit.Level.Criticality == 1)
@@ -577,6 +579,7 @@ namespace AssetManager.IOWs
                 }
                 else if (limit.LastDeviationEndTimestamp.HasValue && (DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalHours <= 24)
                 {
+                    hoursSinceLastDeviation = (DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalHours;
                     severityMessage1 = limit.Level.Name;
                     severityMessage2 = localize.GetString("IowMsgLast24Hours");
                     if (limit.Level.Criticality == 1)
@@ -586,6 +589,7 @@ namespace AssetManager.IOWs
                 }
                 else if (limit.LastDeviationEndTimestamp.HasValue)
                 {
+                    hoursSinceLastDeviation = (DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalHours;
                     double days = Math.Round((DateTime.Now - limit.LastDeviationEndTimestamp.Value).TotalDays,0);
                     severityMessage1 = "";
                     severityMessage2 = String.Format(localize.GetString("IowMsgNotRecent"), days);
@@ -621,6 +625,7 @@ namespace AssetManager.IOWs
                     LastStatus = limit.LastStatus,
                     LastDeviationStartTimestamp = limit.LastDeviationStartTimestamp,
                     LastDeviationEndTimestamp = limit.LastDeviationEndTimestamp,
+                    HoursinceLastDeviation = hoursSinceLastDeviation, 
 
                     SeverityMessage1 = severityMessage1,
                     SeverityMessage2 = severityMessage2,

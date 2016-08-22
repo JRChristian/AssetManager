@@ -134,10 +134,10 @@
             </uib-tabset>
         </div>
         <div class="row">
-            <div class="btn-group btn-group-sm">
-                <button id="changeDayRange" type="button" class="btn btn-info" ng-click="vm.changeDayRange()">{{vm.viewButtonLabel}}</button>
+                <button id="changeDayRange" type="button" class="btn btn-info btn-sm" ng-click="vm.changeDayRange()">{{vm.viewButtonLabel}}</button>
+                <a class="btn btn-info btn-sm" ui-sref="assethealthdashboardforassets({ AssetId: vm.asset.id })"><i class="fa fa-dot-circle-o"></i> Dashboard</a>
+                <a class="btn btn-info btn-sm" ui-sref="assethealthaction({ AssetId: vm.asset.id })"><i class="fa fa-magic"></i> Action</a>
                 <a class="btn btn-info btn-sm" ui-sref="assetedit({ assetId: vm.asset.id })"><i class="fa fa-pencil-square-o"></i> @L("Edit")</a>
-            </div>
         </div>
     </div>
 </div>
