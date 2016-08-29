@@ -12,15 +12,22 @@ namespace AssetManager.Web
 
             //~/Bundles/App/vendor/css
             //FIXED 2015-11-18. See http://forum.aspnetboilerplate.com/viewtopic.php?p=1962
+            //FIXED 2016-08-28. See http://forum.aspnetboilerplate.com/viewtopic.php?f=2&t=146
             bundles.Add(
                 new StyleBundle("~/Bundles/App/vendor/css")
-                    .Include("~/Content/themes/base/all.css", new CssRewriteUrlTransform())
+                    /*
+                     * BUG 2016-08-28 Bundling abruptly stopped handling the two @import directives in all.css
+                     * This code replaces the all.css file with specific calls to the two files it imports.
+                    .Include("~/Content/themes/base/all.css", new CssRewriteUrlTransformWrapper())
+                     */
+                    .Include("~/Content/themes/base/base.css", new CssRewriteUrlTransform())
+                    .Include("~/Content/themes/base/theme.css", new CssRewriteUrlTransform())
                     .Include("~/Content/bootstrap-cerulean.min.css", new CssRewriteUrlTransform())
                     //.Include("~/Content/bootstrap-cosmo.min.css", new CssRewriteUrlTransform())
                     //.Include("~/Content/bootstrap-paper.min.css", new CssRewriteUrlTransform())
                     //.Include("~/Content/bootstrap-simplex.min.css", new CssRewriteUrlTransform())
-                    .Include("~/Content/toastr.min.css")
-                    .Include("~/Scripts/sweetalert/sweet-alert.css")
+                    .Include("~/Content/toastr.min.css", new CssRewriteUrlTransform())
+                    .Include("~/Scripts/sweetalert/sweet-alert.css", new CssRewriteUrlTransform())
                     .Include("~/Content/flags/famfamfam-flags.css", new CssRewriteUrlTransform())
                     .Include("~/Content/font-awesome.min.css", new CssRewriteUrlTransform())
                     .Include("~/Content/ui-grid.min.css", new CssRewriteUrlTransform())     // Angular UI Grid

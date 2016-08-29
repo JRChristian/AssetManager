@@ -1344,6 +1344,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\AssetManagerNavigationProvider.cs" />
     <Compile Include="App_Start\AssetManagerWebModule.cs" />
+    <Compile Include="App_Start\CssRewriteUrlTransformerWrapper.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -1427,7 +1428,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>6234</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
